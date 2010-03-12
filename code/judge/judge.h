@@ -5,21 +5,30 @@
 #include <string>
 extern "C" 
 {
-#include "logger.h"
 #include <unistd.h>
+#include <sys/time.h>
+#include <sys/resource.h>
+#include <sys/signal.h>
+#include "logger.h"
 }
 
 using namespace std;
 
 namespace judge_conf
 {
-    //编译限制5s
-    int compile_time_limit          = 5; 
+    //编译限制(ms)
+    int compile_time_limit          = 5000;
+
+    //程序运行的栈空间大小(KB)
+    int stack_size_limit            = 4096;
+
+    //参照Oak的设置，附加一段时间到time_limit里，不把运行时间限制得太死
+    int time_limit_addtion          = 314;
 
     //程序的主目录(考虑做成配置)
-    string  root_dir                = "/home/user/felix021/woj";
+    string  root_dir                = "/home/felix021/woj";
 
-    const std::string log_dir       = "/log";
+    const std::string log_file       = "/log/judge.log";
 
     //临时文件夹
     const std::string temp_dir      = "/temp";
@@ -50,9 +59,17 @@ namespace judge_conf
     const int MEGA              = KILO * KILO;  // 1M
     const int GIGA              = KILO * MEGA;  // 1G
 
+    const int GCC_COMPILE_ERROR = 1;
+
+    const string NULL_DEVICE    = "/dev/null";
+
     //退出原因
     const int EXIT_OK           = 0;
     const int EXIT_BAD_PARAM    = 2;
+    const int EXIT_COMPILE      = 4;
+    const int EXIT_PRE_JUDGE    = 8;
+    const int EXIT_SET_LIMIT    = 10;
+    const int EXIT_JUDGE        = 12;
     const int EXIT_UNKNOWN      = 127;
 
     const string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
@@ -68,14 +85,28 @@ namespace problem
     int result              = 0;
     int status;
 
+    long memory_usage       = 0;
+    int time_usage          = 0;
+
     bool spj                = false;
+
+    std::string uid; //会追加到日志中的唯一编号，可选
 
     std::string temp_dir;
     std::string data_dir;
+
+    std::string stdout_file_compiler;
+    std::string stderr_file_compiler;
+
     std::string source_file;
+    std::string exec_file;
+
     std::string data_file;
     std::string input_file;
-    std::string output_file;
+    std::string output_file_std;
+
+    std::string stdout_file_executive;
+    std::string stderr_file_executive;
 
     void dump_to_log()
     {
@@ -99,8 +130,9 @@ void parse_arguments(int argc, char *argv[])
     int opt;
     extern char *optarg;
 
-    while ((opt = getopt(argc, argv, "s:n:D:d:t:m:o:S")) != -1) {
+    while ((opt = getopt(argc, argv, "u:s:n:D:d:t:m:o:S")) != -1) {
         switch (opt) {
+            case 'u': problem::uid          = optarg;       break;
             case 's': problem::source_file  = optarg;       break;
             case 'n': problem::id           = atoi(optarg); break;
             case 'D': problem::data_dir     = optarg;       break;
@@ -114,8 +146,101 @@ void parse_arguments(int argc, char *argv[])
                 exit(judge_conf::EXIT_BAD_PARAM);
         }
     }
-    problem::data_file = problem::data_dir + judge_conf::data_filename;
+    problem::data_file              = problem::data_dir + "/" + judge_conf::data_filename;
+    problem::exec_file              = problem::temp_dir + "/" + "a.out";
+    problem::stdout_file_compiler   = problem::temp_dir + "/" + "stdout_compiler.txt";
+    problem::stderr_file_compiler   = problem::temp_dir + "/" + "stderr_compiler.txt";
+    problem::stdout_file_executive  = problem::temp_dir + "/" + "stdout_executive.txt";
+    problem::stderr_file_executive  = problem::temp_dir + "/" + "stderr_executive.txt";
+    if (false == problem::uid.empty())
+    {
+        //在log中自动记录uid
+        log_add_info(("uid:" + problem::uid).c_str());
+    }
     problem::dump_to_log();
 }
 
+//a simpler interface for setitimer
+//which can be ITIMER_REAL, ITIMER_VIRTUAL, ITIMER_PROF
+bool malarm(int which, int milliseconds)
+{
+    struct itimerval t;
+    FM_LOG_TRACE("malarm: %d", milliseconds);
+    t.it_value.tv_sec       = milliseconds / 1000;
+    t.it_value.tv_usec      = milliseconds % 1000 * 1000; //微秒
+    t.it_interval.tv_sec    = 0;
+    t.it_interval.tv_usec   = 0;
+    return setitimer(which, &t, NULL);
+}
+
+void io_redirect()
+{
+    //io_redirect
+    stdin  = freopen(problem::input_file.c_str(), "r", stdin);
+    stdout = freopen(problem::stdout_file_executive.c_str(), "w", stdout);
+    stderr = freopen(problem::stderr_file_executive.c_str(), "w", stderr);
+    if (stdin == NULL || stdout == NULL || stderr == NULL)
+    {
+        FM_LOG_WARNING("error freopen: stdin(%p) stdout(%p), stderr(%p)",
+                stdin, stdout, stderr);
+        exit(judge_conf::EXIT_PRE_JUDGE);
+    }
+    FM_LOG_TRACE("io redirect ok!");
+}
+
+
+void set_limit()
+{
+
+    rlimit lim;
+
+    //时间限制, 秒, 向上取整 
+    lim.rlim_max = (problem::time_limit - problem::time_usage + 999) / 1000 + 1; //硬限制 
+    lim.rlim_cur = lim.rlim_max; //软限制
+    if (setrlimit(RLIMIT_CPU, &lim) < 0)
+    {
+        FM_LOG_WARNING("error setrlimit for RLIMIT_CPU");
+        exit(judge_conf::EXIT_SET_LIMIT);
+    }
+
+/*
+    //内存限制
+    //在这里进行内存限制可能导致MLE被判成RE
+    //所以改成在每次wait以后计算缺页中断的次数
+    lim.rlim_max = memlimit * judge_conf::KILO;
+    lim.rlim_cur = memlimit * judge_conf::KILO;
+    if (setrlimit(RLIMIT_AS, &lim) < 0)  
+    {
+        perror("setrlimit");
+        exit(judge_conf::EXIT_SET_LIMIT);
+    }
+*/
+
+    //堆栈空间限制
+    lim.rlim_max = judge_conf::stack_size_limit * judge_conf::KILO;
+    lim.rlim_cur = lim.rlim_max;
+    if (setrlimit(RLIMIT_STACK, &lim) < 0)
+    {
+        FM_LOG_WARNING("setrlimit RLIMIT_STACK failed");
+        exit(judge_conf::EXIT_SET_LIMIT);
+    }
+
+    //输出文件大小限制
+    lim.rlim_max = problem::output_limit * judge_conf::KILO;
+    lim.rlim_cur = lim.rlim_max;
+    if (setrlimit(RLIMIT_FSIZE, &lim) < 0)
+    {
+        FM_LOG_WARNING("setrlimit RLIMIT_FSIZE failed");
+        exit(judge_conf::EXIT_SET_LIMIT);
+    }
+
+    FM_LOG_TRACE("set limit ok");
+}
+
+//输出最终结果
+void output_result(int result, int memory_usage = 0, int time_usage = 0)
+{
+    FM_LOG_TRACE("result: %d, %dKB, %dms", result, memory_usage, time_usage);
+    printf("%d %d %d", result, memory_usage, time_usage);
+}
 #endif
