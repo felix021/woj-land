@@ -173,12 +173,11 @@ int main(int argc, char *argv[])
                     exit(judge_conf::EXIT_PRE_JUDGE);
                 }
                 //载入程序
-                log_close();
                 execlp(problem::exec_file.c_str(), problem::exec_file.c_str(), NULL);
 
                 //运行到此说明execlp出错了 
-                log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
                 FM_LOG_WARNING("execvp failed, %d: %s", errno, strerror(errno));
+                exit(judge_conf::EXIT_PRE_JUDGE);
             }
             else
             {
