@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <string>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 extern "C" 
 {
 #include <unistd.h>
@@ -11,8 +14,6 @@ extern "C"
 #include <sys/signal.h>
 #include "logger.h"
 }
-
-using namespace std;
 
 namespace judge_conf
 {
@@ -26,7 +27,7 @@ namespace judge_conf
     int time_limit_addtion          = 314;
 
     //程序的主目录(考虑做成配置)
-    string  root_dir                = "/home/felix021/woj";
+    std::string root_dir             = "/home/felix021/woj";
 
     const std::string log_file       = "/log/judge.log";
 
@@ -61,18 +62,24 @@ namespace judge_conf
 
     const int GCC_COMPILE_ERROR = 1;
 
-    const string NULL_DEVICE    = "/dev/null";
-
     //退出原因
-    const int EXIT_OK           = 0;
-    const int EXIT_BAD_PARAM    = 2;
-    const int EXIT_COMPILE      = 4;
-    const int EXIT_PRE_JUDGE    = 8;
-    const int EXIT_SET_LIMIT    = 10;
-    const int EXIT_JUDGE        = 12;
-    const int EXIT_UNKNOWN      = 127;
+    const int EXIT_OK               = 0;
+    const int EXIT_BAD_PARAM        = 3;
+    const int EXIT_COMPILE          = 6;
+    const int EXIT_PRE_JUDGE        = 9;
+    const int EXIT_PRE_JUDGE_PTRACE = 10;
+    const int EXIT_PRE_JUDGE_EXECLP = 11;
+    const int EXIT_SET_LIMIT        = 15;
+    const int EXIT_JUDGE            = 21;
+    const int EXIT_COMPARE          = 27;
+    const int EXIT_UNKNOWN          = 127;
 
-    const string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
+    const std::string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
+    const int LANG_UNKNOWN      = 0;
+    const int LANG_C            = 1;
+    const int LANG_CPP          = 2;
+    const int LANG_JAVA         = 3;
+    const int LANG_PASCAL       = 4;
 };
 
 namespace problem
@@ -82,7 +89,7 @@ namespace problem
     int time_limit          = 1000;
     int memory_limit        = 65536;
     int output_limit        = 8192;
-    int result              = 0;
+    int result              = 0; //初始化为0比较好, 嗯
     int status;
 
     long memory_usage       = 0;
@@ -235,6 +242,73 @@ void set_limit()
     }
 
     FM_LOG_TRACE("set limit ok");
+}
+
+int oj_compare_output(std::string file_std, std::string file_exec)
+{
+    FM_LOG_TRACE("start compare");
+    FILE *fp_std = fopen(file_std.c_str(), "r");
+    if (fp_std == NULL)
+    {
+        FM_LOG_WARNING("open standard output failed");
+        exit(judge_conf::EXIT_COMPARE);
+    }
+    FILE *fp_exe = fopen(file_exec.c_str(), "r");
+    if (fp_exe == NULL)
+    {
+        FM_LOG_WARNING("open executive's output failed");
+        exit(judge_conf::EXIT_COMPARE);
+    }
+    int a, b;
+    enum {
+        AC = judge_conf::OJ_AC,
+        PE = judge_conf::OJ_PE,
+        WA = judge_conf::OJ_WA
+    } status = AC;
+    while (true)
+    {
+        a = fgetc(fp_std);
+        b = fgetc(fp_exe);
+        if (feof(fp_std) && feof(fp_exe))
+        {
+            //如果两个文件都已经结束, 退出循环
+            break;
+        }
+
+        //如果两个字符不同，
+        if (a != b)
+        {
+            status = PE; //可能是PE，再继续检测是否是WA
+#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\r') || (a == '\n'))
+            //过滤空白字符
+            if (is_space_char(a) && is_space_char(b))
+            {
+                //两个都是空白字符, 都过滤
+                continue;
+            }
+            if (is_space_char(a))
+            {
+                //a是空白字符, 过滤, 退回b以便下一轮循环
+                ungetc(b, fp_exe);
+            }
+            else if (is_space_char(b))
+            {
+                //b是空白字符, 过滤, 退回a以便下一轮循环
+                ungetc(a, fp_std);
+            }
+            else
+            {
+                //如果两个都不是空白字符且不相等, 就是WA
+                status = WA;
+                break;
+            }
+        }
+    }
+    fclose(fp_std);
+    fclose(fp_exe);
+    FM_LOG_TRACE("compare over, result = %s",
+            status == AC ? "AC" : (status == PE ? "PE" : "WA"));
+    return status;
 }
 
 //输出最终结果
