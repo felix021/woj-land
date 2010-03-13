@@ -1,8 +1,21 @@
 #!/bin/bash
-ac=1
-if [ $ac -eq 1 ]; then
-    ./judge_c.exe -u 0000 -s "test/1001.c" -n 1001 -D "test" -d "test/temp" -t 4000 -m 32768 -o 1024 -S
-else
-    ./judge_c.exe -u 0001 -s "test/1001_ce.c" -n 1001 -D "test" -d "test/temp" -t 1000 -m 32768 -o 1024 -S
-fi
+
+# ac pe wa ce ...
+select=pe
+
+case $select in
+    ac) src=1001.c
+    ;;
+    pe) src=1001_pe.c
+    ;;
+    wa) src=1001_wa.c
+    ;;
+    ce) src=1001_ce.c
+    ;;
+    #*)
+    #echo Unknown option.
+    #exit
+esac
+
+./judge_c.exe -u 0001 -s "test/$src" -n 1001 -D "test" -d "test/temp" -t 1000 -m 32768 -o 1024
 echo -e "\nExit status: $?"

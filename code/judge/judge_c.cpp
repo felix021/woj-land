@@ -24,7 +24,7 @@ int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 
 int main(int argc, char *argv[])
 {
-    problem::lang = 1; //C语言 
+    problem::lang = judge_conf::LANG_C; //C语言 
     log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
     parse_arguments(argc, argv);
@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
             exit(judge_conf::EXIT_COMPILE);
         }
 
-        FM_LOG_TRACE("start compiler: gcc -w -O2 -DOJ -o %s %s",
+        FM_LOG_TRACE("start: gcc -w -O2 -DOJ -o %s %s",
                 problem::exec_file.c_str(), problem::source_file.c_str());
         malarm(ITIMER_REAL, judge_conf::compile_time_limit);
         execlp("gcc", "gcc", "-w", "-O2", "-DOJ",
@@ -86,7 +86,7 @@ int main(int argc, char *argv[])
             }
             else
             {
-                FM_LOG_WARNING("unknown exit status %d", WEXITSTATUS(status));
+                FM_LOG_WARNING(" compiler unknown exit status %d", WEXITSTATUS(status));
                 exit(judge_conf::EXIT_COMPILE);
             }
         }
@@ -160,30 +160,31 @@ int main(int argc, char *argv[])
             //设置 memory, time, output 限制..
             set_limit();
 
-            int real_time_limit = problem::time_limit - problem::time_usage
-                                + judge_conf::time_limit_addtion;
             FM_LOG_DEBUG("tl: %d, tu: %d, tla: %d",
-                    problem::time_limit, problem::time_usage, judge_conf::time_limit_addtion);
-            if (EXIT_SUCCESS == malarm(ITIMER_REAL, real_time_limit))//真实时间，防止sleep等死
-            {
-                FM_LOG_TRACE("begin executive: %s", problem::exec_file.c_str());
-                if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0)
-                {
-                    FM_LOG_WARNING("ptrace failed, errno(%d): %s", errno, strerror(errno));
-                    exit(judge_conf::EXIT_PRE_JUDGE);
-                }
-                //载入程序
-                execlp(problem::exec_file.c_str(), problem::exec_file.c_str(), NULL);
-
-                //运行到此说明execlp出错了 
-                FM_LOG_WARNING("execvp failed, %d: %s", errno, strerror(errno));
-                exit(judge_conf::EXIT_PRE_JUDGE);
-            }
-            else
+                    problem::time_limit, problem::time_usage,
+                    judge_conf::time_limit_addtion);
+            int real_time_limit = problem::time_limit //总时限
+                                - problem::time_usage //已用时间
+                                + judge_conf::time_limit_addtion; //误差调整
+            //设置一个真实时间的ALARM，防止sleep/io等卡住不退
+            if (EXIT_SUCCESS != malarm(ITIMER_REAL, real_time_limit))
             {
                 FM_LOG_WARNING("malarm failed");
+                exit(judge_conf::EXIT_PRE_JUDGE);
             }
-            exit(judge_conf::EXIT_PRE_JUDGE);
+
+            FM_LOG_TRACE("begin executive: %s", problem::exec_file.c_str());
+            log_close();
+            if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0)
+            {
+                //无法打日志了，因为已经close日志且chroot了, 所以给出更详细的退出值
+                exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
+            }
+            //载入程序
+            execlp(problem::exec_file.c_str(), problem::exec_file.c_str(), NULL);
+
+            //运行到此说明execlp出错了, 无法打日志了
+            exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);
         }
         else 
         {
@@ -208,15 +209,37 @@ int main(int argc, char *argv[])
                     {
                         //子进程返回0 (AC/PE,WA)
                         FM_LOG_TRACE("normal quit");
+                        int result;
                         if (problem::spj)
                         {
                             //TODO SPJ，由SPJ程序判结果
+                            result = judge_conf::OJ_AC;
                         }
                         else
                         {
-                            //TODO 非SPJ，直接判结果
+                            //非SPJ，直接判结果
+                            result = oj_compare_output(problem::output_file_std, 
+                                                       problem::stdout_file_executive);
                         }
-                        problem::result = judge_conf::OJ_AC; //TODO just for test
+                        //如果这一轮是WA
+                        if (result == judge_conf::OJ_WA)
+                        {
+                            //那么最终结果就是WA
+                            problem::result = judge_conf::OJ_WA;
+                        } 
+                        //这一轮是AC或PE
+                        else if (problem::result != judge_conf::OJ_PE)
+                        {
+                            //第一轮或上一轮是AC，结果就是这一轮的情况
+                            problem::result = result;
+                        }
+                        else /* (problem::result == judge_conf::OJ_PE) */
+                        {
+                            //上一轮是PE，这轮无论是AC还是PE，都是PE
+                            problem::result = judge_conf::OJ_PE;
+                        }
+                        FM_LOG_TRACE("case result: %d, problem result: %d",
+                                    result, problem::result);
                     }
                     else
                     {
@@ -308,9 +331,10 @@ int main(int argc, char *argv[])
         problem::time_usage += (rused.ru_stime.tv_sec * 1000 + 
                                 rused.ru_stime.tv_usec / 1000);
 
-        if (problem::result != judge_conf::OJ_AC)
+        if (problem::result != judge_conf::OJ_AC &&
+            problem::result != judge_conf::OJ_PE)
         {
-            FM_LOG_TRACE("not ac, no need to continue");
+            FM_LOG_TRACE("not ac/pe, no need to continue");
             if (problem::result == judge_conf::OJ_TLE)
             {
                 problem::time_usage = problem::time_limit;
