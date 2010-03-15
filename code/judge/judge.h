@@ -6,12 +6,15 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <cctype>
 extern "C" 
 {
 #include <unistd.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sys/signal.h>
+#include <sys/wait.h>
+#include <errno.h>
 #include "logger.h"
 }
 
@@ -19,6 +22,9 @@ namespace judge_conf
 {
     //编译限制(ms)
     int compile_time_limit          = 5000;
+
+    //SPJ时间限制(ms)
+    int spj_time_limit              = 5000;
 
     //程序运行的栈空间大小(KB)
     int stack_size_limit            = 4096;
@@ -72,6 +78,8 @@ namespace judge_conf
     const int EXIT_SET_LIMIT        = 15;
     const int EXIT_JUDGE            = 21;
     const int EXIT_COMPARE          = 27;
+    const int EXIT_COMPARE_SPJ      = 30;
+    const int EXIT_COMPARE_SPJ_FORK = 30;
     const int EXIT_UNKNOWN          = 127;
 
     const std::string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
@@ -107,6 +115,7 @@ namespace problem
 
     std::string source_file;
     std::string exec_file;
+    std::string spj_exe_file;
 
     std::string data_file;
     std::string input_file;
@@ -114,6 +123,8 @@ namespace problem
 
     std::string stdout_file_executive;
     std::string stderr_file_executive;
+
+    std::string stdout_file_spj;
 
     void dump_to_log()
     {
@@ -159,6 +170,11 @@ void parse_arguments(int argc, char *argv[])
     problem::stderr_file_compiler   = problem::temp_dir + "/" + "stderr_compiler.txt";
     problem::stdout_file_executive  = problem::temp_dir + "/" + "stdout_executive.txt";
     problem::stderr_file_executive  = problem::temp_dir + "/" + "stderr_executive.txt";
+    if (problem::spj == true)
+    {
+        problem::spj_exe_file       = problem::data_dir + "/" + "spj.exe";
+        problem::stdout_file_spj    = problem::temp_dir + "/" + "stdout_spj.txt";
+    }
     if (false == problem::uid.empty())
     {
         //在log中自动记录uid
@@ -242,6 +258,129 @@ void set_limit()
     }
 
     FM_LOG_TRACE("set limit ok");
+}
+
+// copied from
+// http://csourcesearch.net/c/fid471AEC75A44B4EB7F79BAB9F1C5DE7CA616177E5.aspx
+int strincmp(const char *s1, const char *s2, int n)
+{
+	/* case insensitive comparison */
+	int d;
+	while (--n >= 0) {
+#ifdef ASCII_CTYPE
+	  if (!isascii(*s1) || !isascii(*s2))
+	    d = *s1 - *s2;
+	  else
+#endif
+	    d = (tolower((unsigned char)*s1) - tolower((unsigned char)*s2));
+	  if ( d != 0 || *s1 == '\0' || *s2 == '\0' )
+	    return d;
+	  ++s1;
+	  ++s2;
+	}
+	return(0);
+}
+
+//使用spj.exe来判断
+int oj_compare_output_spj(
+        std::string file_std, //用户程序的输出文件
+        std::string file_exec, //用户程序的输出文件
+        std::string spj_exec,  //spj.exe的路径
+        std::string file_spj)  //spj.exe的输出文件
+{
+    FM_LOG_TRACE("start compare spj");
+    pid_t pid_spj = fork();
+    int status = 0;
+    if (pid_spj < 0)
+    {
+        FM_LOG_WARNING("fork for spj failed");
+        exit(judge_conf::EXIT_COMPARE_SPJ);
+    }
+    else if (pid_spj == 0)
+    {
+        log_add_info("spj");
+        stdin  = freopen(file_exec.c_str(), "r", stdin);
+        stdout = freopen(file_spj.c_str(),  "w", stdout);
+        if (stdin == NULL || stdout == NULL)
+        {
+            FM_LOG_WARNING("failed to open files: stdin(%p), stdout(%p)", stdin, stdout);
+            exit(judge_conf::EXIT_COMPARE_SPJ);
+        }
+        //给spj.exe限制时间
+        if (EXIT_SUCCESS == malarm(ITIMER_REAL, judge_conf::spj_time_limit))
+        {
+            FM_LOG_TRACE("load spj.exe");
+            log_close();
+            execlp(spj_exec.c_str(), "spj.exe", file_std.c_str(), NULL);
+            exit(judge_conf::EXIT_COMPARE_SPJ_FORK);
+        }
+        else
+        {
+            FM_LOG_WARNING("malarm failed");
+            exit(judge_conf::EXIT_COMPARE_SPJ);
+        }
+    }
+    else
+    {
+        if (wait4(pid_spj, &status, 0, NULL) < 0)
+        {
+            FM_LOG_WARNING("wait4 failed, %d:%s", errno, strerror(errno));
+            exit(judge_conf::EXIT_COMPARE_SPJ);
+        }
+        if (WIFEXITED(status))
+        {
+            //调用exit退出了
+            if (WEXITSTATUS(status) == EXIT_SUCCESS)
+            {
+                //返回值是0, 正常结束
+                FILE *fp = fopen(file_spj.c_str(), "r");
+                if (fp == NULL)
+                {
+                    FM_LOG_WARNING("open stdout_file_spj failed");
+                    exit(judge_conf::EXIT_COMPARE_SPJ);
+                }
+                char buff[20];
+                int ignored;
+                ignored = fscanf(fp, "%19s", buff);
+                FM_LOG_TRACE("spj.exe result: %s", buff);
+                if (strincmp(buff, "AC", 2) == 0)
+                {
+                    return judge_conf::OJ_AC;
+                }
+                else if (strincmp(buff, "PE", 2) == 0)
+                {
+                    return judge_conf::OJ_PE;
+                }
+                else if (strincmp(buff, "WA", 2) == 0)
+                {
+                    return judge_conf::OJ_WA;
+                }
+                else
+                {
+                    FM_LOG_WARNING("unknown spj output");
+                    exit(judge_conf::EXIT_COMPARE_SPJ);
+                }
+            }
+            else
+            {
+                //返回值非0，非正常结束
+                FM_LOG_WARNING("spj.exe abnormal termination, "
+                       "exit code: %d", WEXITSTATUS(status));
+            }
+        }
+        else if (WIFSIGNALED(status) && WTERMSIG(status) == SIGALRM)
+        {
+            //收到SIGALRM结束，spj.exe超时
+            FM_LOG_WARNING("spj.exe: time out");
+        }
+        else
+        {
+            //走到这里就莫名其妙了，估计是 spj.exe RE了
+            FM_LOG_WARNING("unkown termination, status = %d", status);
+        }
+    }
+    //如果一切正常，前面就该return了，嗯
+    exit(judge_conf::EXIT_COMPARE_SPJ);
 }
 
 int oj_compare_output(std::string file_std, std::string file_exec)
