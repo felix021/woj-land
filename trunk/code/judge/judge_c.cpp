@@ -213,7 +213,10 @@ int main(int argc, char *argv[])
                         if (problem::spj)
                         {
                             //TODO SPJ，由SPJ程序判结果
-                            result = judge_conf::OJ_AC;
+                            result = oj_compare_output_spj(problem::output_file_std, 
+                                                       problem::stdout_file_executive,
+                                                       problem::spj_exe_file,
+                                                       problem::stdout_file_spj);
                         }
                         else
                         {

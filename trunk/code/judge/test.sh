@@ -1,7 +1,8 @@
 #!/bin/bash
 
 # ac pe wa ce ...
-select=pe
+select=ac
+spj=-S
 
 case $select in
     ac) src=1001.c
@@ -17,5 +18,5 @@ case $select in
     #exit
 esac
 
-./judge_c.exe -u 0001 -s "test/$src" -n 1001 -D "test" -d "test/temp" -t 1000 -m 32768 -o 1024
+./judge_c.exe -u 0001 -s "test/$src" -n 1001 -D "test" -d "test/temp" -t 1000 -m 32768 -o 1024 $spj
 echo -e "\nExit status: $?"
