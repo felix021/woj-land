@@ -33,7 +33,7 @@ namespace judge_conf
     int time_limit_addtion          = 314;
 
     //程序的主目录(考虑做成配置)
-    std::string root_dir             = "/home/felix021/woj";
+    std::string root_dir             = "/home/acm/woj";
 
     const std::string log_file       = "/log/judge.log";
 
@@ -412,14 +412,36 @@ int oj_compare_output(std::string file_std, std::string file_exec)
         {
             //如果两个文件都已经结束, 退出循环
             break;
+        } 
+        else if (feof(fp_std) || feof(fp_exe))
+        {
+            //如果只有一个文件结束,
+            //但是另一个文件的末尾是回车
+            //那么也当做AC来进行处理
+            FILE *fp_tmp;
+            if (feof(fp_std))
+            {
+                fp_tmp = fp_exe;
+            }
+            else /* feof(fp_std) */
+            {
+                fp_tmp = fp_std;
+            }
+            int c;
+            for (c = fgetc(fp_tmp); !feof(fp_tmp); )
+            {
+                if (c != '\n' && c != '\r')
+                    status = WA;
+            }
+            break;
         }
 
         //如果两个字符不同，
         if (a != b)
         {
             status = PE; //可能是PE，再继续检测是否是WA
-#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\r') || (a == '\n'))
             //过滤空白字符
+#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\r') || (a == '\n'))
             if (is_space_char(a) && is_space_char(b))
             {
                 //两个都是空白字符, 都过滤
@@ -448,6 +470,32 @@ int oj_compare_output(std::string file_std, std::string file_exec)
     FM_LOG_TRACE("compare over, result = %s",
             status == AC ? "AC" : (status == PE ? "PE" : "WA"));
     return status;
+}
+
+//系统调用在进和出的时候都会暂停, 把控制权交给judge
+static bool in_syscall = false;
+#include "rf_table.h"
+bool is_valid_syscall(int lang, int syscall_id)
+{
+    in_syscall = !in_syscall;
+    if (RF_table[syscall_id] == 0)
+    {
+        //如果RF_table中对应的syscall_id可以被调用的次数为0, 则为RF
+        return false;
+    }
+    else if (RF_table[syscall_id] > 0)
+    {
+        //如果RF_table中对应的syscall_id可被调用的次数>0
+        //且是在退出syscall的时候, 那么次数减一
+        if (in_syscall == false)
+            RF_table[syscall_id]--;
+    }
+    else
+    {
+        //RF_table中syscall_id对应的指<0, 表示是不限制调用的
+        ;
+    }
+    return true;
 }
 
 //输出最终结果

@@ -81,6 +81,7 @@ int log_open(const char* filename)
     log_fp = fopen(log_filename, "a");
     if (log_fp == NULL)
     {
+        fprintf(stderr, "log_file: %s", log_filename);
         perror("can't not open log file");
         exit(1);
     }
