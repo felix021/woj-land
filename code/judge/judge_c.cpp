@@ -25,6 +25,7 @@ int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 int main(int argc, char *argv[])
 {
     problem::lang = judge_conf::LANG_C; //C语言 
+    init_RF_table(problem::lang);
     log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
     parse_arguments(argc, argv);
@@ -129,10 +130,20 @@ int main(int argc, char *argv[])
         struct rusage rused;
         int_ignored = fscanf(fp, " %1023[^\n]", line);
         int len = strlen(line);
+        while (len > 0 && (line[len - 1] == ' ' || line[len - 1] == '\t'))
+        {
+            len--;
+        }
         if (feof(fp) || len == 0)
         {
             FM_LOG_TRACE("end of reading data_file");
             break;
+        }
+        len -= 3;
+        if (strncmp(line + len, ".in", 3) == 0)
+        {
+            //此处是为了兼容noah/oak的带.in后缀的数据文件
+            line[len] = '\0';
         }
         problem::input_file      = problem::data_dir + "/" + line + ".in";
         problem::output_file_std = problem::data_dir + "/" + line + ".out";
@@ -190,8 +201,8 @@ int main(int argc, char *argv[])
         {
             //judge进程(父进程)
             int status          = 0;
-            //int orig_eax        = 0; //存放系统调用的调用号
-            //struct user_regs_struct regs;
+            int syscall_id      = 0; //存放系统调用的调用号
+            struct user_regs_struct regs;
 
             FM_LOG_TRACE("start judging...");
             while (true)
@@ -212,7 +223,7 @@ int main(int argc, char *argv[])
                         int result;
                         if (problem::spj)
                         {
-                            //TODO SPJ，由SPJ程序判结果
+                            //SPJ，由SPJ程序判结果
                             result = oj_compare_output_spj(problem::output_file_std, 
                                                        problem::stdout_file_executive,
                                                        problem::spj_exe_file,
@@ -303,7 +314,7 @@ int main(int argc, char *argv[])
                             problem::result = judge_conf::OJ_RE_UNKNOWN;
                             break;
                     } //end of swtich
-                    kill(executive, SIGKILL);
+                    ptrace(PTRACE_KILL, executive, NULL, NULL);
                     break;
                 } //end of  "if (WIFSIGNALED(status) ...)"
 
@@ -315,11 +326,31 @@ int main(int argc, char *argv[])
                     problem::result = judge_conf::OJ_MLE;
                     FM_LOG_TRACE("memory limit exceeded: %d (fault: %d * %d)", 
                             problem::memory_usage, rused.ru_minflt, getpagesize());
-                    kill(executive, SIGKILL);
+                    ptrace(PTRACE_KILL, executive, NULL, NULL);
                     break;
                 }
 
-                //TODO 截获的SYSCALL, 检查
+                //截获的SYSCALL, 检查
+                if (ptrace(PTRACE_GETREGS, executive, NULL, &regs) < 0)
+                {
+                    FM_LOG_WARNING("ptrace(PTRACE_GETREGS) failed, %d: %s",
+                            errno, strerror(errno));
+                    exit(judge_conf::EXIT_JUDGE);
+                }
+#ifdef __i386__
+                syscall_id = regs.orig_eax;
+#else
+                //此处是从bnuoj直接copy过来的，没有用i386平台测试过...
+                syscall_id = regs.orig_rax;
+#endif
+                FM_LOG_DEBUG("syscall: %d", syscall_id);
+                if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id))
+                {
+                    FM_LOG_TRACE("restricted function, syscall_id: %d", syscall_id);
+                    problem::result = judge_conf::OJ_RF;
+                    ptrace(PTRACE_KILL, executive, NULL, NULL);
+                    break;
+                }
                 
                 if (ptrace(PTRACE_SYSCALL, executive, NULL, NULL) < 0)
                 {
