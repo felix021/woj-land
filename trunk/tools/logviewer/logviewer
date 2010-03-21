@@ -1,0 +1,96 @@
+#!/usr/bin/php
+<?php
+/* vim: set cindent filetype=php: */
+
+if (!defined("ROOT")) {
+    define("ROOT", dirname(__FILE__));
+}
+
+require_once(ROOT . "/inc/util.inc.php");
+require_once(ROOT . "/conf/conf.php");
+
+conf::init();
+
+util::process_hook("begin");
+
+$cmd = conf::$default_cmd . " ";
+
+if (!is_array(conf::$log_files)) {
+    util::fatal("conf::\$log_files is not an array.");
+}
+
+foreach (conf::$log_files as $file) {
+    echo util::color("FILE", 35), ": $file\n";
+    $cmd .= "\"$file\" ";
+}
+$cmd .= "2>&1";
+
+$fp = popen($cmd, "rb");
+if (!$fp) {
+    util::fatal("executing \"$cmd\" failed");
+    exit;
+}
+
+class runtime {
+	static $buf = '';
+}
+
+util::process_hook("pre_main");
+
+while (true) {
+    $stop = false;
+    runtime::$buf = fgets($fp, 8192);
+    if (feof($fp) || false === runtime::$buf ) {
+        pclose($fp);
+        break;
+    }
+
+    util::process_hook("pre_process");
+
+    if (is_array(log_conf::$pattern) && is_array(log_conf::$replace)
+        && count(log_conf::$pattern) == count(log_conf::$replace)) 
+    {
+        runtime::$buf = preg_replace(log_conf::$pattern, log_conf::$replace, runtime::$buf);
+    }
+    
+    if (is_array(log_conf::$callback)) {
+        foreach (log_conf::$callback as $cb) {
+            if (!isset($cb['pattern']) || !isset($cb['replace'])) {
+                util::warning("callback: 'pattern' or 'replace' not set.");
+                continue;
+            }
+            if (!function_exists($cb['replace'])) {
+                util::warning("callback: function {$cb['replace']} does not exist.");
+                continue;
+            }
+            runtime::$buf = preg_replace_callback($cb['pattern'], $cb['replace'], runtime::$buf);
+        }
+    }
+
+    util::process_hook("pre_output");
+
+    echo runtime::$buf;
+
+    util::process_hook("post_output");
+
+
+    if (conf::$watch_mode == true && is_array(conf::$watch_arr)) {
+        foreach (conf::$watch_arr as $watch) {
+            if (strpos(runtime::$buf, $watch) !== false) {
+                $stop = "Caucht a \"$watch\"!";
+				runtime::$buf = str_replace($watch, util::color($watch, "5;41"), runtime::$buf);
+                break;
+            }
+        }
+    }
+
+    if (false !== $stop) {
+        util::trace($stop);
+        util::wait_user();
+    }
+
+}
+
+util::process_hook("end");
+
+?>
