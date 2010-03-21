@@ -128,7 +128,7 @@ static void log_write(int level, const char *file,
     va_end(ap);   
 
     size_t count = snprintf(buffer, log_buffer_size,
-            "--%s--\x7 [%s]\x7 [%s:%d]%s\x7 %s\x7\n", 
+            "%s\x7 [%s]\x7 [%s:%d]%s\x7 %s\x7\n", 
             LOG_LEVEL_NOTE[level], datetime, file, line, log_extra_info, log_buffer);
     int log_fd = log_fp->_fileno;
     //puts(buffer);

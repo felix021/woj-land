@@ -98,7 +98,7 @@ class logger
                 break;
             }
         }
-        $str_common = sprintf("--%s--\x7 [%s]\x7 [%s:%d]%s\x7 ",
+        $str_common = sprintf("%s\x7 [%s]\x7 [%s:%d]%s\x7 ",
                 self::$LOG_LEVEL[$level], $now, $info['file'], $info['line'], self::$log_extra_info);
         $params = func_get_args();
         array_shift($params);
