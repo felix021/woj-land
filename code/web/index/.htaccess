@@ -1,4 +1,7 @@
 RewriteEngine On
-RewriteBase /flood
+RewriteBase /land/
 
-RewriteRule .* index.php [L]
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^.*$ - [QSA,L]
+
+RewriteRule ^.*$ index.php [QSA,L]
