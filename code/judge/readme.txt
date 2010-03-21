@@ -46,7 +46,10 @@ Special Judge相关
     2. 标准输出
         输出JUDGE结果的值, 对应judge.h中的OJ_*系列。输出的一定是个正整数。
     3. 文件输出
-        如果出现CE, 将编译器的标准错误输出存在CE.txt;
-        如果出现RE(Java), 将JRE的标准错误输出存在RE.txt中。
-
+        如果出现CE, 将编译器的标准错误输出存在stderr_compiler.txt;
+        如果出现RE(Java), 将JRE的标准错误输出存在stderr_executive.txt中。 //待定
+        *编译器、程序、spj.exe的输出分别是在临时目录下的(-d)
+            stdout_compiler.txt, stderr_compiler.txt
+            stdout_executive.txt, stderr_executive.txt
+            stdout_spj.txt
 
