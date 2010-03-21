@@ -15,6 +15,8 @@ extern "C"
 #include <sys/signal.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include <pwd.h>
+#include <sys/types.h>
 #include "logger.h"
 }
 
@@ -70,16 +72,18 @@ namespace judge_conf
 
     //退出原因
     const int EXIT_OK               = 0;
+    const int EXIT_UNPRIVILEGED     = 1;
     const int EXIT_BAD_PARAM        = 3;
     const int EXIT_COMPILE          = 6;
     const int EXIT_PRE_JUDGE        = 9;
     const int EXIT_PRE_JUDGE_PTRACE = 10;
     const int EXIT_PRE_JUDGE_EXECLP = 11;
     const int EXIT_SET_LIMIT        = 15;
+    const int EXIT_SET_SECURITY     = 17;
     const int EXIT_JUDGE            = 21;
     const int EXIT_COMPARE          = 27;
     const int EXIT_COMPARE_SPJ      = 30;
-    const int EXIT_COMPARE_SPJ_FORK = 30;
+    const int EXIT_COMPARE_SPJ_FORK = 31;
     const int EXIT_UNKNOWN          = 127;
 
     const std::string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
@@ -260,6 +264,56 @@ void set_limit()
     FM_LOG_TRACE("set limit ok");
 }
 
+/*
+ * 设置安全相关，比如chroot和setuid
+ */
+void set_security_option()
+{
+    //必须先getpwnam, 然后chroot, 然后再setuid
+    //先setuid就没法getpwnam, 先setuid就没法chroot了, 真囧
+    struct passwd *nobody = getpwnam("nobody");
+    if (nobody == NULL)
+    {
+        FM_LOG_WARNING("no user named 'nobody'? %d: %s", errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+
+    //chdir + chroot
+    if (EXIT_SUCCESS != chdir(problem::temp_dir.c_str()))
+    {
+        FM_LOG_WARNING("chdir(%s) failed, %d: %s", 
+                problem::temp_dir.c_str(), errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+
+    char cwd[1024], *tmp = getcwd(cwd, 1024);
+    if (tmp == NULL)
+    {
+        FM_LOG_WARNING("getcwd failed, %d: %s", errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+    FM_LOG_DEBUG("cwd: %s", cwd);
+    /*
+    if (EXIT_SUCCESS != chroot(cwd))
+    {
+        FM_LOG_WARNING("chroot(%s) failed, %d: %s",
+                cwd, errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+    tmp = getcwd(cwd, 1024);
+    FM_LOG_DEBUG("cwd: %s", cwd);
+    */
+
+    //setuid
+    if (EXIT_SUCCESS != setuid(nobody->pw_uid))
+    {
+        FM_LOG_WARNING("setuid(%d) failed, %d: %s", 
+                nobody->pw_uid, errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+
+    FM_LOG_TRACE("set_security_option ok");
+}
 // copied from
 // http://csourcesearch.net/c/fid471AEC75A44B4EB7F79BAB9F1C5DE7CA616177E5.aspx
 int strincmp(const char *s1, const char *s2, int n)
@@ -472,12 +526,14 @@ int oj_compare_output(std::string file_std, std::string file_exec)
     return status;
 }
 
-//系统调用在进和出的时候都会暂停, 把控制权交给judge
-static bool in_syscall = false;
 #include "rf_table.h"
+//系统调用在进和出的时候都会暂停, 把控制权交给judge
+static bool in_syscall = true;
 bool is_valid_syscall(int lang, int syscall_id)
 {
     in_syscall = !in_syscall;
+    FM_LOG_DEBUG("syscall: %d, %s, count: %d",
+            syscall_id, in_syscall?"in":"out", RF_table[syscall_id]);
     if (RF_table[syscall_id] == 0)
     {
         //如果RF_table中对应的syscall_id可以被调用的次数为0, 则为RF
