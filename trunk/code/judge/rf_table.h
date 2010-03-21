@@ -15,46 +15,139 @@
 short RF_table[1024] = {0};
 
 /*
- * LANG_*V/LANG_*C数组对是用于初始化RF_table的数据来源
- *      LANG_*V数组的每个单元存放syscall的编号
- *      LANG_*C数组的对应单元存放该syscall可被调用的次数
- *
- * p.s. LANG_*V数组的最后一个单元存放的是非正值，表示结束
+ * RF_* 数组对是用于初始化RF_table的数据来源, 
+ * 每两个数字为一组k/v: syscall_id:次数
+ *   次数 < 0 表示不限制
+ *   次数 > 0 表示可调用次数, 运行时每调用一次减一
+ *   次数 = 0 (运行时达到) 不再允许调用该syscall
+ * 最后一个syscall_id存放的是非正值，表示结束
+ * 未指定的syscall_id的次数将被自动初始化为0
  */
 //c or c++
-int LANG_CV[256]={SYS_execve, SYS_read, SYS_uname, SYS_write, SYS_open, SYS_close, SYS_access, SYS_brk, SYS_munmap, SYS_mprotect, SYS_mmap2, SYS_fstat64, SYS_set_thread_area, SYS_exit_group, SYS_exit, 0};
-int LANG_CC[256]={1,          -1,       -1,        -1,        -1,       -1,        -1,         -1,      -1,         -1,           -1,        -1,          -1,                  -1,             -1,       0};
-//Pascal
-int LANG_PV[256]={SYS_execve, SYS_open, SYS_set_thread_area, SYS_brk, SYS_read, SYS_uname, SYS_write, SYS_ioctl, SYS_readlink, SYS_mmap, SYS_rt_sigaction, SYS_getrlimit, SYS_exit_group, SYS_exit, SYS_ugetrlimit, 0};
-int LANG_PC[256]={1,          -1,       -1,                  -1,      -1,       -1,        -1,        -1,        -1,           -1,       -1,               -1,            -1,             -1,       -1,             0};
-//Java
-int LANG_JV[256]={SYS_execve, SYS_ugetrlimit, SYS_rt_sigprocmask, SYS_futex, SYS_read, SYS_mmap2, SYS_stat64, SYS_open, SYS_close, SYS_access, SYS_brk, SYS_readlink, SYS_munmap, SYS_close, SYS_uname, SYS_clone, SYS_uname, SYS_mprotect, SYS_rt_sigaction, SYS_sigprocmask, SYS_getrlimit, SYS_fstat64, SYS_getuid32, SYS_getgid32, SYS_geteuid32, SYS_getegid32, SYS_set_thread_area, SYS_set_tid_address, SYS_set_robust_list, SYS_exit_group, 0};
-int LANG_JC[256]={2,          -1,            -1,                 -1,        -1,        -1,        -1,         -1,       -1,        -1,         -1,      -1,           -1,         -1,        -1,        1,         -1,        -1,           -1,               -1,              -1,            -1,          -1,           -1,           -1,            -1,            -1,                  -1,                  -1,                  -1,              0};
+int RF_C[512] =
+{
+    SYS_execve,         1,
+    SYS_brk,            -1,
+    SYS_access,         -1,
+    SYS_mmap2,          -1,
+    SYS_open,           2,
+    SYS_fstat64,        -1,
+    SYS_close,          -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_write,          -1,
+    SYS_exit_group,     -1,
+    0
+};
 
-//根据LANG_*V/LANG_*C数组来初始化RF_table
+int RF_CPP[512] =
+{
+    SYS_execve,         1,
+    SYS_brk,            -1,
+    SYS_access,         -1,
+    SYS_mmap2,          -1,
+    SYS_open,           5,
+    SYS_fstat64,        -1,
+    SYS_close,          -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_write,          -1,
+    SYS_exit_group,     -1,
+    0
+};
+
+//Pascal (TODO暂未测试)
+int RF_PASCAL[512] = 
+{
+    SYS_execve,         1,
+    SYS_open,           2,
+    SYS_close,          -1,
+    SYS_fstat64,        -1,
+    SYS_access,         -1,
+    SYS_read,           -1,
+    SYS_write,          -1,
+    SYS_ioctl,          -1,
+    SYS_readlink,       -1,
+    SYS_mmap,           -1,
+    SYS_uname,          -1,
+    SYS_brk,            -1,
+    SYS_mmap2,          -1,
+    SYS_munmap,         -1,
+    SYS_mprotect,       -1,
+    SYS_rt_sigaction,   -1,
+    SYS_getrlimit,      -1,
+    SYS_ugetrlimit,     -1,
+    SYS_set_thread_area,-1,
+    SYS_exit_group,     -1,
+    SYS_exit,           -1,
+    0
+};
+//Java (TODO暂未测试)
+int RF_JAVA[512] = 
+{
+    SYS_execve,         2,
+    SYS_ugetrlimit,     -1,
+    SYS_futex,          -1,
+    SYS_read,           -1,
+    SYS_mmap,           -1,
+    SYS_mmap2,          -1,
+    SYS_stat64,         -1,
+    SYS_open,           -1,
+    SYS_close,          -1,
+    SYS_access,         -1,
+    SYS_brk,            -1,
+    SYS_readlink,       -1,
+    SYS_munmap,         -1,
+    SYS_close,          -1,
+    SYS_uname,          -1,
+    SYS_clone,          1,
+    SYS_rt_sigprocmask, -1,
+    SYS_rt_sigaction,   -1,
+    SYS_sigprocmask,    -1,
+    SYS_getrlimit,      -1,
+    SYS_fstat64,        -1,
+    SYS_getuid32,       -1,
+    SYS_getgid32,       -1,
+    SYS_geteuid32,      -1,
+    SYS_getegid32,      -1,
+    SYS_set_thread_area,-1,
+    SYS_set_tid_address,-1,
+    SYS_set_robust_list,-1,
+    SYS_exit_group,     -1,
+    SYS_exit,           -1,
+    0
+};
+
+//根据 RF_* 数组来初始化RF_table
 void init_RF_table(int lang)
 {
-    int *pv = NULL, *pc = NULL;
+    int *p = NULL;
     switch (lang)
     {
         case judge_conf::LANG_C:
+            p = RF_C;
+            break;
         case judge_conf::LANG_CPP:
-            pv = LANG_CV, pc = LANG_CC;
+            p = RF_CPP;
             break;
         case judge_conf::LANG_JAVA:
-            pv = LANG_JV, pc = LANG_JC;
+            p = RF_JAVA;
             break;
         case judge_conf::LANG_PASCAL:
-            pv = LANG_PV, pc = LANG_PC;
+            p = RF_PASCAL;
             break;
         default:
             FM_LOG_WARNING("unknown lang: %d", lang);
             break;
     }
     memset(RF_table, 0, sizeof(RF_table));
-    for (int i = 0; pv[i] > 0; i++)
+    for (int i = 0; p[i] > 0; i += 2)
     {
-        RF_table[pv[i]] = pc[i];
+        RF_table[p[i]] = p[i+1];
     }
 }
 

@@ -1,3 +1,11 @@
+/*
+ * judge_c.cpp
+ *
+ * by felix021 http://www.felix021.com
+ *
+ * 此judge仅仅用于判c写的程序, 用于实现并测试一个judge的原型
+ *
+ */
 #include <iostream>
 #include <string>
 #include <cstdio>
@@ -25,9 +33,13 @@ int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 int main(int argc, char *argv[])
 {
     problem::lang = judge_conf::LANG_C; //C语言 
-    init_RF_table(problem::lang);
     log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
+    if (geteuid() != 0)
+    {
+        FM_LOG_FATAL("euid != 0, please run as root, or set suid bit(chmod +4755)");
+        exit(judge_conf::EXIT_UNPRIVILEGED);
+    }
     parse_arguments(argc, argv);
 
 //编译---------------------------------------------------------------------
@@ -165,8 +177,8 @@ int main(int argc, char *argv[])
             io_redirect();
             fclose(fp);
 
-            //TODO 安全相关, 包括setuid, chroot
-            //set_security_option();
+            //TODO 安全相关, 包括seteuid, chroot
+            set_security_option();
 
             //设置 memory, time, output 限制..
             set_limit();
@@ -192,7 +204,7 @@ int main(int argc, char *argv[])
                 exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
             }
             //载入程序
-            execlp(problem::exec_file.c_str(), problem::exec_file.c_str(), NULL);
+            execlp("./a.out", "a.out", NULL);
 
             //运行到此说明execlp出错了, 无法打日志了
             exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);
@@ -204,6 +216,8 @@ int main(int argc, char *argv[])
             int syscall_id      = 0; //存放系统调用的调用号
             struct user_regs_struct regs;
 
+            //每个case在judge之前都需要初始化rf_table
+            init_RF_table(problem::lang);
             FM_LOG_TRACE("start judging...");
             while (true)
             {
@@ -343,7 +357,6 @@ int main(int argc, char *argv[])
                 //此处是从bnuoj直接copy过来的，没有用i386平台测试过...
                 syscall_id = regs.orig_rax;
 #endif
-                FM_LOG_DEBUG("syscall: %d", syscall_id);
                 if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id))
                 {
                     FM_LOG_TRACE("restricted function, syscall_id: %d", syscall_id);
