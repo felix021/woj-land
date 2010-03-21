@@ -12,7 +12,7 @@ function apply_func_recursive($user_func, &$data)
     }
     else
     {
-        $value = call_user_func($user_func, $value);
+        $data = call_user_func($user_func, $data);
     }
 }
 

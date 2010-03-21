@@ -21,7 +21,7 @@ require_once(LIB_ROOT . "/request.lib.php");
 
 request::init();
 
-if (false === logger::log_open("/home/acm/woj/log/php.log"))
+if (false === logger::log_open("/home/felix021/woj/log/php.log"))
 {
     echo "errno: ", logger::$err_info[logger::$errno], "\n";
 }
