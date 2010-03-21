@@ -35,7 +35,7 @@ namespace judge_conf
     int time_limit_addtion          = 314;
 
     //程序的主目录(考虑做成配置)
-    std::string root_dir             = "/home/acm/woj";
+    std::string root_dir             = "/home/felix021/woj";
 
     const std::string log_file       = "/log/judge.log";
 

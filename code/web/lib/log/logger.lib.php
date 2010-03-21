@@ -102,7 +102,7 @@ class logger
                 self::$LOG_LEVEL[$level], $now, $info['file'], $info['line'], self::$log_extra_info);
         $params = func_get_args();
         array_shift($params);
-        $str_user   = call_user_func_array(sprintf, $params);
+        $str_user   = call_user_func_array('sprintf', $params);
         self::$log_buff .= sprintf("%s%s\x7\n", $str_common, $str_user);
         if (strlen(self::$log_buff) > self::BUFF_SIZE)
         {
