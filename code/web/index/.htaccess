@@ -1,0 +1,4 @@
+RewriteEngine On
+RewriteBase /flood
+
+RewriteRule .* index.php [L]
