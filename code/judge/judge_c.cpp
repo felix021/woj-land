@@ -177,7 +177,7 @@ int main(int argc, char *argv[])
             io_redirect();
             fclose(fp);
 
-            //TODO 安全相关, 包括seteuid, chroot
+            //安全相关, 包括seteuid, chroot
             set_security_option();
 
             //设置 memory, time, output 限制..

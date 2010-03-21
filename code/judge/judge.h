@@ -294,6 +294,7 @@ void set_security_option()
     }
     FM_LOG_DEBUG("cwd: %s", cwd);
     /*
+     //发现chroot以后无法正常载入可执行程序, 所以暂不使用此功能
     if (EXIT_SUCCESS != chroot(cwd))
     {
         FM_LOG_WARNING("chroot(%s) failed, %d: %s",
@@ -532,8 +533,7 @@ static bool in_syscall = true;
 bool is_valid_syscall(int lang, int syscall_id)
 {
     in_syscall = !in_syscall;
-    FM_LOG_DEBUG("syscall: %d, %s, count: %d",
-            syscall_id, in_syscall?"in":"out", RF_table[syscall_id]);
+    //FM_LOG_DEBUG("syscall: %d, %s, count: %d", syscall_id, in_syscall?"in":"out", RF_table[syscall_id]);
     if (RF_table[syscall_id] == 0)
     {
         //如果RF_table中对应的syscall_id可以被调用的次数为0, 则为RF
