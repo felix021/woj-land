@@ -32,6 +32,14 @@ class cframe implements iframe
         FM_LOG_WARNING("err_handler incompleted");
         return true;
     }
+
+    public function set_my_tpl($filename)
+    {
+        $debug = debug_backtrace();
+        //FM_LOG_DEBUG("%s", print_r($debug, true));
+        $tpl = dirname($debug[0]['file']) . "/" . $filename;
+        response::set_tpl($tpl);
+    }
 }
 
 ?>

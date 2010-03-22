@@ -38,6 +38,7 @@ class cframe_loader
                 }
 
                 FM_LOG_TRACE("cframe_loader finished succussfully");
+                return self::$c;
             }
             catch(Exception_frame $e)
             {
@@ -45,12 +46,14 @@ class cframe_loader
                 if (false == self::$c->err_handler())
                 {
                     FM_LOG_WARNING("err_handler returned false");
+                    throw $e;
                 }
             }
         }
         else
         {
-            FM_LOG_WARNING("unknown class");
+            FM_LOG_WARNING("unknown object");
+            throw Exception("unknown object");
         }
     }
 
