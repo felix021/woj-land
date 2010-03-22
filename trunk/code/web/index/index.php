@@ -11,6 +11,7 @@ if (!defined("ROOT"))
     define("CONF_ROOT",     ROOT . "/conf");
     define("MODULE_ROOT",   ROOT . "/module");
     define("LIB_ROOT",      ROOT . "/lib");
+    define("TPL_ROOT",      ROOT . "/lib");
 }
 
 require_once(CONF_ROOT . "/land.cfg.php");
@@ -19,8 +20,10 @@ error_reporting(land_conf::ERROR_REPORT_LEVEL);
 require_once(LIB_ROOT . "/logger.lib.php");
 require_once(LIB_ROOT . "/misc.lib.php");
 require_once(LIB_ROOT . "/request.lib.php");
+require_once(LIB_ROOT . "/session.lib.php");
 require_once(LIB_ROOT . "/response.lib.php");
 require_once(LIB_ROOT . "/frame/cframe_loader.lib.php");
+require_once(LIB_ROOT . "/template/ctemplate.lib.php");
 
 try
 {
@@ -31,6 +34,7 @@ try
     }
 
     request::init();
+    session::init();
 
     logger::log_add_info('logid:' . request::$logid);
     logger::log_add_info('ip:' . $_SERVER['REMOTE_ADDR']);
@@ -43,10 +47,12 @@ try
     if (!is_readable($dispatch_filename))
     {
         FM_LOG_WARNING("$dispatch_filename is not readable");
-        throw new Exception('找不到请求的文件');
+        throw new Exception('bad request');
     }
     require_once($dispatch_filename);
-    cframe_loader::run("Main");
+    $cf       = cframe_loader::run(land_conf::DEFAULT_CFRAME_CLASS);
+
+    response::display();
 }
 catch (Exception $e)
 {

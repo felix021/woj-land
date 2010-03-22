@@ -2,10 +2,9 @@
 
 class Main extends cframe
 {
-    public function display()
+    public function process()
     {
-        FM_LOG_TRACE("Hi, I'm here!");
-        echo "hello, world!";
+        ;
     }
 }
 
