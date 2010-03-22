@@ -15,7 +15,7 @@ class request
     public static function init()
     {
         self::$uri  = $_SERVER['REQUEST_URI'];
-        self::$uri  = str_replace(land_conf::INSTALL_DIR, "", self::$uri);
+        self::$uri  = str_replace(land_conf::$web_root, "", self::$uri);
         self::$uri  = preg_replace("/\?.*/", "", self::$uri);
         if (self::$uri == "/") //主页模块为index
         {

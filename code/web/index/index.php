@@ -11,7 +11,8 @@ if (!defined("ROOT"))
     define("CONF_ROOT",     ROOT . "/conf");
     define("MODULE_ROOT",   ROOT . "/module");
     define("LIB_ROOT",      ROOT . "/lib");
-    define("TPL_ROOT",      ROOT . "/lib");
+    define("TPL_ROOT",      ROOT . "/tpl");
+    define("CACHE_ROOT",    ROOT . "/cache");
 }
 
 require_once(CONF_ROOT . "/land.cfg.php");
@@ -22,15 +23,16 @@ require_once(LIB_ROOT . "/misc.lib.php");
 require_once(LIB_ROOT . "/request.lib.php");
 require_once(LIB_ROOT . "/session.lib.php");
 require_once(LIB_ROOT . "/response.lib.php");
+require_once(LIB_ROOT . "/cache_util.lib.php");
 require_once(LIB_ROOT . "/frame/cframe_loader.lib.php");
 require_once(LIB_ROOT . "/template/ctemplate.lib.php");
+require_once(LIB_ROOT . "/template/ctemplate_run.lib.php");
 
 try
 {
     if (false === logger::log_open(land_conf::LOG_FILE))
     {
-        echo 'errno: ', logger::$err_info[logger::$errno], "\n";
-        die();
+        throw Exception();
     }
 
     request::init();
@@ -47,7 +49,7 @@ try
     if (!is_readable($dispatch_filename))
     {
         FM_LOG_WARNING("$dispatch_filename is not readable");
-        throw new Exception('bad request');
+        throw new Exception('This page does not exists in Land.');
     }
     require_once($dispatch_filename);
     $cf       = cframe_loader::run(land_conf::DEFAULT_CFRAME_CLASS);
@@ -56,9 +58,16 @@ try
 }
 catch (Exception $e)
 {
-    response::add_header("HTTP/1.1 500 Server Internal Error");
-    response::send_headers();
-    echo $e->getMessage(), "\n";
+    response::add_header("HTTP/1.1 403 Not Permitted");
+    $p = array(
+        'errmsg'    => $e->getMessage(),
+        'links'     => array(
+                'Go Back'  =>  'javascript:history.back(1)',
+            ),
+        );
+    response::set_data_arr($p);
+    response::set_tpl(TPL_ROOT . "/error.tpl.php");
+    response::display();
 }
 
 ?>

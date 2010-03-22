@@ -7,7 +7,7 @@ class response
         );
     public static $arr_data    = array();
 
-    public static $tpl_file    = "/lib/template/default_tpl.lib.php";
+    public static $tpl_file;
 
     public static function add_header($head_str)
     {
@@ -59,30 +59,16 @@ class response
 
     public static function display()
     {
-        if (!file_exists(self::$tpl_file))
+        self::send_headers();
+        if (land_conf::DEBUG)
         {
-            self::$tpl_file = ROOT . self::$tpl_file;
+            FM_LOG_DEBUG("arr_data: %s", print_r(self::$arr_data, true));
         }
-        if (!is_readable(self::$tpl_file))
+        if (empty(self::$tpl_file))
         {
-            FM_LOG_WARNING("tpl file: %s is not readable", self::$tpl_file);
-            throw Exception("bad tpl");
+            self::$tpl_file = LIB_ROOT . "/template/default_tpl.lib.php";
         }
-        FM_LOG_TRACE("load template: %s", self::$tpl_file);
-        require_once(self::$tpl_file);
-        if (!class_exists(land_conf::DEFAULT_TPL_CLASS))
-        {
-            FM_LOG_WARNING("DEFAULT_TPL_CLASS missing");
-            throw Exception("bad tpl");
-        }
-        $class_name = land_conf::DEFAULT_TPL_CLASS;
-        $tpl = new $class_name();
-        if (!($tpl  instanceof itemplate))
-        {
-            FM_LOG_WARNINIG("tpl class not implemented itemplate");
-            throw Exception("bad tpl");
-        }
-        $tpl->display(self::$arr_data);
+        ctemplate_run::run(self::$tpl_file, land_conf::DEFAULT_TPL_CLASS);
     }
 }
 
