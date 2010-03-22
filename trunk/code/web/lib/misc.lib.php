@@ -15,18 +15,14 @@ function apply_func_recursive($user_func, &$data){
     }
 }
 
-function display_err($errmsg, $links = array())
+function rndstr($len = 4)
 {
-    ob_clean();
-    $errmsg = htmlspecialchars($errmsg);
-    echo $errmsg, "<br/>\n";
-    if (is_array($links))
+    $char_tbl = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    $str = "";
+    for ($i = 0; $i < $len; $i++)
     {
-        foreach ($links as $key => $link)
-        {
-            echo "<a href=\"$link\">$key</a> <br\>\n";
-        }
+        $str .= $char_tbl{mt_rand(0, 25)};
     }
+    return $str;
 }
-
 ?>
