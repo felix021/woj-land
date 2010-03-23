@@ -70,6 +70,12 @@ class response
         }
         ctemplate_run::run(self::$tpl_file, land_conf::DEFAULT_TPL_CLASS);
     }
+
+    public static function display_msg($msg)
+    {
+        self::add_data('msg', $msg);
+        self::set_tpl(TPL_ROOT . '/msg.tpl.php');
+    }
 }
 
 ?>

@@ -120,6 +120,14 @@ class logger
     }
 }
 
+function backtrace($layer = 1)
+{
+    $info = debug_backtrace();
+    while ($layer > 0 && !isset($info[$layer]))
+        $layer--;
+    return array($info[$layer]['file'], $info[$layer]['line']);
+}
+
 function FM_LOG_DEBUG()
 {
     $args = func_get_args();
@@ -144,6 +152,15 @@ function FM_LOG_NOTICE()
 function FM_LOG_WARNING()
 {
     $args = func_get_args();
+    array_unshift($args, logger::LOG_WARNING);
+    call_user_func_array("logger::log_write", $args);
+}
+
+function FM_LOG_WARNING2()
+{
+    $args = func_get_args();
+    list($file, $line) = backtrace(2);
+    $args[0] = sprintf("[%s:%d]", $file, $line) . $args[0];
     array_unshift($args, logger::LOG_WARNING);
     call_user_func_array("logger::log_write", $args);
 }

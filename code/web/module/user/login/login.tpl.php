@@ -16,12 +16,17 @@ class TPL_Main extends ctemplate
 function fillForm()
 {
     var password    = $('password');
+    //alert(hex_md5(password.value));
     var passEnc     = $('passEnc');
     var seed        = $('seed');
     passEnc.value   = encodePass(password.value, seed.value);
     password.value  = '';
-    //alert(passEnc.value);
-
+/*
+alert('pass: ' + password.value + '\\n'
+    + 'seed: ' + seed.value + '\\n'
+    + 'md5(pass): ' + hex_md5(password.value) + '\\n'
+    + 'md5(md5(pass)+seed): ' + passEnc.value);
+*/
     var submit_btn  = $('submit_btn');
     submit_btn.click();
 }
@@ -35,7 +40,7 @@ function fillForm()
         <tbody> 
         <tr class="tro"> 
           <td width="400" align="right"><strong>Username</strong></td> 
-          <td align="left"><input name="uid" tabIndex="1" value="" size="20" maxlength="150" /></td> 
+          <td align="left"><input name="username" tabIndex="1" value="" size="20" maxlength="150" /></td> 
         </tr> 
         <tr class="tre"> 
           <td align="right"><strong>Password</strong></td> 

@@ -20,6 +20,7 @@ error_reporting(land_conf::ERROR_REPORT_LEVEL);
 
 require_once(LIB_ROOT . "/logger.lib.php");
 require_once(LIB_ROOT . "/misc.lib.php");
+require_once(LIB_ROOT . "/db.lib.php");
 require_once(LIB_ROOT . "/request.lib.php");
 require_once(LIB_ROOT . "/session.lib.php");
 require_once(LIB_ROOT . "/response.lib.php");

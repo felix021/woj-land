@@ -25,4 +25,13 @@ function rndstr($len = 4)
     }
     return $str;
 }
+
+function fail_test($variable, $cond = false)
+{
+    if ($cond === $variable)
+    {
+        throw new Exception("");
+    }
+}
+
 ?>
