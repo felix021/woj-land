@@ -21,15 +21,17 @@ eot;
             throw new Exception($msg);
         }
 
-        FM_LOG_DEBUG('post: %s', print_r(request::$arr_post, true));
+        //FM_LOG_DEBUG('post: %s', print_r(request::$arr_post, true));
         $pass_seed = $line['password'] . request::$arr_post['seed'];
         $passEnc   = md5($pass_seed);
-        FM_LOG_DEBUG("md5(%s) = %s", $pass_seed, $passEnc);
+        //FM_LOG_DEBUG("md5(%s) = %s", $pass_seed, $passEnc);
         if ($passEnc !== request::$arr_post['passEnc'])
         {
+            /*
             FM_LOG_DEBUG("post: %s, %s\ndb: %s, %s",
                 request::$arr_post['passEnc'], request::$arr_post['seed'],
                 $passEnc, $line['password']);
+             */
             FM_LOG_WARNING('bad password');
             throw new Exception('Bad password!');
         }
@@ -50,7 +52,7 @@ eot;
 
         response::add_data('links', array(
             'Back'      => 'javascript:history.back(1)',
-            'Problems'  => land_conf::$web_root . '/problem/list',
+            'Problems'  => land_conf::$web_root . '/problem/volume',
             ));
         response::display_msg("Hey, you've logged in succeesfully~");
         return true;

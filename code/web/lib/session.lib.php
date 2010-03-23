@@ -26,6 +26,7 @@ final class session
         $user_info  = db_fetch_line($conn, $sql);
         fail_test($user_info, false);
         self::$user_info = $user_info;
+        logger::log_add_info("username:" . self::$user_info['username']);
     }
 
     public static function set_login($user_id)
