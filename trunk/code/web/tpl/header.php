@@ -32,7 +32,7 @@ class header implements itemplate
 <div id="bar"> 
 <a href="$web_root">Home</a> | 
 $nav1
-<a href="$web_root/problems/volume">Problems</a> | 
+<a href="$web_root/problem/volume">Problems</a> | 
 <a href="$web_root/contest/list">Contests</a> | 
 <!-- TODO <a href="$web_root/vcontest/list">vContests</a> | -->
 <a href="$web_root/submit/submit">Submit</a> | 

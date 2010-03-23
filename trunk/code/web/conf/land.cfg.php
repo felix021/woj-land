@@ -22,5 +22,8 @@ final class land_conf
         self::LANG_PASCAL   => 'Pascal',
         );
 
+    //problems
+    const PROBLEMS_PER_VOLUME   = 100;
+    const MIN_PROBLEM_ID        = 1001;
 }
 ?>
