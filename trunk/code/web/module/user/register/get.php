@@ -2,9 +2,14 @@
 
 class Main extends cframe
 {
+    public function process()
+    {
+        response::add_data('lang', land_conf::$lang);
+        return true;
+    }
     public function display()
     {
-        response::set_tpl("register.tpl.php");
+        $this->set_my_tpl("register.tpl.php");
         return true;
     }
 }

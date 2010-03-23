@@ -53,7 +53,7 @@ class cframe_loader
         else
         {
             FM_LOG_WARNING("unknown object");
-            throw Exception("unknown object");
+            throw new Exception("unknown object");
         }
     }
 

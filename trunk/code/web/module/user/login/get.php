@@ -4,10 +4,12 @@ class Main extends cframe
 {
     public function process()
     {
+        /*
         if (session::$is_login)
         {
             response::set_redirect(land_conf::$web_root);
         }
+         */
 
         if (isset($_SERVER['HTTP_REFERER']))
         {

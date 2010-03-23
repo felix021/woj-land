@@ -31,7 +31,7 @@ CREATE TABLE `users`
 (
  `user_id` int primary key auto_increment,
  `username` char(20) NOT NULL,
- `password` char(30) NOT NULL,
+ `password` char(50) NOT NULL,
  `nickname` varchar(100),
  `email` varchar(100),
  `school` varchar(100),
@@ -44,10 +44,12 @@ CREATE TABLE `users`
  `share_code` tinyint DEFAULT 1,
  `group_ids` varchar(200) DEFAULT ""
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
+ALTER TABLE  `users` ADD INDEX (  `username` );
 
 INSERT INTO `users`
 (`user_id`, `username`, `password`, `nickname`, `email`, `school`, `reg_time`, `group_ids`) VALUES
-(NULL, "root", MD5("123456"), "root", "acm@whu.edu.cn", "whu", "2010-3-22 14:29:00", "1");
+(NULL, "root", MD5("123456"), "root", "acm@whu.edu.cn", "whu", "2010-3-22 14:29:00", "1"),
+(NULL, "anonymous", MD5(""), "anonymous", "acm@whu.edu.cn", "whu", "2010-3-22 14:29:00", "");
 
 CREATE TABLE `groups`
 (

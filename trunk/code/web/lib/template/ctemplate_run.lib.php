@@ -21,13 +21,13 @@ class ctemplate_run
         if (!class_exists($classname))
         {
             FM_LOG_WARNING("class: %s missing", $classname);
-            throw Exception("");
+            throw new Exception("");
         }
         $tpl = new $classname();
         if (!($tpl instanceof itemplate))
         {
             FM_LOG_WARNINIG("tpl class not implemented itemplate");
-            throw Exception("bad tpl");
+            throw new Exception("");
         }
         $tpl->display(self::$arr_data);
     }
