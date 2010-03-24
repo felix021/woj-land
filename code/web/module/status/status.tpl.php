@@ -4,7 +4,7 @@ class TPL_Main extends ctemplate
 {
     public function display($p)
     {
-        FM_LOG_DEBUG("%s", dump_var($p));
+        //FM_LOG_DEBUG("%s", dump_var($p));
         $web_root = land_conf::$web_root;
         header("Refresh: 30");
 

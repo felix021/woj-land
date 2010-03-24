@@ -8,14 +8,16 @@ class TPL_Main extends ctemplate
         $problem = $p['problem'];
         foreach ($problem as $key => &$v)
             $v = htmlspecialchars($v);
+        $SPJ = $problem['spj'] == 1 ? "Yes" : "No";
         echo <<<eot
   <div id="tt"> Problem {$problem['problem_id']} - {$problem['title']} </div> 
   
   <div class="ifm"> 
-    <strong>Time Limit</strong>: {$problem['time_limit']}MS 
+    <strong>Time Limit</strong>: {$problem['time_limit']}MS &nbsp;
     <strong>Memory Limit</strong>: {$problem['memory_limit']}KB<br/> 
-    <strong>Total Submit</strong>: {$problem['submitted']}
-    <strong>Accepted</strong>: {$problem['accepted']}<br/> 
+    <strong>Total Submit</strong>: {$problem['submitted']}&nbsp;
+    <strong>Accepted</strong>: {$problem['accepted']}&nbsp;
+    <strong>Special Judge</strong>: {$SPJ}
   </div> 
  
   <div id="main"> 
