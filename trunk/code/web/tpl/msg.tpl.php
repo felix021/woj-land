@@ -2,8 +2,19 @@
 
 class TPL_Main extends ctemplate
 {
+
     public function display($p)
     {
+        if (isset($p['return_url']))
+        {
+            $t = land_conf::STAY_TIME;
+            $url = $p['return_url'];
+            header("Refresh: $t; url=$url");
+            echo <<<eot
+<meta http-equiv="Refresh" content-type="$t; url=$url"/>
+
+eot;
+        }
         $errmsg = htmlspecialchars($p['msg']);
         if (empty($errmsg))
         {
@@ -13,7 +24,7 @@ class TPL_Main extends ctemplate
 <div id="tt">Accepted!</div> 
 <div id="main">
 <p><span class="ntc" style="font-size:14px;">$errmsg</span></p>
-<br/>
+<p style="line-height:0px;"><br/></p>
 
 eot;
         if (isset($p['links']) &&is_array($p['links']) && count($p['links']) > 0)

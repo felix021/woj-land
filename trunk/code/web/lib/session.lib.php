@@ -3,6 +3,7 @@
 final class session
 {
     const ANONYMOUS_ID      = 2;
+    const ANONYMOUS_NAME    = 'anonymous';
 
     public static $is_login = false;
     public static $user_id  = self::ANONYMOUS_ID;

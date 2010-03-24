@@ -5,7 +5,7 @@ define ("ROOT", dirname(__FILE__));
 
 if ($argc < 4)
 {
-    die("usage: ./new.php mod|tpl PATH name\n");
+    die("usage: ./new.php PATH mod|tpl name\n");
 }
 
 $path = ROOT . "/" . $argv[1];
