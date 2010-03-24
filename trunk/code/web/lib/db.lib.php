@@ -22,7 +22,7 @@ function db_query(&$conn, $sql)
 {
     FM_LOG_DEBUG("%s\n--SQL--", $sql);
     $result = $conn->query($sql);
-    if (false === $result)
+    if (0 != $conn->errno)
     {
         FM_LOG_WARNING2("query failed, %d: %s", $conn->errno, $conn->error);
         return false;
@@ -95,7 +95,7 @@ function db_insert(&$conn, $sql)
 function db_fetch_lines($conn, $sql, $count = 1)
 {
     $result = db_query($conn, $sql);
-    fail_test($result, false);
+    //fail_test($result, false);
     $lines = array();
     $i = 0;
     while ($i < $count && ($row = $result->fetch_assoc()))

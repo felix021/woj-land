@@ -13,7 +13,7 @@ class Main extends cframe
         db_close($conn);
         if ($problem == false)
         {
-            FM_LOG_TRACE("request a not-exist problem");
+            FM_LOG_WARNING("request a not-exist problem");
             throw new Exception("This problem does not exist in Land.");
         }
 

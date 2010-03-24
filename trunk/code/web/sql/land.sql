@@ -17,6 +17,7 @@ CREATE TABLE `problems`
  `contest_seq` int default 0,
  `time_limit` int default 1000,
  `memory_limit` int default 65536,
+ `spj` tinyint default 0,
  `accepted` int default 0,
  `submitted` int default 0,
  `enabled` tinyint default 1,
@@ -42,7 +43,8 @@ CREATE TABLE `users`
  `enabled` tinyint DEFAULT 1,
  `preferred_lang` tinyint DEFAULT 1,
  `share_code` tinyint DEFAULT 1,
- `group_ids` varchar(200) DEFAULT ""
+ `group_ids` varchar(200) DEFAULT "",
+ `solved_list` text NOT NULL DEFAULT ""
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 ALTER TABLE  `users` ADD INDEX (  `username` );
 
@@ -78,6 +80,7 @@ CREATE TABLE `sources`
  `submit_ip` char(20),
  `lang` tinyint NOT NULL,
  `share` tinyint NOT NULL,
+ `judge_time` datetime,
  `memory_usage` int NOT NULL,
  `time_usage` int NOT NULL,
  `result` int NOT NULL DEFAULT 0,
