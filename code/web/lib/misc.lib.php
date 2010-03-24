@@ -34,4 +34,22 @@ function fail_test($variable, $cond = false)
     }
 }
 
+function force_read($arr, $key)
+{
+    if (isset($arr[$key]))
+    {
+        return $arr[$key];
+    }
+    return null;
+}
+
+function dump_var($var)
+{
+    ob_start();
+    var_dump($var);
+    $d = ob_get_contents();
+    ob_clean();
+    return $d;
+}
+
 ?>
