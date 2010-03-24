@@ -14,13 +14,13 @@ SELECT `user_id`, `password`
   FROM `users` WHERE `username`='$username'
 eot;
         $line = db_fetch_line($conn, $sql);
+        db_close($conn);
         if (false == $line)
         {
             FM_LOG_WARNING('user not exist');
             $msg = 'User ' . request::$arr_post['username'] . ' does not exists';
             throw new Exception($msg);
         }
-        db_close($conn);
 
         //FM_LOG_DEBUG('post: %s', print_r(request::$arr_post, true));
         $pass_seed = $line['password'] . request::$arr_post['seed'];

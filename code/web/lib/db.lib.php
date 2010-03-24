@@ -1,10 +1,14 @@
 <?php
 
+$arr_conns = array();
+
 function db_connect()
 {
+    global $arr_conns;
     require_once(CONF_ROOT . "/db.cfg.php");
     $conn = new mysqli(db_conf::DBHOST,
         db_conf::DBUSER, db_conf::DBPASS, db_conf::DBNAME);
+    array_push($arr_conns, array('conn' => &$conn, 'alive' => true));
     if (false === $conn)
     {
         FM_LOG_WARNING2("mysql connect err: %s", mysqli_connect_error());
@@ -28,8 +32,47 @@ function db_query(&$conn, $sql)
 
 function db_close(&$conn)
 {
-    $conn->close();
-    unset($conn);
+    if (is_object($conn) && $conn instanceof mysqli)
+    {
+        global $arr_conns;
+        $conn->close();
+        foreach ($arr_conns as &$c)
+        {
+            if ($c['conn'] === $conn)
+            {
+                $c['alive'] = false;
+                break;
+            }
+        }
+        unset($conn);
+    }
+    else
+    {
+        FM_LOG_WARNING2("bad conn provided");
+    }
+}
+
+function db_close_all()
+{
+    global $arr_conns;
+    $count = 0;
+    foreach ($arr_conns as &$c)
+    {
+        if ($c['alive'])
+        {
+            $conn = $c['conn'];
+            if (is_object ($conn) && $conn instanceof mysqli)
+            {
+                $c['conn']->close();
+                $count++;
+            }
+        }
+        unset($c['conn']);
+        unset($c['alive']);
+        unset($c);
+    }
+    FM_LOG_TRACE("db_close_all: %s connection closed", $count);
+    $arr_conns = array();
 }
 
 function db_count(&$conn, $sql)

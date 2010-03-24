@@ -10,11 +10,14 @@ class Main extends cframe
         $problem_id = (int)request::$arr_get['problem_id'];
         $sql = "SELECT * FROM `problems` WHERE `problem_id`=$problem_id";
         $problem    = db_fetch_line($conn, $sql);
-        if ($line == false)
+        db_close($conn);
+        if ($problem == false)
         {
             FM_LOG_TRACE("request a not-exist problem");
             throw new Exception("This problem does not exist in Land.");
         }
+
+        response::add_data('problem', $problem);
         return true;
     }
 
