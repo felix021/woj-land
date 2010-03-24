@@ -17,6 +17,7 @@ eot;
         $conn = db_connect();
         fail_test($conn, false);
         $problems = db_fetch_lines($conn, $sql, land_conf::PROBLEMS_PER_VOLUME);
+        db_close($conn);
         foreach ($problems as &$p)
         {
             $ac = $p['accepted'];

@@ -20,6 +20,7 @@ eot;
             $msg = 'User ' . request::$arr_post['username'] . ' does not exists';
             throw new Exception($msg);
         }
+        db_close($conn);
 
         //FM_LOG_DEBUG('post: %s', print_r(request::$arr_post, true));
         $pass_seed = $line['password'] . request::$arr_post['seed'];

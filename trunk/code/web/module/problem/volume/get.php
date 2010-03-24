@@ -9,6 +9,7 @@ class Main extends cframe
 
         $sql = "SELECT MAX(`problem_id`) FROM `problems`";
         $maxid = db_count($conn, $sql);
+        db_close($conn);
         if ($maxid == 1000)
         {
             FM_LOG_WARNING("problems count = 0");
