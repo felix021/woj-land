@@ -59,6 +59,7 @@ class response
 
     public static function display()
     {
+        db_close_all();
         self::send_headers();
         if (land_conf::DEBUG)
         {

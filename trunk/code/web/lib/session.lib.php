@@ -24,6 +24,7 @@ final class session
 
         $sql = "SELECT * FROM `users` WHERE `user_id`=" . self::$user_id; 
         $user_info  = db_fetch_line($conn, $sql);
+        db_close($conn);
         fail_test($user_info, false);
         self::$user_info = $user_info;
         logger::log_add_info("username:" . self::$user_info['username']);

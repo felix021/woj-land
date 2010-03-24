@@ -13,23 +13,21 @@ class TPL_Main extends ctemplate
 <div id="tt">Accepted!</div> 
 <div id="main">
 <p><span class="ntc" style="font-size:14px;">$errmsg</span></p>
+<br/>
 
 eot;
         if (isset($p['links']) &&is_array($p['links']) && count($p['links']) > 0)
         {
-            $first = true;
-            echo "<span class=\"ptx\" style=\"text-align:center\">\n";
+            echo "<p style=\"text-align:center\">\n";
             foreach ($p['links'] as $k => $v)
             {
-                if ($first) $first = !$first;
-                else echo " | \n";
                 $k = htmlspecialchars($k);
                 echo <<<eot
-<a href="$v">$k</a>
+<span class="bt"><a href="$v">$k</a></span>
 
 eot;
             }
-            echo '</span>';
+            echo '</p>';
         }
         echo "\n</div>\n";
     }

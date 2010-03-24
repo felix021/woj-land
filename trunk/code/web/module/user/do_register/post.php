@@ -26,6 +26,7 @@ class Main extends cframe
             "SELECT COUNT(*) FROM `users` WHERE `username`='$username'");
         if ($count != 0)
         {
+            db_close($conn);
             FM_LOG_WARNING("username has been used, count: %s", $count);
             throw new Exception("Username has been used ~.~");
         }

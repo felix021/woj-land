@@ -25,7 +25,7 @@ CREATE TABLE `problems`
 
 INSERT INTO `problems` 
 (`problem_id`, `title`, `description`, `input`, `output`, `sample_input`, `sample_output`) VALUES
-(NULL, "A+B Problem", "count a + b", "2 numbers", "their sum", "1 2", "3");
+(NULL, "A+B Problem", "Calculate a + b", "Two integer a, b (0<=a, b<=10)", "Output a + b", "1 2", "3");
 
 CREATE TABLE `users`
 (
