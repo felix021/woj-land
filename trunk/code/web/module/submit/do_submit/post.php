@@ -35,7 +35,8 @@ eot;
 
         $source_id = db_insert($conn, $sql);
 
-        //TODO notify deamon
+        //notify deamon
+        notify_daemon_java($source_id);
         return true;
     }
 
