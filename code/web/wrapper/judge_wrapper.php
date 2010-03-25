@@ -202,10 +202,10 @@ eot;
         }
 
         //更新problems表
-        $set_ac = $result == land_conf::OJ_AC ? '`accepted`=`accepted`+1' : '';
+        $set_ac = $result == land_conf::OJ_AC ? '`, accepted`=`accepted`+1' : '';
         $sql = <<<eot
 UPDATE `problems` SET
-`submitted`=`submitted`+1,
+`submitted`=`submitted`+1
 $set_ac
 eot;
         $res = db_query($conn, $sql);
