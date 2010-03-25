@@ -3,7 +3,7 @@
 final class land_conf
 {
     const DAEMON_HOST           = '127.0.0.1';
-    const DAEMON_PORT           = 9528;
+    const DAEMON_PORT           = 9527;
     const DAEMON_TIME_OUT       = 5; //seconds
 
     const LOG_FILE              = "/home/felix021/woj/log/php.log";
