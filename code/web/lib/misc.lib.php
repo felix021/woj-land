@@ -52,4 +52,45 @@ function dump_var($var)
     return $d;
 }
 
+function notify_daemon_java($src_id)
+{
+    $retry = 3;
+    while ($retry--)
+    {
+        if ($retry < 2)
+        {
+            FM_LOG_WARNING("Retrying...");
+        }
+        $host   = land_conf::DAEMON_HOST;
+        $port   = land_conf::DAEMON_PORT;
+        $timeout= land_conf::DAEMON_TIME_OUT;
+        $errno  = 0;
+        $errstr = '';
+        $fp = fsockopen($host, $port, $errno, $errstr, $timeout);
+        if (!$fp)
+        {
+            FM_LOG_WARNING("Notify daemon failed, %d:%s", $errno, $errstr);
+        }
+        else
+        {
+            FM_LOG_TRACE("connected to daemon");
+            fwrite($fp, "$src_id\n");
+            $ret = fgets($fp);
+            fclose($fp);
+            FM_LOG_TRACE("daemon returned: %s", $ret);
+            if ($ret == $src_id)
+            {
+                FM_LOG_TRACE("notify succeeded");
+                return true;
+            }
+            else
+            {
+                FM_LOG_WARNING("bad return value");
+            }
+        }
+    }
+    FM_LOG_FATAL("Retried 3 times. Aborted");
+    return false;
+}
+
 ?>
