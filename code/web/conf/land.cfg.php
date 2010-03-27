@@ -61,7 +61,7 @@ final class land_conf
         self::OJ_WA                 => "Wrong Answer",
         self::OJ_OLE                => "Output Limit Exceeded",
         self::OJ_CE                 => "Compilation Error",
-        self::OJ_RE_SEGV            => "Runtime Error(Segment Violation)",
+        self::OJ_RE_SEGV            => "Runtime Error(Segment Fault)",
         self::OJ_RE_FPE             => "Runtime Error(FPU Error)",
         self::OJ_RE_BUS             => "Runtime Error(Bus Error)",
         self::OJ_RE_ABRT            => "Runtime Error(Aborted)",
