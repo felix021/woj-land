@@ -35,9 +35,9 @@ class TPL_Main extends ctemplate
  
   <form action="$web_root/status" method="get"> 
    <input type="hidden" name="contest_id" value="{$p['contest_id']}" /> 
-   <strong>Select status by: </strong>
-   <strong>Problem ID</strong> <input size="8" name="problem_id" value="{$p['problem_id']}"/>
-   <strong>Username</strong> <input size="15" name="username" value="{$username}"/>
+   <strong>Search: </strong>
+   <strong>Problem ID</strong> <input size="6" name="problem_id" value="{$p['problem_id']}"/>
+   <strong>Username</strong> <input size="12" name="username" value="{$username}"/>
    <strong>Result</strong> 
     <select size="1" name="result" > 
     $result_opt
@@ -46,7 +46,7 @@ class TPL_Main extends ctemplate
     $language_opt
    </select>&nbsp;
    <input type="submit" value="Go" width="8" /> 
-    <input type="button" onclick="javascript:window.location = '$web_root/status';" value="Clear"/>
+        <input type="button" onclick="javascript:window.location = '$web_root/status';" value="Cancel"/>
   </form> 
   <br/> 
  
@@ -84,7 +84,7 @@ eot;
     <td style="text-align:center;"><a href="$web_root/user/defail?username={$username}">$username</a></td> 
     <td style="text-align:center;"><a href="$web_root/problem/detail?problem_id={$problem_id}">{$problem_id}</a></td> 
     <td style="text-align:center;"> 
-       <span class="STYLE7"><font color="$result_color">$result_name</font></span> 
+       <span class="STYLE7"><a href="$web_root/source/info?source_id={$line['source_id']}"><font color="$result_color">$result_name</font></a></span> 
     </td> 
 	<td style="text-align:center;">{$line['memory_usage']}</td> 
     <td style="text-align:center;">{$line['time_usage']}</td> 
