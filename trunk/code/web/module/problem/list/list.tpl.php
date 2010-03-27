@@ -62,7 +62,7 @@ try
         tr.appendChild(td);
         td = document.createElement('td');
         td.innerHTML = data[i].ratio + 
-            ' (' + data[i].accepted + '/' + data[i].submitted + ')';
+            '% (' + data[i].accepted + '/' + data[i].submitted + ')';
         tr.appendChild(td);
         tbody.appendChild(tr);
     }
