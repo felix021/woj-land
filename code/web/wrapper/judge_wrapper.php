@@ -203,10 +203,15 @@ eot;
             {
                 //如果之前是AC, 而这次没AC
                 $solved--; //过题数减一
-                //把这题从 过题list 里删掉
+                /*
+                 * 把这题从 过题list 里删掉
+                 * 如果提交了两次a(真的AC),b(假的AC), rejudge b以后会把此id去掉，就忽
+                 * 略了a的结果。如果要计算进a的结果，那么会需要从之前的list里再去翻一
+                 * 遍，效率很低。因此Felix在设计上允许存在此误差，以提高效率。
                 for ($i = 0; $i < count($arr_solved); $i++)
                     if ($arr_solved[$i] == $solved)
                         unset($arr_solved[$i]);
+                 */
             }
             else if ($source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
             {
@@ -221,7 +226,7 @@ eot;
         }
         if ($need_update)
         {
-            $solved_list = implode('|', $arr_solved);
+            $solved_list = implode('|', array_unique($arr_solved));
             $sql = <<<eot
 UPDATE `users` SET
     `submit`=$submit,
