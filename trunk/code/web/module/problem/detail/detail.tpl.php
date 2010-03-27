@@ -7,7 +7,13 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         $problem = $p['problem'];
         foreach ($problem as $key => &$v)
+        {
             $v = htmlspecialchars($v);
+            $v = str_replace("\r\n", "\n", $v);
+            $v = str_replace("\r", "\n", $v);
+            $v = str_replace("\n", "<br/>", $v);
+            $v = str_replace("  ", "&nbsp;", $v);
+        }
         $SPJ = $problem['spj'] == 1 ? "Yes" : "No";
         echo <<<eot
   <div id="tt"> Problem {$problem['problem_id']} - {$problem['title']} </div> 
