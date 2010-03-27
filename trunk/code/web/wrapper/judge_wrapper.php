@@ -60,6 +60,9 @@ try
     //judge过程比较耗时,暂时关闭连接
     db_close($conn);
 
+    //如果该source的结果不是OJ_WAIT, 那么就是rejudge的情况了
+    $is_rejudge = ($source['result'] == land_conf::OJ_WAIT) ? false : true;
+
     //准备给judge的参数
     $temp_dir = wrapper_conf::TEMP_PATH . "/" . $src_id;
     $data_dir = wrapper_conf::DATA_PATH . "/" . $problem_id;
@@ -91,7 +94,7 @@ try
 
     //写入代码
     $nWrite = file_put_contents($src_file, $source['source_code']);
-    if ($nWrite != $source['length'])
+    if ($nWrite != strlen($source['source_code']))
     {
         FM_LOG_WARNING("write to $src_file failed");
         throw new Exception("");
@@ -130,8 +133,8 @@ try
         $stderr_executive = $temp_dir . '/' . 'stderr_executive.txt';
         $extra_info = file_get_contents($stderr_executive);
     }
-    //把具体的目录名称过滤,不暴露给用户
-    $extra_info = str_replace($temp_dir, '', $extra_info);
+    //把具体的目录名称过滤, 不暴露给用户
+    $extra_info = str_replace($temp_dir . '/', '', $extra_info);
     $extra_info = str_replace($data_dir, '', $extra_info);
 
     //将judge结果更新到数据库
@@ -141,7 +144,7 @@ try
         
         //TODO  rejudge的情况
 
-    //以下是普通情况(非比赛、非adimn、非rejudge)
+    //以下是普通情况(非比赛、非admin、非rejudge)
     $conn = db_connect();
     fail_test($conn);
 
@@ -178,41 +181,103 @@ eot;
             break;
         }
 
-        $submit       = $user['submit'] + 1;
+        $need_update  = true;
+        $submit       = $user['submit'];
         $solved       = $user['solved'];
-        $solved_list  = $user['solved_list'];
-        $has_accpeted = preg_match('/\b'.$problem_id.'\b/', $solved_list);
-        if ($result == land_conf::OJ_AC && !$has_accpeted)
+        $arr_solved   = explode("|", $users['solved_list']);
+        if (false === $is_rejudge)
         {
-            $solved++;
-            $solved_list .= "|" . $problem_id;
+            //如果不是rejudge
+            $submit++; //多提交了一次
+            if ($result == land_conf::OJ_AC)
+            {
+                //如果ac了
+                $solved++; //多ac了一题
+                $arr_solved[] = $problem_id; //把题号加到过题list里
+            }
         }
-        $sql = <<<eot
+        else
+        {
+            //如果是rejudge
+            if ($source['result'] == land_conf::OJ_AC && $result != land_conf::OJ_AC)
+            {
+                //如果之前是AC, 而这次没AC
+                $solved--; //过题数减一
+                //把这题从 过题list 里删掉
+                for ($i = 0; $i < count($arr_solved); $i++)
+                    if ($arr_solved[$i] == $solved)
+                        unset($arr_solved[$i]);
+            }
+            else if ($source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
+            {
+                //如果之前不是AC, 而这次AC了
+                $solved++;
+                $arr_solved[] = $problem_id;
+            }
+            else
+            {
+                $need_update = false;
+            }
+        }
+        if ($need_update)
+        {
+            $solved_list = implode('|', $arr_solved);
+            $sql = <<<eot
 UPDATE `users` SET
     `submit`=$submit,
     `solved`=$solved,
     `solved_list`='$solved_list'
 WHERE `user_id`=$user_id
 eot;
-        $res = db_query($conn, $sql);
-        if (false == $res || 0 == $conn->affected_rows)
-        {
-            FM_LOG_WARNING("update users failed");
-            break;
+            $res = db_query($conn, $sql);
+            if (false == $res || 0 == $conn->affected_rows)
+            {
+                FM_LOG_WARNING("update users failed");
+                break;
+            }
         }
 
         //更新problems表
-        $set_ac = $result == land_conf::OJ_AC ? ', `accepted`=`accepted`+1' : '';
-        $sql = <<<eot
-UPDATE `problems` SET
-`submitted`=`submitted`+1
-$set_ac
-eot;
-        $res = db_query($conn, $sql);
-        if (false == $res || 0 == $conn->affected_rows)
+        $need_update = true;
+        $sql = 'UPDATE `problems` SET ';
+        if (false == $is_rejudge)
         {
-            FM_LOG_WARNING("update problem info failed");
-            break;
+            //不是rejudge
+            $sql .= '`submitted`=`submitted`+1 ';
+            if ($result == land_conf::OJ_AC)
+            {
+                $sql .= ', `accepted`=`accepted`+1 ';
+            }
+        }
+        else
+        {
+            //如果是rejudge
+            if ($source['result'] == land_conf::OJ_AC && $result != land_conf::OJ_AC)
+            {
+                //如果之前是AC, 而这次没AC
+                $sql .= '`accepted`=`accepted`-1 ';
+            }
+            else if ($source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
+            {
+                //如果之前没AC, 这次AC
+                $sql .= '`accepted`=`accepted`+1 ';
+            }
+            else
+            {
+                //如果前后都AC或者前后都没AC, 那就不要更新数据库了
+                $need_update = false;
+            }
+        }
+        $sql .= ' WHERE `problem_id`=' . $problem_id;
+
+        if ($need_update)
+        {
+            $res = db_query($conn, $sql);
+            if (false == $res || 0 == $conn->affected_rows)
+            {
+                FM_LOG_WARNING("update problem info failed");
+                break;
+            }
         }
 
         $in_trans = false;
