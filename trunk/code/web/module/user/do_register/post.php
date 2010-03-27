@@ -41,9 +41,11 @@ class Main extends cframe
         $REG_ip   = $_SERVER['REMOTE_ADDR'];
         $REG_share_code = isset(request::$arr_post['share_code']) ? 1 : 0;
         $sql = <<<eot
-INSERT INTO `users` VALUES
+INSERT INTO `users` 
+(`user_id`, `username`, `password`, `nickname`, `email`, `school`, `reg_time`, `last_ip`, `submit`, `solved`, `enabled`, `preferred_lang`, `share_code`, `group_ids`, `solved_list`) 
+VALUES
 (NULL, '$REG_username', '$REG_passEnc', '$REG_nick', '$REG_email',
-'$REG_school', '$REG_time', '$REG_ip', 0, 0, 1, $REG_lang, $REG_share_code, "");
+'$REG_school', '$REG_time', '$REG_ip', 0, 0, 1, $REG_lang, $REG_share_code, "", "");
 eot;
 
         $user_id = db_insert($conn, $sql);
@@ -58,7 +60,7 @@ eot;
     {
         response::add_data('links',
             array(
-                'Problems'  => land_conf::$web_root . "/problem/list",
+                'Problems'  => land_conf::$web_root . "/problem/volume",
                 'FAQ'       => land_conf::$web_root . "/faq.html",
                 )
             );
