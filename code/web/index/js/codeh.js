@@ -96,7 +96,7 @@ function CodeHilight(ObjDiv,language1)
 	}else if(lng=="XML")
 	{
 		str1=HighLightXML(str1,false);
-	}else if(lng=="Java")
+	}else if(lng=="JAVA")
 	{
 		str1=HighLightJava(str1);
 	}else if(lng=="JS")
