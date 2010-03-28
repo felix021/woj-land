@@ -79,7 +79,7 @@ try
     $cmd .= append_arg('m', $problem['memory_limit']);
     if ($problem['spj'] == 1)
     {
-        $cmd .= append_arg('-S', null);
+        $cmd .= append_arg('S', null);
     }
     FM_LOG_TRACE("cmd: %s", $cmd);
 
@@ -184,7 +184,7 @@ eot;
         $need_update  = true;
         $submit       = $user['submit'];
         $solved       = $user['solved'];
-        $arr_solved   = explode("|", $users['solved_list']);
+        $arr_solved   = explode("|", $user['solved_list']);
         if (false === $is_rejudge)
         {
             //如果不是rejudge
