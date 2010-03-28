@@ -1,4 +1,7 @@
-//codeh.js, chcommon.js, codeh.css is developed by sandy_sp
+//CodeHilighter v.85 
+//File: codeh.js, chcommon.js, codeh.css
+//Developed By Sandy_zc_1
+//Date: 2009/6/23
 
   function HighLightCpp(str1)
   {
