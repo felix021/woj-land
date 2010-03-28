@@ -78,7 +78,7 @@ eot;
             echo <<<eot
    <tr class="$tr_class"> 
     <td style="text-align:center;">{$line['source_id']}</td> 
-    <td style="text-align:center;"><a href="$web_root/user/defail?username={$username}">$username</a></td> 
+    <td style="text-align:center;"><a href="$web_root/user/detail?username={$username}">$username</a></td> 
     <td style="text-align:center;"><a href="$web_root/problem/detail?problem_id={$problem_id}">{$problem_id}</a></td> 
     <td style="text-align:center;"> 
        <span class="STYLE7"><a href="$web_root/source/info?source_id={$line['source_id']}"><font color="$result_color">$result_name</font></a></span> 
