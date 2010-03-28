@@ -30,48 +30,54 @@ function fillRegisterForm()
     var submit_btn = $('submit_btn');
     submit_btn.click();
 }
+
+function checkEnter(key)
+{
+    if (key == 13 || key == 10)
+        fillRegisterForm();
+}
 </script>
    
   <div id="main"> 
-    <form action="{$this->web_root}/user/do_register" method="post"> 
+    <form action="{$this->web_root}/user/do_register" method="post" onkeypress="javascript:key_event(event, checkEnter);">
     <input type="hidden" name="passEnc" id="passEnc"/>
     <table><tbody> 
       <tr class="tro"> 
         <td width="400" align="right"><strong>Username</strong></td> 
-        <td align="left"><input name="username" type="text" value="" size="20" /> (less than 20 characters)</td>
+        <td align="left"><input name="username" type="text" value="" size="20" tabindex="1" /> (less than 20 characters)</td>
       </tr> 
       <tr class="tre"> 
         <td align="right"><strong>Password</strong></td> 
-        <td align="left"><input size="20" type="password" name="password" id="password"/></td> 
+        <td align="left"><input size="20" type="password" name="password" id="password" tabindex="2"/></td> 
       </tr> 
       <tr class="tro"> 
         <td align="right"><strong>Confirm Password</strong></td> 
-        <td align="left"><input size="20" type="password" name="repeatpassword" id="repeatpassword"/></td> 
+        <td align="left"><input size="20" type="password" name="repeatpassword" id="repeatpassword" tabindex="3"/></td> 
       </tr> 
       <tr class="tre"> 
         <td align="right"><strong>Nick Name</strong></td> 
-        <td align="left"><input size="40" type="text" name="nick" /></td> 
+        <td align="left"><input size="40" type="text" name="nick"  tabindex="4"/></td> 
       </tr> 
       <tr class="tro"> 
         <td align="right"><strong>School</strong></td> 
-        <td align="left"><input size="40" type="text" name="school" /></td> 
+        <td align="left"><input size="40" type="text" name="school" tabindex="5"/></td> 
       </tr> 
       <tr class="tre"> 
         <td align="right"><strong>Email</strong></td> 
-        <td align="left"><input size="40" type="text" name="email" /></td> 
+        <td align="left"><input size="40" type="text" name="email" tabindex="6"/></td> 
       </tr> 
       <tr class="tro"> 
         <td align="right"><strong>Preferred Language</strong></td> 
-        <td align="left"><select name="lang">{$preferred_lang}</select></td> 
+        <td align="left"><select name="lang" tabindex="7">{$preferred_lang}</select></td> 
       </tr> 
       <tr class="tre"> 
         <td align="right"></td> 
-        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" checked/> I'd like to share my code with others</td> 
+        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" checked tabindex="8"/> I'd like to share my code with others</td> 
       </tr> 
       <tr class="tro"> 
         <td colspan="2" align="center"> 
         <input type="submit" id="submit_btn" style="display:none;"/>
-        <input type="button" value="Submit" onclick="javascript:fillRegisterForm();" />
+        <input type="button" value="Submit"  tabindex="9" onclick="javascript:fillRegisterForm();" />
         <input type="reset" value="Reset" name="reset" /> 
         </td> 
       </tr> 
