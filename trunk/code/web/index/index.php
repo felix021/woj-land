@@ -60,13 +60,8 @@ try
 catch (Exception $e)
 {
     response::add_header("HTTP/1.1 403 Not Permitted");
-    $p = array(
-        'errmsg'    => $e->getMessage(),
-        'links'     => array(
-                'Go Back'  =>  'javascript:history.back(1)',
-            ),
-        );
-    response::set_data_arr($p);
+    response::add_data('errmsg', $e->getMessage());
+    response::add_link('Go Back', 'javascript:history.back(1)');
     response::set_tpl(TPL_ROOT . "/error.tpl.php");
     response::display();
 }
