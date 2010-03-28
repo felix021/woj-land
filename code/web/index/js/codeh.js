@@ -1,4 +1,7 @@
-//codeh.js, chcommon.js, codeh.css is developed by sandy_sp
+//CodeHilighter v.85 
+//File: codeh.js, chcommon.js, codeh.css
+//Developed By Sandy_zc_1
+//Date: 2009/6/23
 
   function cdh_GetText(obj,isff)
   {
@@ -106,9 +109,9 @@ function CodeHilight(ObjDiv,language1)
     {
 	    str1=HighLightCSharp(str1);
     }
-    else if (lng == "Pascal")
+    else if (lng == "PASCAL")
     {
-        //left undone by sandy_sp
+        //left undone
     }
 	
 	document.getElementById(ObjDiv).innerHTML=str1 ;
