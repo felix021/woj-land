@@ -13,7 +13,7 @@ class TPL_Main extends ctemplate
   <div id="main"> 
 <script language="javascript">
 
-function fillForm()
+function fillLoginForm()
 {
     var password    = $('password');
     //alert(hex_md5(password.value));
@@ -21,18 +21,18 @@ function fillForm()
     var seed        = $('seed');
     passEnc.value   = encodePass(password.value, seed.value);
     password.value  = '';
-/*
-alert('pass: ' + password.value + '\\n'
-    + 'seed: ' + seed.value + '\\n'
-    + 'md5(pass): ' + hex_md5(password.value) + '\\n'
-    + 'md5(md5(pass)+seed): ' + passEnc.value);
-*/
     var submit_btn  = $('submit_btn');
     submit_btn.click();
 }
+
+function checkEnter(key)
+{
+    if (key == 13 || key == 10)
+        fillLoginForm();
+}
 </script>
     
-    <form name="loginform" action="{$this->web_root}/user/do_login" method="post" onsubmit="encodepass"> 
+    <form name="loginform" action="{$this->web_root}/user/do_login" method="post" onkeypress="javascript:key_event(event, checkEnter)"> 
       <input type="hidden" name="origURL" value="$last_url" /> 
       <input type="hidden" name="passEnc" id="passEnc" value="" /> 
       <input type="hidden" name="seed" id="seed" value="{$p['seed']}" /> 
@@ -48,12 +48,7 @@ alert('pass: ' + password.value + '\\n'
         </tr> 
         <tr class="tro"> 
           <td colspan="2" align="center"> 
-          <input name="autoLogin" type="checkbox" class="radio" tabIndex="3" value="true"/>Remember Me
-          </td> 
-        </tr> 
-        <tr class="tre"> 
-          <td colspan="2" align="center"> 
-            <input tabIndex="4" type="button" value="Login" name="doLogin" onclick="javascript:fillForm();"/> 
+            <input tabIndex="4" type="button" value="Login" name="doLogin" onclick="javascript:fillLoginForm();"/> 
             <input tabIndex="5" type="submit" value="Cancel" name="doCancel" /> 
             <input type="submit" id="submit_btn" style="display:none;"/>
           </td> 

@@ -47,3 +47,15 @@ function htmlspecialchars(str)
     str = str.replace(/'/g, '&#039;');
     return str;
 }
+
+function key_event(evt, func){
+    evt = (evt) ? evt : ((window.event) ? window.event : null);
+    if (!evt) return;
+    try {
+        var key = evt.keyCode ? evt.keyCode : evt.which;
+        func(key);
+    } catch (e) {
+        alert(e);
+    }  
+}
+
