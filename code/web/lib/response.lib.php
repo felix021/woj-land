@@ -77,6 +77,20 @@ class response
         self::add_data('msg', $msg);
         self::set_tpl(TPL_ROOT . '/msg.tpl.php');
     }
+
+    public static function add_links($arr_links)
+    {
+        if (isset(self::$arr_data['links']))
+        {
+            $arr_links = array_merge(self::$arr_data['links'], $arr_links);
+        }
+        self::$arr_data['links'] = $arr_links;
+    }
+
+    public static function add_link($name, $link)
+    {
+        self::add_links(array($name => $link));
+    }
 }
 
 ?>

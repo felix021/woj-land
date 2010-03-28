@@ -40,11 +40,14 @@ eot;
         $lines = db_fetch_lines($conn, $sql, $itpp);
         db_close($conn);
         
+        /*
+         * 不在此处判断代码可见性了，否则开销太大
         foreach ($lines as &$line)
         {
             //TODO 该代码是否可见(share + AC)
             $line['visible'] = true;
         }
+         */
 
         response::add_data('status', $lines);
         response::add_data('result_name', land_conf::$result_name);

@@ -74,10 +74,7 @@ eot;
             $result_name    = htmlspecialchars(land_conf::$result_name[$result]);
             $result_color   = land_conf::$result_color[$result];
             $lang           = $p['lang'][$line['lang']];
-            if ($line['visible'])
-            {
-                $lang = "<a href=\"source?source_id={$line['source_id']}\">$lang</a>";
-            }
+            $lang           = "<a href=\"source?source_id={$line['source_id']}\">$lang</a>";
             echo <<<eot
    <tr class="$tr_class"> 
     <td style="text-align:center;">{$line['source_id']}</td> 

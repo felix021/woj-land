@@ -30,6 +30,7 @@ function fail_test($variable, $cond = false)
 {
     if ($cond === $variable)
     {
+        FM_LOG_WARNING2("fail_test: %s", print_r($cond));
         throw new Exception("");
     }
 }
@@ -91,6 +92,63 @@ function notify_daemon_java($src_id)
     }
     FM_LOG_FATAL("Retried 3 times. Aborted");
     return false;
+}
+
+function in_solved_list($problem_id, $solved_list)
+{
+    $pid = (int) $problem_id;
+    return preg_match("/\\b$pid\\b/", $solved_list);
+}
+
+function get_privileges_by_groups($group_ids)
+{
+    $priv = array();
+    foreach (land_conf::$priv_fields as $pf)
+    {
+        $priv[$pf] = false;
+    }
+
+    $arr_groups = explode("|", $group_ids);
+    $arr_groups = array_filter($arr_groups, create_function('$a', 'return !empty($a);'));
+    foreach ($arr_groups as &$g) $g = (int)$g;
+
+//    FM_LOG_DEBUG("group_ids: %s", $group_ids);
+//    FM_LOG_DEBUG("groups: %s", print_r($arr_groups, true));
+
+    if (count($arr_groups) == 0)
+    {
+        return $priv;
+    }
+
+    $group_ids  = implode(",", $arr_groups);
+
+    $sql = "SELECT * FROM `groups` WHERE `group_id` IN ($group_ids)";
+    $conn = db_connect();
+    fail_test($conn, false);
+
+    //取出所有组的信息 TODO cache
+    $groups = db_fetch_lines($conn, $sql, count($arr_groups));
+    //FM_LOG_DEBUG("groups: %s", print_r($groups, true));
+    fail_test($groups, false);
+
+    db_close($conn);
+
+    foreach ($groups as $group)
+    {
+        foreach (land_conf::$priv_fields as $pf)
+        {
+            //采用 OR 来决定最终的权限
+            if ($priv[$pf] != true)
+            {
+                if ($group[$pf] == 1)
+                {
+                    $priv[$pf] = true;
+                }
+            }
+        }
+    }
+
+    return $priv;
 }
 
 ?>

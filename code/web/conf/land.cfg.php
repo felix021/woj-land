@@ -2,10 +2,6 @@
 
 final class land_conf
 {
-    const DAEMON_HOST           = '127.0.0.1';
-    const DAEMON_PORT           = 9527;
-    const DAEMON_TIME_OUT       = 5; //seconds
-
     const LOG_FILE              = "/home/felix021/woj/log/php.log";
 
     const ERROR_REPORT_LEVEL    = E_ALL;
@@ -18,6 +14,18 @@ final class land_conf
     const STAY_TIME             = 3; //seconds before refresh
 
     public static $web_root     = "/land";
+
+    //daemon
+    const DAEMON_HOST           = '127.0.0.1';
+    const DAEMON_PORT           = 9527;
+    const DAEMON_TIME_OUT       = 5; //seconds
+
+    //privileges
+    public static $priv_fields = array(
+        'admin',
+        'view_src',
+        'private_contest',
+        );
 
     const LANG_UNKNOWN          = 0;
     const LANG_C                = 1;

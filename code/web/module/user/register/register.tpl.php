@@ -60,16 +60,16 @@ function fillRegisterForm()
         <td align="right"><strong>Email</strong></td> 
         <td align="left"><input size="40" type="text" name="email" /></td> 
       </tr> 
-      <tr class="tre"> 
+      <tr class="tro"> 
         <td align="right"><strong>Preferred Language</strong></td> 
         <td align="left"><select name="lang">{$preferred_lang}</select></td> 
       </tr> 
       <tr class="tre"> 
         <td align="right"></td> 
-        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" checked/> I'd like to share my code to others</td> 
+        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" checked/> I'd like to share my code with others</td> 
       </tr> 
       <tr class="tro"> 
-        <td colspan=2 align=center> 
+        <td colspan="2" align="center"> 
         <input type="submit" id="submit_btn" style="display:none;"/>
         <input type="button" value="Submit" onclick="javascript:fillRegisterForm();" />
         <input type="reset" value="Reset" name="reset" /> 
