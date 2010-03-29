@@ -189,9 +189,10 @@ eot;
         {
             //如果不是rejudge
             $submit++; //多提交了一次
-            if ($result == land_conf::OJ_AC)
+            if (!in_solved_list($problem_id, $user['solved_list'])
+                && $result == land_conf::OJ_AC)
             {
-                //如果ac了
+                //如果是第一次ac这题
                 $solved++; //多ac了一题
                 $arr_solved[] = $problem_id; //把题号加到过题list里
             }
