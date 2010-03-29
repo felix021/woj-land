@@ -50,7 +50,7 @@ try
     if (!is_readable($dispatch_filename))
     {
         FM_LOG_WARNING("$dispatch_filename is not readable");
-        throw new Exception('This page does not exists in Land.');
+        throw new Exception('This page does not exist in Land. Maybe it\'s still on noah\'s ark?');
     }
     require_once($dispatch_filename);
     $cf       = cframe_loader::run(land_conf::DEFAULT_CFRAME_CLASS);
