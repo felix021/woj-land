@@ -14,7 +14,7 @@ class Main extends cframe
         if ($problem == false)
         {
             FM_LOG_WARNING("request a not-exist problem");
-            throw new Exception("This problem does not exist in Land.");
+            throw new Exception("This problem does not exist in Land. Maybe it's still on noah's ark?");
         }
 
         response::add_data('problem', $problem);
