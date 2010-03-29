@@ -22,6 +22,9 @@ extern "C"
 
 namespace judge_conf
 {
+    //judge本身的时限(ms)           
+    int judge_time_limit            = 15000;
+
     //编译限制(ms)
     int compile_time_limit          = 5000;
 
@@ -74,6 +77,7 @@ namespace judge_conf
     const int EXIT_OK               = 0;
     const int EXIT_UNPRIVILEGED     = 1;
     const int EXIT_BAD_PARAM        = 3;
+    const int EXIT_VERY_FIRST       = 4;
     const int EXIT_COMPILE          = 6;
     const int EXIT_PRE_JUDGE        = 9;
     const int EXIT_PRE_JUDGE_PTRACE = 10;
@@ -84,6 +88,7 @@ namespace judge_conf
     const int EXIT_COMPARE          = 27;
     const int EXIT_COMPARE_SPJ      = 30;
     const int EXIT_COMPARE_SPJ_FORK = 31;
+    const int EXIT_TIMEOUT          = 36;
     const int EXIT_UNKNOWN          = 127;
 
     const std::string languages[]    = {"unknown", "c", "c++", "java", "pascal"};
@@ -187,9 +192,17 @@ void parse_arguments(int argc, char *argv[])
     problem::dump_to_log();
 }
 
+void timeout(int signo)
+{
+    if (signo == SIGALRM)
+    {
+        exit(judge_conf::EXIT_TIMEOUT);
+    }
+}
+
 //a simpler interface for setitimer
 //which can be ITIMER_REAL, ITIMER_VIRTUAL, ITIMER_PROF
-bool malarm(int which, int milliseconds)
+int malarm(int which, int milliseconds)
 {
     struct itimerval t;
     FM_LOG_TRACE("malarm: %d", milliseconds);
@@ -483,12 +496,16 @@ int oj_compare_output(std::string file_std, std::string file_exec)
                 fp_tmp = fp_std;
             }
             int c;
-            for (c = fgetc(fp_tmp); !feof(fp_tmp); )
+            while (true)
             {
+                c = fgetc(fp_tmp);
+                if (feof(fp_tmp)) break;
                 if (c != '\n' && c != '\r')
+                {
                     status = WA;
+                    break;
+                }
             }
-            break;
         }
 
         //如果两个字符不同，

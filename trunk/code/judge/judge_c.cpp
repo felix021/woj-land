@@ -41,6 +41,13 @@ int main(int argc, char *argv[])
         exit(judge_conf::EXIT_UNPRIVILEGED);
     }
     parse_arguments(argc, argv);
+    judge_conf::judge_time_limit += problem::time_limit;
+    if (EXIT_SUCCESS != malarm(ITIMER_REAL, judge_conf::judge_time_limit))
+    {
+        FM_LOG_WARNING("set alarm for judge failed, %d: %s", errno, strerror(errno));
+        exit(judge_conf::EXIT_VERY_FIRST);
+    }
+    signal(SIGALRM, timeout);
 
 //编译---------------------------------------------------------------------
     pid_t compiler = fork();
