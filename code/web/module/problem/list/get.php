@@ -28,7 +28,7 @@ eot;
             }
             else
             {
-                $p['ratio'] = round($ac / $st, 2);
+                $p['ratio'] = round($ac * 100 / $st, 2);
             }
         }
         response::add_data('problems', $problems);
