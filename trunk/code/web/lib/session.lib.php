@@ -11,10 +11,10 @@ final class session
 
     public static function init()
     {
-        if (isset($_SESSION['is_login']))
+        if (isset($_SESSION['land_is_login']))
         {
             self::$is_login = true;
-            self::$user_id  = $_SESSION['user_id'];
+            self::$user_id  = $_SESSION['land_user_id'];
         }
         else
         {
@@ -33,11 +33,19 @@ final class session
 
     public static function set_login($user_id)
     {
-        $_SESSION['is_login'] = true;
-        self::$is_login       = true;
-        
-        $_SESSION['user_id']  = $user_id;
-        self::$user_id        = $user_id;
+        //匿名用户不允许登录
+        if ($user_id != self::ANONYMOUS_ID)
+        {
+            $_SESSION['land_is_login']  = true;
+            self::$is_login             = true;
+            
+            $_SESSION['land_user_id']   = $user_id;
+            self::$user_id              = $user_id;
+        }
+        else
+        {
+            throw new Exception("User '".self::ANONYMOUS_NAME."' is not allowed to login.");
+        }
     }
 
     public static function set_logout()

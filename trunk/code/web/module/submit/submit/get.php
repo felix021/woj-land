@@ -21,6 +21,8 @@ class Main extends cframe
         response::add_data('share_code', $share_code);
         response::add_data('problem_id', $problem_id);
         response::add_data('lang', land_conf::$lang);
+        response::add_data('min_len', land_conf::MIN_SOURCE_LEN);
+        response::add_data('max_len', land_conf::MAX_SOURCE_LEN);
         //TODO vcontest_id 
         return true;
     }

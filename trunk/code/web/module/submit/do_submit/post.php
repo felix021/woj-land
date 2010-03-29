@@ -7,6 +7,17 @@ class Main extends cframe
         $problem_id = (int)request::$arr_post['problem_id'];
         $language   = (int)request::$arr_post['lang'];
         $source     = request::$arr_post['source'];
+        if (strlen($source) < land_conf::MIN_SOURCE_LEN)
+        {
+            response::add_link("Go Back", 'javascript:history.back(1);');
+            throw new Exception("Your source code is too short..");
+        }
+        else if (strlen($source) > land_conf::MAX_SOURCE_LEN)
+        {
+            response::add_link("Go Back", 'javascript:history.back(1);');
+            $k = round(land_conf::MAX_SOURCE_LEN / 1024, 0);
+            throw new Exception("Your source code is too long (more than $k KB)..");
+        }
         $share_code = isset(request::$arr_post['share_code']) ? 1 : 0;
         $user_id    = session::ANONYMOUS_ID;
         $username   = session::ANONYMOUS_NAME;

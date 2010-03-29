@@ -43,6 +43,10 @@ final class land_conf
     const PROBLEMS_PER_VOLUME   = 100;
     const MIN_PROBLEM_ID        = 1001;
 
+    //submit
+    const MIN_SOURCE_LEN        = 10;
+    const MAX_SOURCE_LEN        = 65536;
+
     //ranklist
     const USERS_PER_PAGE        = 20;
 
