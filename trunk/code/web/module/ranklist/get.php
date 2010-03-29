@@ -31,7 +31,7 @@ eot;
 
         foreach ($users as &$user)
         {
-            $user['ratio'] = round($user['ratio'], 2);
+            $user['ratio'] = round($user['ratio'] * 100, 2);
         }
 
         response::add_data('page', $page);
