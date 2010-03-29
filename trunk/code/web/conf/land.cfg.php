@@ -43,6 +43,9 @@ final class land_conf
     const PROBLEMS_PER_VOLUME   = 100;
     const MIN_PROBLEM_ID        = 1001;
 
+    //ranklist
+    const USERS_PER_PAGE        = 20;
+
     //status
     const STATUS_PER_PAGE       = 20;
     const OJ_WAIT               = 0; //Queue
