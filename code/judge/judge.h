@@ -496,24 +496,27 @@ int oj_compare_output(std::string file_std, std::string file_exec)
                 fp_tmp = fp_std;
             }
             int c;
-            while (true)
+            while (c = fgetc(fp_tmp), c != EOF)
             {
-                c = fgetc(fp_tmp);
-                if (feof(fp_tmp)) break;
                 if (c != '\n' && c != '\r')
                 {
                     status = WA;
                     break;
                 }
             }
+            break;
         }
+
+        //统一\r和\n之间的区别
+        if (a == '\r') a = '\n';
+        if (b == '\r') b = '\n';
 
         //如果两个字符不同，
         if (a != b)
         {
             status = PE; //可能是PE，再继续检测是否是WA
             //过滤空白字符
-#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\r') || (a == '\n'))
+#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\n'))
             if (is_space_char(a) && is_space_char(b))
             {
                 //两个都是空白字符, 都过滤

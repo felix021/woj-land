@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # ac pe wa ce re tle...
-select=ac
+select=acpe
 #spj=-S
 
 src=1001_${select}.c
