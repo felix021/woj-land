@@ -16,23 +16,21 @@ class TPL_Main extends ctemplate
 function fillLoginForm()
 {
     var password    = $('password');
-    //alert(hex_md5(password.value));
+    if (password.value == '')
+    {
+        alert("Please type in your password..");
+        password.focus();
+        return false;
+    }
     var passEnc     = $('passEnc');
     var seed        = $('seed');
     passEnc.value   = encodePass(password.value, seed.value);
     password.value  = '';
-    var submit_btn  = $('submit_btn');
-    submit_btn.click();
-}
-
-function checkEnter(key)
-{
-    if (key == 13 || key == 10)
-        fillLoginForm();
+    return true;
 }
 </script>
     
-    <form name="loginform" action="{$this->web_root}/user/do_login" method="post" onkeypress="javascript:key_event(event, checkEnter)"> 
+    <form name="loginform" action="{$this->web_root}/user/do_login" method="post" onsubmit="javascript:return fillLoginForm();"> 
       <input type="hidden" name="origURL" value="$last_url" /> 
       <input type="hidden" name="passEnc" id="passEnc" value="" /> 
       <input type="hidden" name="seed" id="seed" value="{$p['seed']}" /> 
@@ -48,9 +46,8 @@ function checkEnter(key)
         </tr> 
         <tr class="tro"> 
           <td colspan="2" align="center"> 
-            <input tabIndex="4" type="button" value="Login" name="doLogin" onclick="javascript:fillLoginForm();"/> 
+            <input type="submit" tabIndex="4" value="Login" id="submit_btn"/>
             <input tabIndex="5" type="submit" value="Cancel" name="doCancel" /> 
-            <input type="submit" id="submit_btn" style="display:none;"/>
           </td> 
         </tr> 
       </tbody></table> 

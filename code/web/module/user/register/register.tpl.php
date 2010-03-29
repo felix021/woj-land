@@ -15,36 +15,43 @@ class TPL_Main extends ctemplate
 <script language="javascript">
 function fillRegisterForm()
 {
+    var username        = $('username');
+    if (username.value == '')
+    {
+        alert("Please type in your username..");
+        username.focus();
+        return false;
+    }
     var password        = $('password');
+    if (password.value == '')
+    {
+        alert("Please type in your password..");
+        password.focus();
+        return false;
+    }
     var repeatpassword  = $('repeatpassword');
     var passEnc         = $('passEnc');
     if (password.value != repeatpassword.value)
     {
-        alert('Two passwords does not match..');
+        alert('Two passwords do not match..');
+        repeatpassword.focus();
         return false;
     }
     passEnc.value  = hex_md5(password.value);
     password.value = "";
     repeatpassword.value = "";
-    //alert(passEnc.value);return;
-    var submit_btn = $('submit_btn');
-    submit_btn.click();
-}
 
-function checkEnter(key)
-{
-    if (key == 13 || key == 10)
-        fillRegisterForm();
+    return true;
 }
 </script>
    
   <div id="main"> 
-    <form action="{$this->web_root}/user/do_register" method="post" onkeypress="javascript:key_event(event, checkEnter);">
+    <form action="{$this->web_root}/user/do_register" method="post" onsubmit="javascript:return fillRegisterForm();">
     <input type="hidden" name="passEnc" id="passEnc"/>
     <table><tbody> 
       <tr class="tro"> 
         <td width="400" align="right"><strong>Username</strong></td> 
-        <td align="left"><input name="username" type="text" value="" size="20" tabindex="1" /> (less than 20 characters)</td>
+        <td align="left"><input name="username" id="username" type="text" value="" size="20" tabindex="1" /> (less than 20 characters)</td>
       </tr> 
       <tr class="tre"> 
         <td align="right"><strong>Password</strong></td> 
@@ -76,8 +83,7 @@ function checkEnter(key)
       </tr> 
       <tr class="tro"> 
         <td colspan="2" align="center"> 
-        <input type="submit" id="submit_btn" style="display:none;"/>
-        <input type="button" value="Submit"  tabindex="9" onclick="javascript:fillRegisterForm();" />
+        <input type="submit" id="submit_btn" value="Submit" tabindex="9"/>
         <input type="reset" value="Reset" name="reset" /> 
         </td> 
       </tr> 
