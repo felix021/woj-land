@@ -37,7 +37,7 @@ $nav1
 <!-- TODO <a href="$web_root/vcontest/list">vContests</a> | -->
 <a href="$web_root/submit/submit">Submit</a> | 
 <a href="$web_root/status">Status</a> | 
-<a href="$web_root/ranklisk">Ranklist</a> | 
+<a href="$web_root/ranklist">Ranklist</a> | 
 $nav2
 <a href="$web_root/mail/list">Mail</a> | 
 <a href="$web_root/faq.html" target="_blank">FAQ</a> 
