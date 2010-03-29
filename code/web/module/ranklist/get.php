@@ -15,9 +15,9 @@ class Main extends cframe
         $start = ($page - 1) * $itpp;
 
         $sql = <<<eot
-SELECT `user_id`, `username`, `nickname`, `solved`, `submit`, (`solved`/`submit`) as ratio
+SELECT `user_id`, `username`, `nickname`, `solved`, `submit`
   FROM `users`
-  ORDER BY `ratio` DESC
+  ORDER BY `solved` DESC
   LIMIT $start,$itpp
 eot;
 
@@ -31,7 +31,10 @@ eot;
 
         foreach ($users as &$user)
         {
-            $user['ratio'] = round($user['ratio'], 2);
+            if ($user['submit'] == 0)
+                $user['ratio'] = '0';
+            else
+                $user['ratio'] = round($user['solved'] / $user['submit'], 2);
         }
 
         response::add_data('page', $page);
