@@ -72,6 +72,8 @@ int RF_PASCAL[512] =
     SYS_write,          -1,
     SYS_close,          -1,
     SYS_exit_group,     -1,
+    SYS_mmap,           -1,
+    SYS_munmap,         -1,
     0
 };
 //Java (TODO暂未测试)
