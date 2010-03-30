@@ -9,6 +9,9 @@ class Main extends cframe
     public $result;
     public $conn;
     
+    protected $need_login = false;
+    protected $need_info  = false;
+
     public function process()
     {
         $page = 1;

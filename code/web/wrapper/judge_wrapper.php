@@ -308,7 +308,7 @@ eot;
     }
 
     db_close($conn);
-    system("rm -rf " . escapeshellcmd($temp_dir));
+    //system("rm -rf " . escapeshellcmd($temp_dir));
     exit(0);
 
 }

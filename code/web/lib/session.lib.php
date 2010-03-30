@@ -9,26 +9,30 @@ final class session
     public static $user_id  = self::ANONYMOUS_ID;
     public static $user_info = array();
 
-    public static function init()
+    public static function init($need_info)
     {
         if (isset($_SESSION['land_is_login']))
         {
             self::$is_login = true;
             self::$user_id  = $_SESSION['land_user_id'];
+            if ($need_info)
+            {
+                $conn = db_connect();
+                fail_test($conn, false);
+
+                $sql = "SELECT * FROM `users` WHERE `user_id`=" . self::$user_id; 
+                $user_info  = db_fetch_line($conn, $sql);
+                db_close($conn);
+                fail_test($user_info, false);
+                self::$user_info = $user_info;
+                logger::log_add_info("username:" . self::$user_info['username']);
+            }
         }
         else
         {
             self::$is_login = false;
         }
-        $conn = db_connect();
-        fail_test($conn, false);
 
-        $sql = "SELECT * FROM `users` WHERE `user_id`=" . self::$user_id; 
-        $user_info  = db_fetch_line($conn, $sql);
-        db_close($conn);
-        fail_test($user_info, false);
-        self::$user_info = $user_info;
-        logger::log_add_info("username:" . self::$user_info['username']);
     }
 
     public static function set_login($user_id)

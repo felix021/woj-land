@@ -7,7 +7,7 @@ class TPL_Main extends ctemplate
         $errmsg = htmlspecialchars($p['errmsg']);
         if (empty($errmsg))
         {
-            $errmsg = "System is busy, please try again later :(";
+            $errmsg = "Land is tooooo crowded, please try again later :(";
         }
         echo <<<eot
 <div id="tt">Ooooops!</div> 

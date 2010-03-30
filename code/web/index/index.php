@@ -37,7 +37,6 @@ try
     }
 
     request::init();
-    session::init();
 
     logger::log_add_info('logid:' . request::$logid);
     logger::log_add_info('ip:' . $_SERVER['REMOTE_ADDR']);
@@ -59,7 +58,7 @@ try
 }
 catch (Exception $e)
 {
-    response::add_header("HTTP/1.1 403 Not Permitted");
+    response::add_header("HTTP/1.1 403 Not Authorized");
     response::add_data('errmsg', $e->getMessage());
     response::add_link('Go Back', 'javascript:history.back(1)');
     response::set_tpl(TPL_ROOT . "/error.tpl.php");

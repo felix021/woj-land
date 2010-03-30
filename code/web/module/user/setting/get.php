@@ -2,13 +2,11 @@
 
 class Main extends cframe
 {
+    protected $need_login = true;
+    protected $need_info  = true;
+
     public function process()
     {
-        if (!session::$is_login)
-        {
-            response::add_link('Login', land_conf::$web_root . '/user/login');
-            throw new Exception("Please login first ~.~");
-        }
         response::add_data('user', session::$user_info);
         response::add_data('lang', land_conf::$lang);
         response::add_data('seed', rndstr(6));

@@ -2,6 +2,9 @@
 
 class Main extends cframe
 {
+    protected $need_login = false;
+    protected $need_info  = false;
+
     public function process()
     {
         /*
@@ -20,6 +23,10 @@ class Main extends cframe
             response::add_data("last_url", land_conf::$web_root);
         }
         response::add_data("seed", rndstr(6));
+        if (isset(request::$arr_get['need_login']))
+        {
+            response::add_data("need_login", true);
+        }
         return true;
     }
 

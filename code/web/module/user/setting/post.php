@@ -2,14 +2,11 @@
 
 class Main extends cframe
 {
+    protected $need_login = true;
+    protected $need_info  = false;
+
     public function process()
     {
-        if (!session::$is_login)
-        {
-            response::add_link('Login', land_conf::$web_root . '/user/login');
-            throw new Exception("Please login first ~.~");
-        }
-
         $user_id    = (int)session::$user_id;
         $sql        = 'SELECT `password` FROM `users` WHERE `user_id`=' . $user_id;
         $conn       = db_connect();

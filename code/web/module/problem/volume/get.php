@@ -2,6 +2,9 @@
 
 class Main extends cframe
 {
+    protected $need_login = false;
+    protected $need_info  = false;
+
     public function process()
     {
         $conn = db_connect();
