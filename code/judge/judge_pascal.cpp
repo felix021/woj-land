@@ -32,7 +32,7 @@ int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 
 int main(int argc, char *argv[])
 {
-    problem::lang = judge_conf::LANG_C; //C语言 
+    problem::lang = judge_conf::LANG_PASCAL; //C语言 
     log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
     if (geteuid() != 0)
@@ -69,12 +69,12 @@ int main(int argc, char *argv[])
             exit(judge_conf::EXIT_COMPILE);
         }
 
-        FM_LOG_TRACE("start: gcc -w -O2 -DOJ -o %s %s",
+        FM_LOG_TRACE("start: fpc -o%s %s -Co -Cr -Ct -Ci",
                 problem::exec_file.c_str(), problem::source_file.c_str());
         malarm(ITIMER_REAL, judge_conf::compile_time_limit);
-        execlp("gcc", "gcc", "-w", "-O2", "-DOJ",
-               "-o", problem::exec_file.c_str(),
-               problem::source_file.c_str(),
+        execlp("fpc", "fpc", problem::source_file.c_str(),
+               ("-o" + problem::exec_file).c_str(),
+                "-Co", "-Cr", "-Ct", "-Ci",
                NULL);
                 
         //如果执行到这里说明execlp出错了

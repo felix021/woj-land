@@ -1,0 +1,6 @@
+Free Pascal Compiler version 2.2.4-3 [2009/06/04] for i386
+Copyright (c) 1993-2008 by Florian Klaempfl
+Target OS: Linux for i386
+Compiling test/1001_rf.pas
+Linking test/temp/a.out
+7 lines compiled, 0.0 sec 

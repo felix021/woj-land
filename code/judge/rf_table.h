@@ -64,26 +64,14 @@ int RF_CPP[512] =
 int RF_PASCAL[512] = 
 {
     SYS_execve,         1,
-    SYS_open,           2,
-    SYS_close,          -1,
-    SYS_fstat64,        -1,
-    SYS_access,         -1,
-    SYS_read,           -1,
-    SYS_write,          -1,
+    SYS_ugetrlimit,     -1,
+    SYS_rt_sigaction,   -1,
     SYS_ioctl,          -1,
     SYS_readlink,       -1,
-    SYS_mmap,           -1,
-    SYS_uname,          -1,
-    SYS_brk,            -1,
-    SYS_mmap2,          -1,
-    SYS_munmap,         -1,
-    SYS_mprotect,       -1,
-    SYS_rt_sigaction,   -1,
-    SYS_getrlimit,      -1,
-    SYS_ugetrlimit,     -1,
-    SYS_set_thread_area,-1,
+    SYS_read,           -1,
+    SYS_write,          -1,
+    SYS_close,          -1,
     SYS_exit_group,     -1,
-    SYS_exit,           -1,
     0
 };
 //Java (TODO暂未测试)
