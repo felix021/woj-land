@@ -236,8 +236,8 @@ int main(int argc, char *argv[])
 
                 if (WIFEXITED(status))
                 {
-                    //子进程主动退出
-                    if (WEXITSTATUS(status) == EXIT_SUCCESS)
+                    //子进程主动退出 //gcc对没有return 0的代码没有特殊处理
+                    if (true || WEXITSTATUS(status) == EXIT_SUCCESS)
                     {
                         //子进程返回0 (AC/PE,WA)
                         FM_LOG_TRACE("normal quit");
