@@ -185,12 +185,12 @@ eot;
         $submit       = $user['submit'];
         $solved       = $user['solved'];
         $arr_solved   = explode("|", $user['solved_list']);
+        $has_accepted = in_solved_list($problem_id, $user['solved_list']);
         if (false === $is_rejudge)
         {
             //如果不是rejudge
             $submit++; //多提交了一次
-            if (!in_solved_list($problem_id, $user['solved_list'])
-                && $result == land_conf::OJ_AC)
+            if (!$has_accepted && $result == land_conf::OJ_AC)
             {
                 //如果是第一次ac这题
                 $solved++; //多ac了一题
@@ -200,25 +200,26 @@ eot;
         else
         {
             //如果是rejudge
-            if ($source['result'] == land_conf::OJ_AC && $result != land_conf::OJ_AC)
+            if (!$has_accepted && $source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
             {
+                //如果未曾AC过此题，且之前不是AC, 而这次AC了
+                $solved++;
+                $arr_solved[] = $problem_id;
+            }
+            else if ($source['result'] == land_conf::OJ_AC && $result != land_conf::OJ_AC)
+            {
+                $need_update = false;
                 //如果之前是AC, 而这次没AC
-                $solved--; //过题数减一
                 /*
                  * 把这题从 过题list 里删掉
                  * 如果提交了两次a(真的AC),b(假的AC), rejudge b以后会把此id去掉，就忽
                  * 略了a的结果。如果要计算进a的结果，那么会需要从之前的list里再去翻一
                  * 遍，效率很低。因此Felix在设计上允许存在此误差，以提高效率。
+                $solved--; //过题数减一
                 for ($i = 0; $i < count($arr_solved); $i++)
                     if ($arr_solved[$i] == $solved)
                         unset($arr_solved[$i]);
                  */
-            }
-            else if ($source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
-            {
-                //如果之前不是AC, 而这次AC了
-                $solved++;
-                $arr_solved[] = $problem_id;
             }
             else
             {
