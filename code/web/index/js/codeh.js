@@ -108,11 +108,10 @@ function CodeHilight(ObjDiv,language1)
 	}else if(lng=="CSHARP")
     {
 	    str1=HighLightCSharp(str1);
-    }
-    else if (lng == "PASCAL")
-    {
-        //left undone
-    }
+    }else if(lng=="PASCAL")
+	{
+	    str1=HighLightPascal(str1);
+	}
 	
 	document.getElementById(ObjDiv).innerHTML=str1 ;
 	
