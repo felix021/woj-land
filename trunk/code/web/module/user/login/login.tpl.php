@@ -11,6 +11,16 @@ class TPL_Main extends ctemplate
   </div> 
   
   <div id="main"> 
+eot;
+
+        if (isset($p['need_login']))
+        {
+            echo <<<eot
+    <span class="cl">Please Login First!</span> <br /><br /> 
+eot;
+        }
+
+        echo <<<eot
 <script language="javascript">
 
 function fillLoginForm()
@@ -36,15 +46,15 @@ function fillLoginForm()
       <input type="hidden" name="seed" id="seed" value="{$p['seed']}" /> 
       <table>
         <tbody> 
-        <tr class="tro"> 
+        <tr class="tre"> 
           <td width="400" align="right"><strong>Username</strong></td> 
           <td align="left"><input name="username" tabIndex="1" value="" size="20" maxlength="150" /></td> 
         </tr> 
-        <tr class="tre"> 
+        <tr class="tro"> 
           <td align="right"><strong>Password</strong></td> 
           <td align="left"><input name="password" type="password" tabIndex="2" value="" size="20" maxLength="150" id="password"/></td> 
         </tr> 
-        <tr class="tro"> 
+        <tr class="tre"> 
           <td colspan="2" align="center"> 
             <input type="submit" tabIndex="4" value="Login" id="submit_btn"/>
             <input tabIndex="5" type="submit" value="Cancel" name="doCancel" /> 

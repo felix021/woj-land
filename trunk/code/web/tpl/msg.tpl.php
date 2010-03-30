@@ -15,15 +15,15 @@ class TPL_Main extends ctemplate
 
 eot;
         }
-        $errmsg = htmlspecialchars($p['msg']);
-        if (empty($errmsg))
+        $msg = htmlspecialchars($p['msg']);
+        if (empty($msg))
         {
-            $errmsg = "Feels good, doesn't it?";
+            $msg = "Feels good, doesn't it?";
         }
         echo <<<eot
-<div id="tt">Accepted!</div> 
+<div id="tt">Operation Accepted!</div> 
 <div id="main">
-<p><span class="ntc" style="font-size:14px;">$errmsg</span></p>
+<p><span class="ntc" style="font-size:16px;background-color:#f7ffe7">$msg</span></p>
 <p style="line-height:0px;"><br/></p>
 
 eot;

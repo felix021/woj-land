@@ -2,6 +2,9 @@
 
 class Main extends cframe
 {
+    protected $need_login = false;
+    protected $need_info  = false;
+
     public function process()
     {
         $source_id = (int)request::$arr_get['source_id'];
@@ -12,7 +15,7 @@ class Main extends cframe
         $source = db_fetch_line($conn, $sql);
         fail_test($conn, false);
 
-        if ($source['user_id'] != session::$user_id)
+        if ($source['user_id'] != session::ANONYMOUS_ID && $source['user_id'] != session::$user_id)
         {
             FM_LOG_WARNING("unauthorized access to source_extra_info");
             throw new Exception("You don't have permission to this page :(");

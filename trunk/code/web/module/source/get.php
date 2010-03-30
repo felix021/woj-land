@@ -2,6 +2,10 @@
 
 class Main extends cframe
 {
+    protected $need_info  = true;
+    //未登录不允许查看代码
+    protected $need_login = true;
+
     public function process()
     {
         $source_id = (int)request::$arr_get['source_id'];
@@ -14,13 +18,6 @@ class Main extends cframe
 
         $visible  = false;
         do {
-            //未登录不允许查看代码
-            if (false === session::$is_login)
-            {
-                response::add_link('Login', land_conf::$web_root . "/user/login");
-                throw new Exception("Please login first ~.~");
-            }
-
             //1. 提交者
             if ($source['user_id'] == session::$user_id)
             {

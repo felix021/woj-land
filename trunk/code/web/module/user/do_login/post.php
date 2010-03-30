@@ -2,6 +2,9 @@
 
 class Main extends cframe
 {
+    protected $need_login = false;
+    protected $need_info  = false;
+
     public function process()
     {
         $conn = db_connect();
@@ -22,17 +25,10 @@ eot;
             throw new Exception($msg);
         }
 
-        //FM_LOG_DEBUG('post: %s', print_r(request::$arr_post, true));
         $pass_seed = $line['password'] . request::$arr_post['seed'];
         $passEnc   = md5($pass_seed);
-        //FM_LOG_DEBUG("md5(%s) = %s", $pass_seed, $passEnc);
         if ($passEnc !== request::$arr_post['passEnc'])
         {
-            /*
-            FM_LOG_DEBUG("post: %s, %s\ndb: %s, %s",
-                request::$arr_post['passEnc'], request::$arr_post['seed'],
-                $passEnc, $line['password']);
-             */
             FM_LOG_WARNING('bad password');
             throw new Exception('Bad password!');
         }
@@ -54,8 +50,9 @@ eot;
         response::add_data('links', array(
             'Back'      => 'javascript:history.back(1)',
             'Problems'  => land_conf::$web_root . '/problem/volume',
+            'Contests'  => land_conf::$web_root . '/contest/list',
             ));
-        response::display_msg("Hey, you've logged in succeesfully~");
+        response::display_msg("The Flood has gone, welcome back to Land again!");
         return true;
     }
 }

@@ -7,8 +7,26 @@ class cframe implements iframe
     public $errno;
     public $err_info;
 
+    //默认需要session, 如不需要session，则覆盖为false
+    protected $need_session = true;
+
+    //默认不需要从数据库取出用户信息，如需要，则覆盖为true
+    protected $need_info    = false;
+
+    //默认不需要login, 如需要login，则覆盖为true
+    protected $need_login   = false;
+
     public function pre_process()
     {
+        if ($this->need_session)
+        {
+            session::init($this->need_info);
+            if ($this->need_login && !session::$is_login)
+            {
+                FM_LOG_WARNING("User not login");
+                response::set_redirect(land_conf::$web_root . "/user/login?need_login");
+            }
+        }
         return true;
     }
 
