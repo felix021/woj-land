@@ -14,7 +14,11 @@ class Main extends cframe
         }
          */
 
-        if (isset($_SERVER['HTTP_REFERER']))
+        if (isset(request::$arr_get['u']))
+        {
+            response::add_data("last_url", request::$arr_get['u']);
+        }
+        else if (isset($_SERVER['HTTP_REFERER']))
         {
             response::add_data("last_url", $_SERVER['HTTP_REFERER']);
         }
