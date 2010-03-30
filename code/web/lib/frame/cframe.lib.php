@@ -24,7 +24,8 @@ class cframe implements iframe
             if ($this->need_login && !session::$is_login)
             {
                 FM_LOG_WARNING("User not login");
-                response::set_redirect(land_conf::$web_root . "/user/login?need_login");
+                $return_url = urlencode($_SERVER['REQUEST_URI']);
+                response::set_redirect(land_conf::$web_root . "/user/login?need_login&u=$return_url");
             }
         }
         return true;

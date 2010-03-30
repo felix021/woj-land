@@ -57,7 +57,7 @@ function fillLoginForm()
         <tr class="tre"> 
           <td colspan="2" align="center"> 
             <input type="submit" tabIndex="4" value="Login" id="submit_btn"/>
-            <input tabIndex="5" type="submit" value="Cancel" name="doCancel" /> 
+            <input tabIndex="5" type="reset" value="Reset"/> 
           </td> 
         </tr> 
       </tbody></table> 
