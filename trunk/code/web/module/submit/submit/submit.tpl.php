@@ -75,7 +75,7 @@ function fillSubmitForm()
     { //Java
         lang_maybe = 3;
     }
-    else if (src.indexOf('begin') >= 0 && src.indexOf('end') >= 0)
+    else if ((/\bbegin\b/i).test(src) >= 0 && (/\bend\b/i).test(src) >= 0)
     { //pascal
         lang_maybe = 4;
     }
