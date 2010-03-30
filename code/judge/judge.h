@@ -466,7 +466,7 @@ int oj_compare_output(std::string file_std, std::string file_exec)
         FM_LOG_WARNING("open executive's output failed");
         exit(judge_conf::EXIT_COMPARE);
     }
-    int a, b;
+    int a, b, Na = 0, Nb = 0;
     enum {
         AC = judge_conf::OJ_AC,
         PE = judge_conf::OJ_PE,
@@ -476,6 +476,13 @@ int oj_compare_output(std::string file_std, std::string file_exec)
     {
         a = fgetc(fp_std);
         b = fgetc(fp_exe);
+        Na++, Nb++;
+
+        //统一\r和\n之间的区别
+        if (a == '\r') a = '\n';
+        if (b == '\r') b = '\n';
+#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\n'))
+
         if (feof(fp_std) && feof(fp_exe))
         {
             //如果两个文件都已经结束, 退出循环
@@ -486,20 +493,34 @@ int oj_compare_output(std::string file_std, std::string file_exec)
             //如果只有一个文件结束,
             //但是另一个文件的末尾是回车
             //那么也当做AC来进行处理
+            FM_LOG_TRACE("one file ended");
             FILE *fp_tmp;
             if (feof(fp_std))
             {
+                if (!is_space_char(b))
+                {
+                    FM_LOG_TRACE("WA exe['%c':0x%x @%d]", b, b, Nb);
+                    status = WA;
+                    break;
+                }
                 fp_tmp = fp_exe;
             }
-            else /* feof(fp_std) */
+            else /* feof(fp_exe) */
             {
+                if (!is_space_char(a))
+                {
+                    FM_LOG_TRACE("WA std['%c':0x%x @%d]", a, a, Na);
+                    status = WA;
+                    break;
+                }
                 fp_tmp = fp_std;
             }
             int c;
             while (c = fgetc(fp_tmp), c != EOF)
             {
-                if (c != '\n' && c != '\r')
+                if (!is_space_char(c))
                 {
+                    FM_LOG_TRACE("WA ['%c':0x%x]", c, c);
                     status = WA;
                     break;
                 }
@@ -507,16 +528,11 @@ int oj_compare_output(std::string file_std, std::string file_exec)
             break;
         }
 
-        //统一\r和\n之间的区别
-        if (a == '\r') a = '\n';
-        if (b == '\r') b = '\n';
-
         //如果两个字符不同，
         if (a != b)
         {
             status = PE; //可能是PE，再继续检测是否是WA
             //过滤空白字符
-#define is_space_char(a) ((a == ' ') || (a == '\t') || (a == '\n'))
             if (is_space_char(a) && is_space_char(b))
             {
                 //两个都是空白字符, 都过滤
@@ -526,15 +542,18 @@ int oj_compare_output(std::string file_std, std::string file_exec)
             {
                 //a是空白字符, 过滤, 退回b以便下一轮循环
                 ungetc(b, fp_exe);
+                Nb--;
             }
             else if (is_space_char(b))
             {
                 //b是空白字符, 过滤, 退回a以便下一轮循环
                 ungetc(a, fp_std);
+                Na--;
             }
             else
             {
                 //如果两个都不是空白字符且不相等, 就是WA
+                FM_LOG_TRACE("WA ['%c':0x%x @%d] : ['%c':0x%x @%d]", a, a, Na, b, b, Nb);
                 status = WA;
                 break;
             }
