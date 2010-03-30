@@ -518,6 +518,7 @@ int oj_compare_output(std::string file_std, std::string file_exec)
             int c;
             while (c = fgetc(fp_tmp), c != EOF)
             {
+                if (c == '\r') c = '\n';
                 if (!is_space_char(c))
                 {
                     FM_LOG_TRACE("WA ['%c':0x%x]", c, c);
