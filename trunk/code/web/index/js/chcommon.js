@@ -112,7 +112,7 @@
 
 	str1=cdh_H2(str1,fstr1,/(\/\/.*)/gim,"shCmm1");
 	str1=cdh_H3(str1,fstr1,/(\{(.|\n)*?\})/gim,"shCmm1");
-	str1=cdh_H2(str1,fstr1,/('.')/gim,"shString1");
+	str1=cdh_H2(str1,fstr1,/('.*?')/gim,"shString1");
 	var re1=/\b(integer|longint|shortint|word|byte|real|single|double|extended|comp|char|boolean|true|false|nil|string|file|record|array)\b/gim;
 	str1=cdh_H2(str1,fstr1,re1,"shType1");
 	var re1=/\b(begin|end|for|to|downto|do|while|repeat|until|if|then|else|case|of|goto|label|const|var|type|with|function|procedure|program|public|private|unit|export|uses|explicit|base|set|and|or|not|xor|div|mod|in)\b/gim;
