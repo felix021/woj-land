@@ -236,8 +236,8 @@ int main(int argc, char *argv[])
 
                 if (WIFEXITED(status))
                 {
-                    //子进程主动退出
-                    if (WEXITSTATUS(status) == EXIT_SUCCESS)
+                    //子进程主动退出 //看起来fpc也是不处理返回值的...
+                    if (true || WEXITSTATUS(status) == EXIT_SUCCESS)
                     {
                         //子进程返回0 (AC/PE,WA)
                         FM_LOG_TRACE("normal quit");
