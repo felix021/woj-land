@@ -14,14 +14,18 @@ class TPL_Main extends ctemplate
             $language .= "<option $sel value=\"$k\">&nbsp;$v&nbsp;</option>\n";
         }
  
-        echo '<div id="tt">Submit</div>';
+        echo <<<eot
+<div id="tt">Submit</div>
+
+  <div id="main"> 
+
+eot;
 
         if (!session::$is_login)
         {
             $anonymous = htmlspecialchars($p['anonymous_name']);
             echo <<<eot
-<br/>
-<span class="ntc">You haven't <a href="{$web_root}/user/login">login</a> yet, but you can still submit as user '$anonymous'</span>
+<p><span class="ntc" style="font-size:14px;">You haven't <a href="{$web_root}/user/login">login</a> yet, but you can still submit your code as user '$anonymous'</span></p>
 eot;
         }
         echo <<<eot
@@ -123,7 +127,6 @@ function ctrl_enter(evt)
 }
 
 </script>
-  <div id="main"> 
     <form action="{$web_root}/submit/do_submit" method="post"  onkeypress="javascript:ctrl_enter(event);" onsubmit="javascript:return fillSubmitForm();"> 
     <table><tbody> 
       <tr> 
