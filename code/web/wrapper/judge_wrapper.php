@@ -68,7 +68,7 @@ try
     $data_dir = wrapper_conf::DATA_PATH . "/" . $problem_id;
     $lang     = $source['lang'];
     $src_file = $temp_dir . "/" . $src_id . "." . wrapper_conf::$extension[$lang];
-    $cmd = wrapper_conf::JUDGE_PATH;
+    $cmd = wrapper_conf::JUDGE_PATH_ROOT . wrapper_conf::$judge_path[$lang];
     $cmd .= append_arg('u', $src_id);
     //$cmd .= append_arg('l', $lang);
     $cmd .= append_arg('s', $src_file);
