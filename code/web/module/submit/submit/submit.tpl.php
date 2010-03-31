@@ -58,35 +58,8 @@ function fillSubmitForm()
     }
     //> <script language="javascript">
     var lang        = $('lang').value;
-    var src         = source.value;
-    var lang_maybe  = -1;
+    var lang_maybe  = guess_lang(source.value);
     var pmt         = '';
-    if (src.indexOf('#include') >= 0 || src.indexOf('int main') >= 0)
-    { //C || C++
-        lang_maybe = 2;
-        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0) //C++
-            lang_maybe = 2;
-        else  //C
-        {
-            lang_maybe = 1;
-            if (lang == 2)
-                lang_maybe = 2; //C++兼容C
-        }
-            
-    }
-    else if (src.indexOf('java') > 0 || src.indexOf('System.out') >= 0 
-            || src.indexOf('public class') >= 0)
-    { //Java
-        lang_maybe = 3;
-    }
-    else if ((/\bbegin\b/i).test(src) >= 0 && (/\bend\b/i).test(src) >= 0)
-    { //pascal
-        lang_maybe = 4;
-    }
-    else
-    { //unknown
-        lang_maybe = 0;
-    }
 
     if (lang_maybe > 0 && lang_maybe != lang)
     {
@@ -126,6 +99,47 @@ function ctrl_enter(evt)
     }
 }
 
+function guess_lang(src)
+{
+    var lang_maybe  = -1;
+    if (src.indexOf('#include') >= 0 || src.indexOf('int main') >= 0)
+    { //C || C++
+        lang_maybe = 2;
+        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0) //C++
+            lang_maybe = 2;
+        else  //C
+        {
+            lang_maybe = 1;
+            if (lang == 2)
+                lang_maybe = 2; //C++兼容C
+        }
+            
+    }
+    else if (src.indexOf('java') > 0 || src.indexOf('System.out') >= 0 
+            || src.indexOf('public class') >= 0)
+    { //Java
+        lang_maybe = 3;
+    }
+    else if ((/\bbegin\b/i).test(src) && (/\bend\b/i).test(src))
+    { //pascal
+        lang_maybe = 4;
+    }
+    else
+    { //unknown
+        lang_maybe = 0;
+    }
+    return lang_maybe;
+}
+
+function change_lang()
+{
+    var lang = $('lang');
+    var lang_maybe = guess_lang($('source').value);
+    if (lang_maybe > 0)
+    {
+        lang.value = lang_maybe;
+    }
+}
 </script>
     <form action="{$web_root}/submit/do_submit" method="post"  onkeypress="javascript:ctrl_enter(event);" onsubmit="javascript:return fillSubmitForm();"> 
     <table><tbody> 
@@ -164,7 +178,7 @@ function ctrl_enter(evt)
       <tr class="tro" valign="top"> 
         <td></td> 
         <td align="right"><br/><strong>Source</strong></td> 
-        <td align="left"> *Press Ctrl + Enter to submit directly.<br/><textarea id="source" tabindex="1" name="source" rows="20" cols="80"></textarea></td> 
+        <td align="left"> *Press Ctrl + Enter to submit directly.<br/><textarea id="source" tabindex="1" name="source" rows="20" cols="80" onblur="javascript:change_lang();"></textarea></td> 
         <td></td> 
       </tr> 
       <tr class="tre"> 
