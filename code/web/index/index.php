@@ -39,7 +39,7 @@ try
     request::init();
 
     logger::log_add_info('logid:' . request::$logid);
-    logger::log_add_info('ip:' . $_SERVER['REMOTE_ADDR']);
+    logger::log_add_info('ip:' . request::$client_ip);
     logger::log_add_info('uri:' . request::$uri);
 
     $dispatch_filename = MODULE_ROOT . request::$uri .

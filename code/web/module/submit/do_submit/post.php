@@ -35,7 +35,7 @@ class Main extends cframe
         $source = db_escape($conn, $source);
         $username = db_escape($conn, $username);
         $submit_time = date("Y-m-d H:i:s");
-        $submit_ip   = $_SERVER['REMOTE_ADDR'];
+        $submit_ip   = request::$client_ip;
         //TODO contest_id
         $sql = <<<eot
 INSERT INTO `sources` 

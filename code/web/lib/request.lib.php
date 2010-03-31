@@ -10,6 +10,7 @@ class request
     public static $arr_post;
     public static $arr_cookie_raw;
     public static $arr_cookie;
+    public static $client_ip;
     public static $logid;
 
     public static function init()
@@ -34,7 +35,13 @@ class request
             apply_func_recursive("stripslashes", self::$arr_post);
             apply_func_recursive("stripslashes", self::$arr_cookie);
         }
-        self::$logid = crc32(time() + ip2long($_SERVER['REMOTE_ADDR'])) & 0x7FFFFFFF;
+
+        self::$client_ip        = $_SERVER['REMOTE_ADDR'];
+        if (isset($_SERVER['HTTP_X_FORWARDED_FOR']))
+        {
+            self::$client_ip    = $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        self::$logid = crc32(microtime() . ip2long(self::$client_ip)) & 0x7FFFFFFF;
     }
 }
 
