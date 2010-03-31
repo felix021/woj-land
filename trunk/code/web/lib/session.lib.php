@@ -58,6 +58,25 @@ final class session
         self::$user_id  = self::ANONYMOUS_ID;
         session_destroy();
     }
+
+    public static function gen_vcode($len = 6)
+    {
+        if ($len <= 0) $len = 6;
+        $vcode = rndstr($len);
+        $_SESSION['land_vcode'] = $vcode;
+        return $vcode;
+    }
+
+    public static function get_vcode()
+    {
+        $vcode = false;
+        if (isset($_SESSION['land_vcode']))
+        {
+            $vcode = $_SESSION['land_vcode'];
+            unset($_SESSION['land_vcode']); //vcode只能用一次
+        }
+        return $vcode;
+    }
 }
 
 ?>

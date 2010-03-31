@@ -26,7 +26,7 @@ class Main extends cframe
         {
             response::add_data("last_url", land_conf::$web_root);
         }
-        response::add_data("seed", rndstr(6));
+        response::add_data("seed", session::gen_vcode());
         if (isset(request::$arr_get['need_login']))
         {
             response::add_data("need_login", true);
