@@ -7,6 +7,21 @@ class Main extends cframe
 
     public function process()
     {
+        //先验证session中的seed
+        $seed = session::get_vcode();
+        if (false === $seed)
+        {
+            FM_LOG_WARNING("no seed set in session, suspicious attacker(or stayed too long in login page)");
+            response::add_link('Login', land_conf::$web_root . '/user/login');
+            throw new Exception('Error encountered, please try to login again');
+        }
+        else if ($seed != request::$arr_post['seed'])
+        {
+            FM_LOG_WARNING("bad seed, suspicious attacker");
+            response::add_link('Login', land_conf::$web_root . '/user/login');
+            throw new Exception('Error encountered, please try to login again');
+        }
+
         $conn = db_connect();
         fail_test($conn);
 
@@ -25,7 +40,7 @@ eot;
             throw new Exception($msg);
         }
 
-        $pass_seed = $line['password'] . request::$arr_post['seed'];
+        $pass_seed = $line['password'] . $seed;
         $passEnc   = md5($pass_seed);
         if ($passEnc !== request::$arr_post['passEnc'])
         {
@@ -44,7 +59,7 @@ eot;
         $url = request::$arr_post['origURL'];
         if (!preg_match("/\/user\/(login|logout)/", $url))
         {
-            response::set_redirect($url);
+                response::set_redirect($url);
         }
 
         response::add_data('links', array(

@@ -7,6 +7,18 @@ class Main extends cframe
 
     public function process()
     {
+        $seed = session::get_vcode();
+        if (false === $seed)
+        {
+            FM_LOG_WARNING("no seed set in session, suspicious attacker(or stayed too long in setting page)");
+            throw new Exception('Error encountered, please try again.');
+        }
+        else if ($seed != request::$arr_post['seed'])
+        {
+            FM_LOG_WARNING("bad seed, suspicious attacker");
+            throw new Exception('Error encountered, please try again.');
+        }
+
         $user_id    = (int)session::$user_id;
         $sql        = 'SELECT `password` FROM `users` WHERE `user_id`=' . $user_id;
         $conn       = db_connect();
@@ -14,10 +26,9 @@ class Main extends cframe
         $user       = db_fetch_line($conn, $sql);
         fail_test($user, false);
 
-        $pass_seed  = request::$arr_post['seed'];
         $passEnc    = request::$arr_post['passEnc'];
 
-        if ($passEnc != md5($user['password'] . $pass_seed))
+        if ($passEnc != md5($user['password'] . $seed))
         {
             FM_LOG_WARNING("bad password");
             throw new Exception("Please input the right password!");

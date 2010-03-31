@@ -47,6 +47,13 @@ class response
     public static function set_redirect($url)
     {
         ob_clean();
+        //增加这一段是为了保证不会重定向到未知网站，以免被利用
+        $arr_url = parse_url($url);
+        $url = $arr_url['path'];
+        if (isset($arr_url['query'])) $url .= '?' . $arr_url['query'];
+        if (isset($arr_url['fragment'])) $url .= '#' . $arr_url['fragment'];
+        //FM_LOG_DEBUG("redirect to: %s", $url);
+
         header("HTTP/1.1 301 Moved Permanently");
         header("location: " . $url);
         exit();

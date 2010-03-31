@@ -9,7 +9,7 @@ class Main extends cframe
     {
         response::add_data('user', session::$user_info);
         response::add_data('lang', land_conf::$lang);
-        response::add_data('seed', rndstr(6));
+        response::add_data('seed', session::gen_vcode());
         return true;
     }
 
