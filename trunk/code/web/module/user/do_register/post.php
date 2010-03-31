@@ -42,7 +42,7 @@ class Main extends cframe
         //FM_LOG_DEBUG("post: %s", print_r(request::$arr_post, true));
         extract(request::$arr_post, EXTR_PREFIX_ALL, "REG");
         $REG_time = date("Y-m-d H:i:s");
-        $REG_ip   = $_SERVER['REMOTE_ADDR'];
+        $REG_ip   = request::$client_ip;
         $REG_share_code = isset(request::$arr_post['share_code']) ? 1 : 0;
         $sql = <<<eot
 INSERT INTO `users` 
