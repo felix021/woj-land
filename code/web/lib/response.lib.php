@@ -82,7 +82,21 @@ class response
     public static function display_msg($msg)
     {
         self::add_data('msg', $msg);
+        if (!isset(self::$arr_data['links']['Go Back']))
+        {
+            self::add_link('Go Back', 'javascript:history.back(1)');
+        }
         self::set_tpl(TPL_ROOT . '/msg.tpl.php');
+    }
+
+    public static function display_err($msg, $do_exit = true)
+    {
+        self::add_data('errmsg', $msg);
+        self::add_link('Go Back', 'javascript:history.back(1)');
+        self::set_tpl(TPL_ROOT . '/error.tpl.php');
+        self::display();
+        if ($do_exit) 
+            exit();
     }
 
     public static function add_links($arr_links)

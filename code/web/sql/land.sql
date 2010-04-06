@@ -126,12 +126,14 @@ CREATE TABLE `problem_at_contest`
 CREATE TABLE `mails`
 (
  `mail_id` int primary key auto_increment,
- `from_user_id` int,
- `to_user_id` int,
- `send_time` datetime,
+ `from_user_id` int NOT NULL DEFAULT 0,
+ `from_username` char(20) NOT NULL,
+ `to_user_id` int NOT NULL DEFAULT 0,
+ `to_username` char(20) NOT NULL DEFAULT 0,
+ `send_time` datetime NOT NULL,
  `title` char(100),
  `content` text,
  `unread` tinyint NOT NULL DEFAULT 1,
  `reader_del` tinyint NOT NULL DEFAULT 0,
  `writer_del` tinyint NOT NULL DEFAULT 0
-);
+) ENGINE=MyISAM DEFAULT CHARSET=utf8; 

@@ -59,3 +59,37 @@ function key_event(evt, func){
     }  
 }
 
+var lang_names = ['Unknown', 'C', 'C++', 'Java', 'Pascal'];
+function guess_lang(lang, src)
+{
+    var lang_maybe  = -1;
+    if (src.indexOf('#include') >= 0 || src.indexOf('int main') >= 0)
+    { //C || C++
+        lang_maybe = 2;
+        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0
+            || src.indexOf('cstdio')) //C++
+            lang_maybe = 2;
+        else  //C
+        {
+            lang_maybe = 1;
+            if (lang == 2)
+                lang_maybe = 2; //C++兼容C
+        }
+            
+    }
+    else if (src.indexOf('java') > 0 || src.indexOf('System.out') >= 0 
+            || src.indexOf('public class') >= 0)
+    { //Java
+        lang_maybe = 3;
+    }
+    else if ((/\bbegin\b/i).test(src) && (/\bend\b/i).test(src))
+    { //pascal
+        lang_maybe = 4;
+    }
+    else
+    { //unknown
+        lang_maybe = 0;
+    }
+    return lang_maybe;
+}
+

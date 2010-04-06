@@ -50,6 +50,10 @@ final class land_conf
     //ranklist
     const USERS_PER_PAGE        = 20;
 
+    //mail
+    const MAILS_PER_PAGE        = 20; 
+    const MAIL_SLICE_LEN        = 200; //characters
+
     //status
     const STATUS_PER_PAGE       = 20;
     const OJ_WAIT               = 0; //Queue
