@@ -57,7 +57,7 @@ class cframe_loader
         }
     }
 
-    protected function load($args)
+    protected static function load($args)
     {
         $class_name = array_shift($args);
         if (count($args) == 0)

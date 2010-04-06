@@ -151,4 +151,21 @@ function get_privileges_by_groups($group_ids)
     return $priv;
 }
 
+function land_err_handler($errno, $errstr, $errfile, $errline)
+{
+    if (logger::$log_opened)
+    {
+        FM_LOG_FATAL("PHP_ERROR: [%s:%s] %d: %s",
+            $errfile, $errline, $errno, $errstr);
+        response::set_redirect(land_conf::$web_root . '/error.html');
+        return true;
+    }
+    else
+    {
+        printf("PHP_ERROR: [%s:%s] %d: %s",
+            $errfile, $errline, $errno, $errstr);
+        return false;
+    }
+}
+
 ?>

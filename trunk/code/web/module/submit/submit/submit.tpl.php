@@ -32,10 +32,8 @@ eot;
 
 <script language="javascript">
 
-
 function fillSubmitForm()
 {
-    var lang_names = ['Unknown', 'C', 'C++', 'Java', 'Pascal'];
     var source = $('source');
     if (source.value.length < {$p['min_len']})
     {
@@ -58,7 +56,7 @@ function fillSubmitForm()
     }
     //> <script language="javascript">
     var lang        = $('lang').value;
-    var lang_maybe  = guess_lang(source.value);
+    var lang_maybe  = guess_lang(lang, source.value);
     var pmt         = '';
 
     if (lang_maybe > 0 && lang_maybe != lang)
@@ -99,13 +97,14 @@ function ctrl_enter(evt)
     }
 }
 
-function guess_lang(src)
+function guess_lang(lang, src)
 {
     var lang_maybe  = -1;
     if (src.indexOf('#include') >= 0 || src.indexOf('int main') >= 0)
     { //C || C++
         lang_maybe = 2;
-        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0) //C++
+        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0
+            || src.indexOf('cstdio')) //C++
             lang_maybe = 2;
         else  //C
         {
@@ -134,7 +133,7 @@ function guess_lang(src)
 function change_lang()
 {
     var lang = $('lang');
-    var lang_maybe = guess_lang($('source').value);
+    var lang_maybe = guess_lang(lang.value, $('source').value);
     if (lang_maybe > 0)
     {
         lang.value = lang_maybe;

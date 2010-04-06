@@ -4,11 +4,11 @@ class TPL_Main extends ctemplate
 {
     public function display($p)
     {
-        $web_root = land_conf::$web_root;
-        $source = $p['source'];
-        $language = land_conf::$lang[$source['lang']];
-        $result = land_conf::$result_name[$source['result']];
-        $username = htmlspecialchars($source['username']);
+        $web_root   = land_conf::$web_root;
+        $source     = $p['source'];
+        $language   = land_conf::$lang[$source['lang']];
+        $result     = land_conf::$result_name[$source['result']];
+        $username   = htmlspecialchars($source['username']);
 
         $code = htmlspecialchars($source['source_code']);
         $code = str_replace("\r\n", "\n", $code);
@@ -35,7 +35,13 @@ class TPL_Main extends ctemplate
     <div class="code" id="code">$code</div> 
     </div> 
 
-    <script language="javascript">CodeHilight('code', '$language');</script>
+    <script language="javascript">
+    var src = $('code').innerHTML;
+    var language = '$language';
+    var lang_maybe = guess_lang({$source['lang']}, src);
+    if (lang_maybe > 0) language = lang_names[lang_maybe];
+    CodeHilight('code', language);
+    </script>
 eot;
         return true;
     }

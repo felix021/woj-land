@@ -29,6 +29,8 @@ require_once(LIB_ROOT . "/frame/cframe_loader.lib.php");
 require_once(LIB_ROOT . "/template/ctemplate.lib.php");
 require_once(LIB_ROOT . "/template/ctemplate_run.lib.php");
 
+set_error_handler('land_err_handler');
+
 try
 {
     if (false === logger::log_open(land_conf::LOG_FILE))
@@ -58,11 +60,7 @@ try
 }
 catch (Exception $e)
 {
-    response::add_header("HTTP/1.1 403 Not Authorized");
-    response::add_data('errmsg', $e->getMessage());
-    response::add_link('Go Back', 'javascript:history.back(1)');
-    response::set_tpl(TPL_ROOT . "/error.tpl.php");
-    response::display();
+    response::display_err($e->getMessage());
 }
 
 ?>

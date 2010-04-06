@@ -39,7 +39,7 @@ $nav1
 <a href="$web_root/status">Status</a> | 
 <a href="$web_root/ranklist">Ranklist</a> | 
 $nav2
-<a href="$web_root/mail/list">Mail</a> | 
+<a href="$web_root/mail/inbox">Mail</a> | 
 <a href="$web_root/faq.html" target="_blank">FAQ</a> 
 </div> 
 

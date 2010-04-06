@@ -1,5 +1,7 @@
 <?php
 
+require_once(MODULE_ROOT . '/user/user.func.php');
+
 class Main extends cframe
 {
     protected $need_login = false;
@@ -10,16 +12,15 @@ class Main extends cframe
         $user_id  = session::ANONYMOUS_ID;
         $username = session::ANONYMOUS_NAME;
         $sql = 'SELECT * FROM `users` WHERE ';
-        $conn = db_connect();
+        $user = null;
+        $conn = null;
         if (isset(request::$arr_get['user_id']))
         {
-            $user_id = (int)request::$arr_get['user_id'];
-            $sql .= "`user_id`=$user_id";
+            $user = get_user_by_user_id($conn, request::$arr_get['user_id']);
         }
         else if (isset(request::$arr_get['username']))
         {
-            $username = request::$arr_get['username'];
-            $sql .= "`username`='" . db_escape($conn, $username) . "'";
+            $user = get_user_by_username($conn, request::$arr_get['username']);
         }
         else
         {
@@ -28,8 +29,6 @@ class Main extends cframe
             throw new Exception("");
         }
 
-        $user = db_fetch_line($conn, $sql);
-        FM_LOG_DEBUG("user: %s", print_r($user, true));
         if (false == $user)
         {
             FM_LOG_WARNING("unknown user");
