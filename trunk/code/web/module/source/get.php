@@ -2,7 +2,6 @@
 
 class Main extends cframe
 {
-    protected $need_info  = true;
     //未登录不允许查看代码
     protected $need_login = true;
 
@@ -36,9 +35,8 @@ class Main extends cframe
 
             //3. 有看代码权限
             $group_ids = session::$user_info['group_ids'];
-            $priv = get_privileges_by_groups($group_ids);
             //FM_LOG_DEBUG("priv: %s", print_r($priv, true));
-            if ($priv['view_src'])
+            if (is_array(session::$priv) && session::$priv['view_src'])
             {
                 $visible = true;
                 break;

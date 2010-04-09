@@ -59,13 +59,14 @@ eot;
         $page = (int)$p['page'];
         $prev = $page > 2 ? $page - 1 : 1;
         $next = $page + 1;
+        $box_name = strtolower($this->box_name);
         echo <<<eot
         </tbody>
     </table> 
     <br /> 
-    <span class="bt"><a href="$web_root/mail/inbox">&nbsp;TOP&nbsp;</a></span> &nbsp;
-    <span class="bt"><a href="$web_root/mail/inbox?page=$prev">&nbsp;Prev&nbsp;</a></span> &nbsp;
-    <span class="bt"><a href="$web_root/mail/inbox?page=$next">&nbsp;Next&nbsp;</a></span> 
+    <span class="bt"><a href="$web_root/mail/{$box_name}">&nbsp;TOP&nbsp;</a></span> &nbsp;
+    <span class="bt"><a href="$web_root/mail/{$box_name}?page=$prev">&nbsp;Prev&nbsp;</a></span> &nbsp;
+    <span class="bt"><a href="$web_root/mail/{$box_name}?page=$next">&nbsp;Next&nbsp;</a></span> 
     <br /><br /> 
 </div> 
 eot;

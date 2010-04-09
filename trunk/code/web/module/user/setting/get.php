@@ -3,7 +3,6 @@
 class Main extends cframe
 {
     protected $need_login = true;
-    protected $need_info  = true;
 
     public function process()
     {

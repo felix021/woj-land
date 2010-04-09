@@ -6,7 +6,6 @@ class Main extends cframe
 {
 
     protected $need_session = true;
-    protected $need_info    = true;
     protected $need_login   = true;
 
     public function process()
@@ -28,6 +27,7 @@ class Main extends cframe
         }
         db_close($conn);
 
+        session::read_mail();
         response::add_data('mail', $mail);
         response::add_data('out_mail', $mail['from_user_id'] == $uid);
         return true;

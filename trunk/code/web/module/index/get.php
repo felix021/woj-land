@@ -2,13 +2,16 @@
 
 class Main extends cframe
 {
-    protected $need_info  = false;
-    protected $need_login = false;
+    protected $need_session = true;
+    protected $need_login   = false;
 
     public function process()
     {
+        response::add_data('priv', session::$priv);
+
         $diligent = cache_util::load('diligent');
         response::add_data_arr(array('diligent' => $diligent));
+
         return true;
     }
 

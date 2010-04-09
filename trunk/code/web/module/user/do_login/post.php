@@ -3,7 +3,6 @@
 class Main extends cframe
 {
     protected $need_login = false;
-    protected $need_info  = false;
 
     public function process()
     {
@@ -49,7 +48,9 @@ eot;
         }
 
         $user_id = $line['user_id'];
+
         session::set_login($user_id);
+        session::init(session::DO_UPDATE);
         
         return true;
     }
