@@ -199,4 +199,9 @@ function land_err_handler($errno, $errstr, $errfile, $errline)
     }
 }
 
+function is_admin()
+{
+    return (isset(session::$priv['admin']) && session::$priv['admin'] == 1);
+}
+
 ?>

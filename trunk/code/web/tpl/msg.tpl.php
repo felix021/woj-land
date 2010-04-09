@@ -23,7 +23,7 @@ eot;
         echo <<<eot
 <div id="tt">Operation Accepted!</div> 
 <div id="main">
-<p><span class="ntc" style="font-size:16px;background-color:#f7ffe7">$msg</span></p>
+<p><span class="ifm" style="font-size:14px;">$msg</span></p>
 <p style="line-height:0px;"><br/></p>
 
 eot;

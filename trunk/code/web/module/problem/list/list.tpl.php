@@ -6,9 +6,11 @@ class TPL_Main extends ctemplate
     {
         $web_root = land_conf::$web_root;
         $problem_data = json_encode($p['problems']);
+        $is_admin = is_admin() ? 1 : 0;
         echo <<<eot
 <script language="javascript">
 var problem_data = $problem_data;
+var is_admin = $is_admin;
 function show_problem_data(data)
 {
 try
@@ -33,7 +35,7 @@ try
     th.innerHTML = '<a href="javascript:sort_by(cmp_id)">ID</a>';
     tr.appendChild(th);
     th      = document.createElement('th');
-    th.width = 590;
+    th.width = 550;
     th.innerHTML = 'Title';
     tr.appendChild(th);
     th      = document.createElement('th');
@@ -43,6 +45,12 @@ try
       + ' (<a href="javascript:sort_by(cmp_accepted)">AC</a>/'
       + '<a href="javascript:sort_by(cmp_total)">Total</a>)';
     tr.appendChild(th);
+    if (is_admin)
+    {
+        th      = document.createElement('th');
+        th.innerHTML = "Operation";
+        tr.appendChild(th);
+    }
     tbody.appendChild(tr);
 
     for (var i = 0; i < data.length; i++)
@@ -64,6 +72,13 @@ try
         td.innerHTML = data[i].ratio + 
             '% (' + data[i].accepted + '/' + data[i].submitted + ')';
         tr.appendChild(td);
+        if (is_admin)
+        {
+            td = document.createElement('td');
+            td.innerHTML = '<a href="{$web_root}/problem/edit?problem_id='
+                         + data[i].problem_id + '">EDIT</a>';
+            tr.appendChild(td);
+        }
         tbody.appendChild(tr);
     }
 
