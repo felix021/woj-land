@@ -3,7 +3,6 @@
 abstract class mailbox extends cframe
 {
     protected $need_login = true;
-    protected $need_info  = true;
 
     protected $param_id   = '';
     protected $param_del  = '';

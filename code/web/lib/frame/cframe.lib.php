@@ -10,9 +10,6 @@ class cframe implements iframe
     //默认需要session, 如不需要session，则覆盖为false
     protected $need_session = true;
 
-    //默认不需要从数据库取出用户信息，如需要，则覆盖为true
-    protected $need_info    = false;
-
     //默认不需要login, 如需要login，则覆盖为true
     protected $need_login   = false;
 
@@ -20,11 +17,15 @@ class cframe implements iframe
     {
         if ($this->need_session)
         {
-            session::init($this->need_info);
+            session::init();
             if ($this->need_login && !session::$is_login)
             {
                 FM_LOG_WARNING("User not login");
                 $return_url = urlencode($_SERVER['REQUEST_URI']);
+                if ($SERVER['REQUEST_METHOD'] == 'POST')
+                {
+                    $return_url = urlencode(force_read($_SERVER, 'HTTP_REFERER'));
+                }
                 response::set_redirect(land_conf::$web_root . "/user/login?need_login&u=$return_url");
             }
         }

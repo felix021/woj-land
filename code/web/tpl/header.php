@@ -4,11 +4,23 @@ class header implements itemplate
 {
     public function display($p)
     {
+        $nav0 = "";
         $nav1 = "";
         $nav2 = "";
+        $mail_color = '';
         $web_root = land_conf::$web_root;
         if (session::$is_login)
         {
+            if (is_array(session::$priv) && session::$priv['admin'] == 1)
+            {
+                $nav0 = '<a href="' . $web_root . '/admin">Admin</a> | ';
+            }
+            
+            if (session::$n_unread > 0)
+            {
+                $mail_color = 'style="color:red;"';
+            }
+
             $nav1 = '<a href="' . $web_root . '/user/logout">Logout</a> | ';
             $nav2 = '<a href="' . $web_root . '/user/setting">Setting</a> | ';
         }
@@ -31,6 +43,7 @@ class header implements itemplate
 <center> 
 <div id="bar"> 
 <a href="$web_root">Home</a> | 
+$nav0
 $nav1
 <a href="$web_root/problem/volume">Problems</a> | 
 <a href="$web_root/contest/list">Contests</a> | 
@@ -39,7 +52,7 @@ $nav1
 <a href="$web_root/status">Status</a> | 
 <a href="$web_root/ranklist">Ranklist</a> | 
 $nav2
-<a href="$web_root/mail/inbox">Mail</a> | 
+<a href="$web_root/mail/inbox" $mail_color>Mail</a> | 
 <a href="$web_root/faq.html" target="_blank">FAQ</a> 
 </div> 
 

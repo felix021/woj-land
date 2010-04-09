@@ -3,7 +3,6 @@
 class Main extends cframe
 {
     protected $need_login = true;
-    protected $need_info  = false;
 
     public function process()
     {
@@ -59,6 +58,7 @@ eot;
         $res = db_query($conn, $sql);
         fail_test($res, false);
 
+        session::init(session::DO_UPDATE);
         response::add_link('Examine', land_conf::$web_root . '/user/detail?user_id=' . $user_id);
         response::add_link('Go Back', 'javascript:history.back(1);');
         response::display_msg("You've successfully updated your information :)");

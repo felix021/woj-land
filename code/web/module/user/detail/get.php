@@ -5,7 +5,6 @@ require_once(MODULE_ROOT . '/user/user.func.php');
 class Main extends cframe
 {
     protected $need_login = false;
-    protected $need_info  = false;
 
     public function process()
     {
