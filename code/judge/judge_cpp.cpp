@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
             exit(judge_conf::EXIT_COMPILE);
         }
 
-        FM_LOG_TRACE("start: g++ -w -O2 -DOJ -o %s %s",
+        FM_LOG_TRACE("start: g++ -static -w -O2 -DOJ -o %s %s",
                 problem::exec_file.c_str(), problem::source_file.c_str());
         malarm(ITIMER_REAL, judge_conf::compile_time_limit);
-        execlp("g++", "g++", "-w", "-O2", "-DOJ",
+        execlp("g++", "g++", "-static", "-w", "-O2", "-DOJ",
                "-o", problem::exec_file.c_str(),
                problem::source_file.c_str(),
                NULL);
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
                 exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
             }
             //载入程序
-            execlp("./a.out", "a.out", NULL);
+            execl("./a.out", "a.out", NULL);
 
             //运行到此说明execlp出错了, 无法打日志了
             exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);
@@ -237,7 +237,7 @@ int main(int argc, char *argv[])
                 if (WIFEXITED(status))
                 {
                     //子进程主动退出
-                    if (WEXITSTATUS(status) == EXIT_SUCCESS)
+                    if (true || WEXITSTATUS(status) == EXIT_SUCCESS)
                     {
                         //子进程返回0 (AC/PE,WA)
                         FM_LOG_TRACE("normal quit");

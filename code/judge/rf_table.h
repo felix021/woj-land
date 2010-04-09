@@ -30,7 +30,6 @@ int RF_C[512] =
     SYS_brk,            -1,
     SYS_access,         -1,
     SYS_mmap2,          -1,
-    SYS_open,           2,
     SYS_fstat64,        -1,
     SYS_close,          -1,
     SYS_read,           -1,
@@ -39,6 +38,7 @@ int RF_C[512] =
     SYS_munmap,         -1,
     SYS_write,          -1,
     SYS_exit_group,     -1,
+    SYS_uname,          -1,
     0
 };
 
@@ -48,7 +48,6 @@ int RF_CPP[512] =
     SYS_brk,            -1,
     SYS_access,         -1,
     SYS_mmap2,          -1,
-    SYS_open,           5,
     SYS_fstat64,        -1,
     SYS_close,          -1,
     SYS_read,           -1,
@@ -57,6 +56,7 @@ int RF_CPP[512] =
     SYS_munmap,         -1,
     SYS_write,          -1,
     SYS_exit_group,     -1,
+    SYS_uname,          -1,
     0
 };
 
@@ -76,6 +76,7 @@ int RF_PASCAL[512] =
     SYS_munmap,         -1,
     0
 };
+
 //Java (TODO暂未测试)
 int RF_JAVA[512] = 
 {
