@@ -6,6 +6,8 @@ class TPL_Main extends ctemplate
     {
         $web_root = land_conf::$web_root;
         $problem = $p['problem'];
+        $edit_button = '';
+        $defunct_button = '';
         foreach ($problem as $key => &$v)
         {
             $v = htmlspecialchars($v);
@@ -15,6 +17,13 @@ class TPL_Main extends ctemplate
             $v = str_replace("  ", "&nbsp;", $v);
         }
         $SPJ = $problem['spj'] == 1 ? "Yes" : "No";
+
+        if (is_admin())
+        {
+            $edit_button    = "<span class=\"bt\"><a href=\"{$web_root}/problem/edit?problem_id={$problem['problem_id']}\">Edit</a></span>";
+            $defunct_button = "<span class=\"bt\"><a href=\"{$web_root}/problem/defuct?problem_id={$problem['problem_id']}\">Defunct</a></span>";
+        }
+
         echo <<<eot
   <div id="tt"> Problem {$problem['problem_id']} - {$problem['title']} </div> 
   
@@ -61,6 +70,8 @@ class TPL_Main extends ctemplate
       <span class="bt"><a href="{$web_root}/submit/submit?problem_id={$problem['problem_id']}">Submit</a></span>  
       <!-- TODO <span class="bt"><a href="{$web_root}/discuss/list?problem_id={$problem['problem_id']}">Discuss</a></span>  -->
       <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Status</a></span> 
+      $edit_button
+      $defunct_button
     </div> 
     <br /> 
   </div> 

@@ -62,4 +62,24 @@ class cframe implements iframe
     }
 }
 
+class acframe extends cframe
+{
+    protected $need_admin = true;
+
+    public function pre_process()
+    {
+        if (false === parent::pre_process())
+        {
+            return false;
+        }
+
+        if (!is_admin())
+        {
+            throw new Exception("You don't have permission to access this page :(");
+        }
+
+        return true;
+    }
+}
+
 ?>
