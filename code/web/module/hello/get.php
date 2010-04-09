@@ -9,7 +9,7 @@ class Main extends cframe
 
     public function process()
     {
-        FM_LOG_TRAC('');
+        date();
         return true;
     }
 
