@@ -153,17 +153,48 @@ function get_privileges_by_groups($group_ids)
 
 function land_err_handler($errno, $errstr, $errfile, $errline)
 {
+    $level_str = "";
+    $fatal = false;
+    switch ($errno)
+    {
+        case E_ERROR:
+            $level_str = "ERROR";
+            $fatal     = true;
+            break;
+        case E_WARNING:
+            $level_str = "WARNING";
+            break;
+        case E_NOTICE:
+            $level_str = "NOTICE";
+            break;
+        case E_PARSE:
+            $level_str = "PARSE";
+            break;
+        default:
+            $level_str = "UNKNOWN";
+            break;
+    }
     if (logger::$log_opened)
     {
-        FM_LOG_FATAL("PHP_ERROR: [%s:%s] %d: %s",
-            $errfile, $errline, $errno, $errstr);
-        response::set_redirect(land_conf::$web_root . '/error.html');
-        return true;
+        FM_LOG_FATAL("PHP_%s: [%s:%s] %d: %s",
+            $level_str, $errfile, $errline, $errno, $errstr);
+        if ($fatal)
+        {
+            response::set_redirect(land_conf::$web_root . '/error.html');
+        }
+        if (land_conf::DEBUG)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
     else
     {
-        printf("PHP_ERROR: [%s:%s] %d: %s",
-            $errfile, $errline, $errno, $errstr);
+        printf("PHP_%s: [%s:%s] %d: %s",
+            $level_str, $errfile, $errline, $errno, $errstr);
         return false;
     }
 }
