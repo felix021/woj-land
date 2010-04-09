@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
                 exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
             }
             //载入程序
-            execlp("./a.out", "a.out", NULL);
+            execl("./a.out", "a.out", NULL);
 
             //运行到此说明execlp出错了, 无法打日志了
             exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);

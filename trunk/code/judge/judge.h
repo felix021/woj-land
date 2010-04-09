@@ -306,17 +306,13 @@ void set_security_option()
         exit(judge_conf::EXIT_SET_SECURITY);
     }
     FM_LOG_DEBUG("cwd: %s", cwd);
-    /*
-     //发现chroot以后无法正常载入可执行程序, 所以暂不使用此功能
+    
     if (EXIT_SUCCESS != chroot(cwd))
     {
         FM_LOG_WARNING("chroot(%s) failed, %d: %s",
                 cwd, errno, strerror(errno));
         exit(judge_conf::EXIT_SET_SECURITY);
     }
-    tmp = getcwd(cwd, 1024);
-    FM_LOG_DEBUG("cwd: %s", cwd);
-    */
 
     //setuid
     if (EXIT_SUCCESS != setuid(nobody->pw_uid))
@@ -328,6 +324,7 @@ void set_security_option()
 
     FM_LOG_TRACE("set_security_option ok");
 }
+
 // copied from
 // http://csourcesearch.net/c/fid471AEC75A44B4EB7F79BAB9F1C5DE7CA616177E5.aspx
 int strincmp(const char *s1, const char *s2, int n)

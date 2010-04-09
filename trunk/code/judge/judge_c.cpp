@@ -69,10 +69,10 @@ int main(int argc, char *argv[])
             exit(judge_conf::EXIT_COMPILE);
         }
 
-        FM_LOG_TRACE("start: gcc -w -O2 -DOJ -o %s %s",
+        FM_LOG_TRACE("start: gcc -static -w -O2 -DOJ -o %s %s",
                 problem::exec_file.c_str(), problem::source_file.c_str());
         malarm(ITIMER_REAL, judge_conf::compile_time_limit);
-        execlp("gcc", "gcc", "-w", "-O2", "-DOJ",
+        execlp("gcc", "gcc", "-static", "-w", "-O2", "-DOJ",
                "-o", problem::exec_file.c_str(),
                problem::source_file.c_str(),
                NULL);
@@ -211,7 +211,7 @@ int main(int argc, char *argv[])
                 exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
             }
             //载入程序
-            execlp("./a.out", "a.out", NULL);
+            execl("./a.out", "a.out", NULL);
 
             //运行到此说明execlp出错了, 无法打日志了
             exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);
