@@ -12,10 +12,17 @@ class TPL_Main extends ctemplate
     <table><tbody> 
     <tr><th>Quick Launch</th></tr> 
     <tr class="tro"><td><a href="$web_root/problem/add">Add a new problem</a></td></tr> 
-    <tr class="tre"><td><a href="$web_root/contest/add">Add a new contest</a></td></tr> 
-    <tr class="tro"><td><a href="$web_root/submit/admin">Submit in Admin's Home</a></td></tr> 
-    <tr class="tre"><td><a href="$web_root/status/admin">See the status in Admin's Home</a></td></tr> 
-    <tr class="tro"><td><a href="$web_root/upload">Upload Files</a></td></tr> 
+    <tr class="tre">
+        <td>
+          <form method="get" action="$web_root/files/manage">
+            Problem ID: <input type="text" name="problem_id" value="1001" size="10" /> 
+            <input type="submit" value="Manage Files"/>
+          </form>
+        </td>
+    </tr> 
+    <tr class="tro"><td><a href="$web_root/contest/add">Add a new contest</a></td></tr> 
+    <tr class="tre"><td><a href="$web_root/submit/submit?admin">Submit as an administrator</a></td></tr> 
+    <tr class="tro"><td><a href="$web_root/status?admin">View admin status</a></td></tr> 
     <tr class="tre"><td><a href="$web_root/user/admin">User Management</a></td></tr> 
     <tr class="tro"><td><a href="$web_root/notice">Set Notice</a></td></tr> 
     </tbody></table> 

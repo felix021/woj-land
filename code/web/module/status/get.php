@@ -14,6 +14,19 @@ class Main extends cframe
     public function process()
     {
         $page = 1;
+        $admin = '';
+        $tbl_name = 'sources';
+        if (isset(request::$arr_get['admin']))
+        {
+            if (!is_admin())
+            {
+                throw new Exception("You don't jave permission to view admin status.");
+            }
+            $admin = 'admin';
+            $tbl_name = 'admin_sources';
+        }
+        response::add_data('admin', $admin);
+
         if (isset(request::$arr_get['page']))
         {
             $page = (int)request::$arr_get['page'];
@@ -33,7 +46,7 @@ class Main extends cframe
         $sql = <<<eot
 SELECT `source_id`, `problem_id`, `username`, `length`, `submit_time`,
     `result`, `memory_usage`, `time_usage`, `lang`, `share`
-  FROM `sources`
+  FROM `{$tbl_name}`
   $where_cond
   ORDER BY `source_id` desc
   LIMIT $start, $itpp;

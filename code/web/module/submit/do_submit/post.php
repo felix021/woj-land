@@ -63,18 +63,19 @@ eot;
 
         //notify deamon
         notify_daemon_java($source_id);
-        return true;
-    }
 
-    public function display()
-    {
-        $url = land_conf::$web_root . '/status';
+        $url = land_conf::$web_root . '/status' . ($admin ? '?admin' : '');
         response::add_data('return_url', $url);
         response::add_data('links', array(
             'Status'    => $url,
             )
         );
         response::display_msg("Source code successfully submitted!");
+        return true;
+    }
+
+    public function display()
+    {
         return true;
     }
 }

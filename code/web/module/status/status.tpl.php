@@ -7,6 +7,7 @@ class TPL_Main extends ctemplate
         //FM_LOG_DEBUG("%s", dump_var($p));
         $web_root = land_conf::$web_root;
         header("Refresh: 30");
+        $admin = $p['admin'];
 
         $result_opt = '<option value="">&nbsp;All&nbsp;</option>' . "\n";
         $result_s = is_null($p['result']) ? -1 : (int)$p['result'];
@@ -29,11 +30,12 @@ class TPL_Main extends ctemplate
         $username = htmlspecialchars($p['username']);
         echo <<<eot
 <meta http-equiv="Refresh" content="30"/>
-  <div id="tt">Status</div> 
+  <div id="tt">$admin Status</div> 
  
   <div id="main"> 
  
   <form action="$web_root/status" method="get"> 
+   <input type="hidden" name="admin" value=""/> 
    <input type="hidden" name="contest_id" value="{$p['contest_id']}" /> 
    <strong>Search: </strong>
    <strong>Problem ID</strong> <input size="6" name="problem_id" value="{$p['problem_id']}"/>
@@ -74,14 +76,14 @@ eot;
             $result_name    = htmlspecialchars(land_conf::$result_name[$result]);
             $result_color   = land_conf::$result_color[$result];
             $lang           = $p['lang'][$line['lang']];
-            $lang           = "<a href=\"source?source_id={$line['source_id']}\">$lang</a>";
+            $lang           = "<a href=\"source?source_id={$line['source_id']}&{$admin}\">$lang</a>";
             echo <<<eot
    <tr class="$tr_class"> 
     <td style="text-align:center;">{$line['source_id']}</td> 
     <td style="text-align:center;"><a href="$web_root/user/detail?username={$username}">$username</a></td> 
     <td style="text-align:center;"><a href="$web_root/problem/detail?problem_id={$problem_id}">{$problem_id}</a></td> 
     <td style="text-align:center;"> 
-       <span class="STYLE7"><a href="$web_root/source/info?source_id={$line['source_id']}"><font color="$result_color">$result_name</font></a></span> 
+       <span class="STYLE7"><a href="$web_root/source/info?source_id={$line['source_id']}&$admin"><font color="$result_color">$result_name</font></a></span> 
     </td> 
 	<td style="text-align:center;">{$line['memory_usage']}</td> 
     <td style="text-align:center;">{$line['time_usage']}</td> 
@@ -113,9 +115,9 @@ eot;
  
   <br /> 
   <div> 
-       <span class="bt"><a href="$web_root/status?page=1&$query">Top</a></span> 
-       <span class="bt"><a href="$web_root/status?page=$last_page&$query">Previous Page</a></span> 
-       <span class="bt"><a href="$web_root/status?page=$next_page&$query">Next Page</a></span> 
+       <span class="bt"><a href="$web_root/status?$admin&page=1&$query">Top</a></span> 
+       <span class="bt"><a href="$web_root/status?$admin&page=$last_page&$query">Previous Page</a></span> 
+       <span class="bt"><a href="$web_root/status?$admin&page=$next_page&$query">Next Page</a></span> 
   </div> 
   <br/>
 eot;

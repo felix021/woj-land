@@ -15,11 +15,11 @@ class TPL_Main extends ctemplate
         }
 
         $admin = '';
-        if ($p['admin'])
+        if ($p['admin'] == 'admin')
             $admin = '<input type="hidden" name="admin" value="1"/>';
  
         echo <<<eot
-<div id="tt">Submit</div>
+<div id="tt">{$p['admin']} Submit</div>
 
   <div id="main"> 
 

@@ -12,11 +12,11 @@ class Main extends cframe
             {
                 throw new Exception("You don't have permission to submit as an administrator.");
             }
-            response::add_data('admin', 1);
+            response::add_data('admin', 'admin');
         }
         else
         {
-            response::add_data('admin', 0);
+            response::add_data('admin', '');
         }
 
         $problem_id = 1001;
