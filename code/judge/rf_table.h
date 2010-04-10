@@ -80,7 +80,7 @@ int RF_PASCAL[512] =
 //Java (TODO暂未测试)
 int RF_JAVA[512] = 
 {
-    SYS_execve,         2,
+    SYS_execve,         -1,
     SYS_ugetrlimit,     -1,
     SYS_futex,          -1,
     SYS_read,           -1,
@@ -95,7 +95,7 @@ int RF_JAVA[512] =
     SYS_munmap,         -1,
     SYS_close,          -1,
     SYS_uname,          -1,
-    SYS_clone,          1,
+    SYS_clone,          -1,
     SYS_rt_sigprocmask, -1,
     SYS_rt_sigaction,   -1,
     SYS_sigprocmask,    -1,
@@ -110,6 +110,7 @@ int RF_JAVA[512] =
     SYS_set_robust_list,-1,
     SYS_exit_group,     -1,
     SYS_exit,           -1,
+    SYS_mprotect,       -1,
     0
 };
 
