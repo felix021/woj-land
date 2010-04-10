@@ -7,6 +7,7 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         $problem = $p['problem'];
         $edit_button = '';
+        $file_button = '';
         $defunct_button = '';
         foreach ($problem as $key => &$v)
         {
@@ -21,6 +22,7 @@ class TPL_Main extends ctemplate
         if (is_admin())
         {
             $edit_button    = "<span class=\"bt\"><a href=\"{$web_root}/problem/edit?problem_id={$problem['problem_id']}\">Edit</a></span>";
+            $file_button = "<span class=\"bt\"><a href=\"{$web_root}/files/manage?problem_id={$problem['problem_id']}\">Files</a></span>";
             $defunct_button = "<span class=\"bt\"><a href=\"{$web_root}/problem/defuct?problem_id={$problem['problem_id']}\">Defunct</a></span>";
         }
 
@@ -71,6 +73,7 @@ class TPL_Main extends ctemplate
       <!-- TODO <span class="bt"><a href="{$web_root}/discuss/list?problem_id={$problem['problem_id']}">Discuss</a></span>  -->
       <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Status</a></span> 
       $edit_button
+      $file_button
       $defunct_button
     </div> 
     <br /> 

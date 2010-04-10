@@ -67,10 +67,18 @@ try
     $temp_dir = wrapper_conf::TEMP_PATH . "/" . $src_id;
     $data_dir = wrapper_conf::DATA_PATH . "/" . $problem_id;
     $lang     = $source['lang'];
-    $src_file = $temp_dir . "/" . $src_id . "." . wrapper_conf::$extension[$lang];
-    $cmd = wrapper_conf::JUDGE_PATH_ROOT . wrapper_conf::$judge_path[$lang];
+    $src_file = '';
+    if ($lang != land_conf::LANG_JAVA)
+    {
+        $src_file = $temp_dir . "/" . $src_id . "." . wrapper_conf::$extension[$lang];
+    }
+    else
+    {
+        $src_file = $temp_dir . "/Main." . wrapper_conf::$extension[$lang];
+    }
+    $cmd = wrapper_conf::JUDGE_PATH_ROOT . wrapper_conf::$judge_path;
     $cmd .= append_arg('u', $src_id);
-    //$cmd .= append_arg('l', $lang);
+    $cmd .= append_arg('l', $lang);
     $cmd .= append_arg('s', $src_file);
     $cmd .= append_arg('n', $problem_id);
     $cmd .= append_arg('D', $data_dir);

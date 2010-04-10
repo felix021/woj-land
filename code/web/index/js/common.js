@@ -93,3 +93,66 @@ function guess_lang(lang, src)
     return lang_maybe;
 }
 
+function getXmlHTTP()
+{
+    var xmlHttp=null;
+    try{
+        //for IE
+        try{ 
+            xmlHttp = new ActiveXObject("Microsoft.XMLHTTP"); 
+        }
+        catch(e1){ 
+            xmlHttp = new ActiveXObject("MSXML2.XMLHTTP");
+        }
+    }catch(e2){
+        //For others
+        try{
+            xmlHttp=new XMLHttpRequest;
+        }
+        catch(e2) {
+            alert('Your browser do not support ajax, please try IE/FireFox/Chrome.');
+        }
+    }
+    return xmlHttp;
+}
+
+function LoadURL(method, url, values, func)
+{
+    var xml = getXmlHTTP();
+    if (xml == null)
+    {
+        alert('Operation failed');
+        return;
+    }
+    try
+    {
+        xml.onreadystatechange = function()
+        {
+            if (xml.readyState == 4)
+            {
+                func(xml.status, xml.responseText);
+            }
+        }
+        if (method == 'GET')
+        {
+            url += '?' + values;
+            values = '';
+        }
+        xml.open(method, url, true);
+        if (method == 'POST')
+        {
+            xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+        }
+        xml.send(values);
+    }
+    catch(e)
+    {
+        alert(e);
+        return;
+    }
+}
+
+function PostURL(url, values, func)
+{
+    LoadURL('POST', url, values, func);
+}

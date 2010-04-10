@@ -71,6 +71,7 @@ final class land_conf
     const OJ_RE_UNKNOWN         = 12;//Unknow
     const OJ_RF                 = 13;//Restricted Function
     const OJ_SE                 = 14;//System Error
+    const OJ_RE_JAVA            = 15;//OJ_SE Java
     public static $result_name  = array(
         self::OJ_WAIT               => "Queuing",
         self::OJ_AC                 => "Accepted",
@@ -87,6 +88,7 @@ final class land_conf
         self::OJ_RE_UNKNOWN         => "Runtime Error(Unknown)",
         self::OJ_RF                 => "Restricted Function",
         self::OJ_SE                 => "System Error",
+        self::OJ_RE_JAVA            => "Java Runtime Error",
         );
 
     public static $result_color = array(
@@ -105,6 +107,7 @@ final class land_conf
         self::OJ_RE_UNKNOWN         => "green",
         self::OJ_RF                 => "green",
         self::OJ_SE                 => "green",
+        self::OJ_RE_JAVA            => "green",
         );
 
 }

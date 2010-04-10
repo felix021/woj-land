@@ -14,12 +14,7 @@ final class wrapper_conf
         );
 
     const JUDGE_PATH_ROOT    = "/home/felix021/svn/woj-land/code/judge/";
-    public static $judge_path = array(
-        land_conf::LANG_C       => 'judge_c.exe',
-        land_conf::LANG_CPP     => 'judge_cpp.exe',
-        land_conf::LANG_JAVA    => 'judge_java.exe',
-        land_conf::LANG_PASCAL  => 'judge_pascal.exe',
-        _);
+    public static $judge_path = 'judge_all.exe';
 }
 
 ?>
