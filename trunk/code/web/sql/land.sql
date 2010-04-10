@@ -87,6 +87,26 @@ CREATE TABLE `sources`
  `extra_info` text
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
+CREATE TABLE `admin_sources`
+(
+ `source_id` int primary key auto_increment,
+ `problem_id` int,
+ `user_id` int,
+ `username` char(20) NOT NULL,
+ `contest_id` int,
+ `source_code` text,
+ `length` int NOT NULL DEFAULT 0,
+ `submit_time` datetime,
+ `submit_ip` char(20),
+ `lang` tinyint NOT NULL,
+ `share` tinyint NOT NULL,
+ `judge_time` datetime,
+ `memory_usage` int NOT NULL,
+ `time_usage` int NOT NULL,
+ `result` int NOT NULL DEFAULT 0,
+ `extra_info` text
+) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
+
 CREATE TABLE `contests`
 (
  `contest_id` int primary key auto_increment,

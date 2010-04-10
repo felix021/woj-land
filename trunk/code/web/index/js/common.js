@@ -67,8 +67,10 @@ function guess_lang(lang, src)
     { //C || C++
         lang_maybe = 2;
         if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0
-            || src.indexOf('cstdio')) //C++
+            || src.indexOf('cstdio') >= 0) //C++
+        {
             lang_maybe = 2;
+        }
         else  //C
         {
             lang_maybe = 1;

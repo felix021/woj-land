@@ -102,10 +102,6 @@ class Request extends Thread
 
                 //获取src_id
                 int src_id = Request.work(GET_SOURCE_ID, 0);
-                if (src_id <= 0)
-                {
-                    continue;
-                }
 
                 logger.log("req_id: " + Integer.toString(req_id) + ", "
                          + "src_id: " + Integer.toString(src_id));

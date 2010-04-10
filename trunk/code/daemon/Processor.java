@@ -36,10 +36,13 @@ class Processor extends Thread
             }
 
             source_id = in.nextInt();
+            /*
+             * source_id < 0 means admin submit
             if (source_id <= 0)
             {
                 throw new Exception("bad source_id: " + Integer.toString(source_id));
             }
+            */
 
             os.write(Integer.toString(source_id));
         }
@@ -64,11 +67,8 @@ class Processor extends Thread
         }
         catch(Exception ioe){}
 
-        if (source_id > 0)
-        {
-            logger.log("Source id: " + Integer.toString(source_id));
-            Request.work(Request.ADD_SOURCE_ID, source_id);
-        }
+        logger.log("Source id: " + Integer.toString(source_id));
+        Request.work(Request.ADD_SOURCE_ID, source_id);
     }
 }
 
