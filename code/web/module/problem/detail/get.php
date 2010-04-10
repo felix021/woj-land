@@ -10,6 +10,10 @@ class Main extends cframe
     {
         $problem_id = (int)request::$arr_get['problem_id'];
         $problem = get_problem_by_id($problem_id);
+        if (!is_admin() && !$problem['enabled'])
+        {
+            throw new Exception("This problem is currently unavailable :(");
+        }
         response::add_data('problem', $problem);
         return true;
     }

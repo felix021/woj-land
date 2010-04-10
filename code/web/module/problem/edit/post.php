@@ -22,6 +22,7 @@ class Main extends acframe
         $time_limit = (int)$p['time_limit'];
         $memory_limit = (int)$p['memory_limit'];
         $contest_id = (int)$p['contest_id'];
+        $spj = (isset($p['spj']) && $p['spj'] == 1) ? 1 : 0;
 
         $sql = <<<eot
 UPDATE `problems` SET
@@ -35,7 +36,8 @@ UPDATE `problems` SET
   `sample_output`='{$p['sample_output']}',
   `hint`='{$p['hint']}',
   `source`='{$p['source']}',
-  `contest_id`={$contest_id}
+  `contest_id`={$contest_id},
+  `spj`={$spj}
 WHERE `problem_id`=$pid;
 eot;
 

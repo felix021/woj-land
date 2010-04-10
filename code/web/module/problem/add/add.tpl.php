@@ -5,18 +5,14 @@ class TPL_Main extends ctemplate
     public function display($p)
     {
         $web_root = land_conf::$web_root;
-        $problem = $p['problem'];
-        $pid = (int)$problem['problem_id'];
-        foreach ($problem as &$v) $v = htmlspecialchars($v);
         $contest_opt = '<option value="0">No Contest</option>';
-        $is_spj = $problem['spj'] ? 'checked' : '';
         echo <<<eot
 <div id="tt"> 
-    Edit Problem {$pid}
+    Add a new problem 
 </div> 
 
 <script language="javascript">
-    function FillEditProblemForm()
+    function FillAddProblemForm()
     {
         //for further check
         return true;
@@ -25,76 +21,69 @@ class TPL_Main extends ctemplate
 
 <div id="main"> 
 
-    <form action="$web_root/problem/edit" method="post" onsubmit="javascript: return FillEditProblemForm();"> 
-        <input type="hidden" value="{$pid}" class="formEle" tabindex="1" name="problem_id" id="problem_id" /> 
+    <form action="$web_root/problem/add" method="post" onsubmit="javascript: return FillAddProblemForm();"> 
         <table><tbody> 
                 <tr> 
                     <th colspan="4" align="center">Complete the Informations</th> 
                 </tr> 
-                <tr class="tro"> 
-                    <td width="100"></td> 
-                    <td width="150" align="right"><strong>Problem ID:</strong>&nbsp;&nbsp;</td> 
-                    <td width="600" align="left">&nbsp;&nbsp;{$pid}</td> 
-                    <td width="100"></td> 
-                </tr> 
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Title:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="2" name="title" id="title" size="75" value="{$problem['title']}" /></td> 
+                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="2" name="title" id="title" size="75" value="" /></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
                     <td></td> 
                     <td align="right"><strong>Time Limit:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="3" name="time_limit" id="time_limit" value="{$problem['time_limit']}" size="15" />ms</td> 
+                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="3" name="time_limit" id="time_limit" value="1000" size="15" />ms</td> 
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Memory Limit:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="4" name="memory_limit" id="memory_limit" value="{$problem['memory_limit']}" size="15" />KB</td> 
+                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="4" name="memory_limit" id="memory_limit" value="65536" size="15" />KB</td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
                     <td></td> 
                     <td align="right"><strong>Description:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="5" name="description" id="description" rows="10" cols="80">{$problem['description']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="5" name="description" id="description" rows="10" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Input:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="6" name="input" id="input" rows="5" cols="80">{$problem['input']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="6" name="input" id="input" rows="5" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
                     <td></td> 
                     <td align="right"><strong>Output:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="7" name="output" id="output" rows="5" cols="80">{$problem['output']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="7" name="output" id="output" rows="5" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Sample Input:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="8" name="sample_input" id="sample_input" rows="5" cols="80">{$problem['sample_input']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="8" name="sample_input" id="sample_input" rows="5" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
                     <td></td> 
                     <td align="right"><strong>Sample Output:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="9" name="sample_output" id="sample_output" rows="5" cols="80">{$problem['sample_output']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="9" name="sample_output" id="sample_output" rows="5" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Hint:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="10" name="hint" id="hint" rows="5" cols="80">{$problem['hint']}</textarea></td> 
+                    <td align="left">&nbsp;&nbsp;<textarea class="formEle" tabindex="10" name="hint" id="hint" rows="5" cols="80"></textarea></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
                     <td></td> 
                     <td align="right"><strong>Source:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="11" name="source" id="source" size="75" value="{$problem['source']}" /></td> 
+                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="11" name="source" id="source" size="75" value="" /></td> 
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
@@ -111,7 +100,7 @@ class TPL_Main extends ctemplate
                     <td></td> 
                     <td align="right"><strong>Special Judge:</strong>&nbsp;&nbsp;</td> 
                     <td align="left">&nbsp;&nbsp;
-                        <input {$is_spj} tabindex="13" type="checkbox" name="spj" id="spj" class="formEle" value="1"/>
+                        <input type="checkbox" name="spj" tabindex="13" id="spj" class="formEle" value="1"/>
                         This is a spj problem.
                     </td> 
                     <td></td> 
