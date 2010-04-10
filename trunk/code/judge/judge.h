@@ -162,7 +162,7 @@ void parse_arguments(int argc, char *argv[])
     int opt;
     extern char *optarg;
 
-    while ((opt = getopt(argc, argv, "u:s:n:D:d:t:m:o:S")) != -1) {
+    while ((opt = getopt(argc, argv, "l:u:s:n:D:d:t:m:o:S")) != -1) {
         switch (opt) {
             case 'u': problem::uid          = optarg;       break;
             case 's': problem::source_file  = optarg;       break;
@@ -173,10 +173,22 @@ void parse_arguments(int argc, char *argv[])
             case 'm': problem::memory_limit = atoi(optarg); break;
             case 'o': problem::output_limit = atoi(optarg); break;
             case 'S': problem::spj          = true;         break;
+            case 'l': problem::lang         = atoi(optarg); break;
             default:
                 FM_LOG_WARNING("unknown option provided: -%c %s", opt, optarg);
                 exit(judge_conf::EXIT_BAD_PARAM);
         }
+    }
+    switch (problem::lang)
+    {
+        case judge_conf::LANG_C:
+        case judge_conf::LANG_CPP:
+        case judge_conf::LANG_PASCAL:
+        case judge_conf::LANG_JAVA: 
+            break;
+        default:
+            FM_LOG_WARNING("Bad language specified: %d", problem::lang);
+            exit(judge_conf::EXIT_BAD_PARAM);
     }
     problem::data_file              = problem::data_dir + "/" + judge_conf::data_filename;
     problem::exec_file              = problem::temp_dir + "/" + "a.out";

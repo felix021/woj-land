@@ -60,7 +60,7 @@ int RF_CPP[512] =
     0
 };
 
-//Pascal (TODO暂未测试)
+//Pascal
 int RF_PASCAL[512] = 
 {
     SYS_execve,         1,
