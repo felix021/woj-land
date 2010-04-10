@@ -56,7 +56,17 @@ $nav2
 <a href="$web_root/faq.html" target="_blank">FAQ</a> 
 </div> 
 
+
 eot;
+
+        $notice = cache_util::load('notice');
+        if (strlen($notice->notice) > 0)
+        {
+            $notice = htmlspecialchars($notice->notice);
+            echo <<<eot
+ <div class="ntc" id="head_ntc"> Notice: $notice </div> 
+eot;
+        }
     }
 }
 
