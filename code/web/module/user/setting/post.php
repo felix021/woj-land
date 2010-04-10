@@ -37,7 +37,7 @@ class Main extends cframe
         $school   = db_escape($conn, request::$arr_post['school']);
         $email    = db_escape($conn, trim(request::$arr_post['email']));
         $lang     = (int)request::$arr_post['lang'];
-        $share_code = (int)request::$arr_post['share_code'];
+        $share_code = (int)force_read(request::$arr_post, 'share_code');
         $updatePass = '';
         if (!empty(request::$arr_post['new_passEnc']))
         {

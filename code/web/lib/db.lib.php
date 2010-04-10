@@ -98,7 +98,8 @@ function db_fetch_lines($conn, $sql, $count = 1)
     //fail_test($result, false);
     $lines = array();
     $i = 0;
-    while ($i < $count && ($row = $result->fetch_assoc()))
+            //count < 0则不限制行数
+    while (($count < 0 || $i < $count) && ($row = $result->fetch_assoc()))
     {
         $lines[$i++] = $row;
     }
