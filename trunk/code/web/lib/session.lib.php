@@ -69,6 +69,9 @@ final class session
         if ($len <= 0) $len = 6;
         $vcode = rndstr($len);
         $_SESSION['land']['vcode'] = $vcode;
+        response::add_header('Pragma: no-cache');
+        response::add_header('Cache-Control: no-cache, must-revalidate');
+        response::add_header('Expires: 0');
         return $vcode;
     }
 

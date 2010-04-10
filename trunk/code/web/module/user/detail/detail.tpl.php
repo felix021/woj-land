@@ -10,6 +10,9 @@ class TPL_Main extends ctemplate
         $username = $user['username'];
         $email = str_replace('@', '[#at]', $user['email']);
         $extra_info = '';
+        $edit_btn   = '';
+        if (is_admin())
+            $edit_btn = "<span class=\"bt\"><a href=\"$web_root/user/admin?username=$username\">Edit</a></span>";
         if ($user['user_id'] == session::ANONYMOUS_ID)
             $extra_info = ': This user is used for anonymous access such as submit.';
         echo <<<eot
@@ -72,7 +75,10 @@ eot;
      </tr> 
     </tbody></table> 
   <br /> 
-  <div><span class="bt"><a href="$web_root/ranklist">Back To Ranklist</a></span></div> 
+    <div>
+        $edit_btn
+        <span class="bt"><a href="$web_root/ranklist">Back To Ranklist</a></span>
+    </div> 
   <br /> 
   </div> 
 

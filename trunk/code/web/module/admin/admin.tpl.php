@@ -23,7 +23,14 @@ class TPL_Main extends ctemplate
     <tr class="tro"><td><a href="$web_root/contest/add">Add a new contest</a></td></tr> 
     <tr class="tre"><td><a href="$web_root/submit/submit?admin">Submit as an administrator</a></td></tr> 
     <tr class="tro"><td><a href="$web_root/status?admin">View admin status</a></td></tr> 
-    <tr class="tre"><td><a href="$web_root/user/admin">User Management</a></td></tr> 
+    <tr class="tre">
+        <td>
+          <form method="get" action="$web_root/user/admin">
+            Username: <input type="text" name="username" value="" size="15" /> 
+            <input type="submit" value="Edit"/>
+          </form>
+        </td>
+    </tr> 
     <tr class="tro"><td><a href="$web_root/notice">Set Notice</a></td></tr> 
     </tbody></table> 
   </div> 
