@@ -10,13 +10,6 @@ class TPL_Main extends ctemplate
         $school         = htmlspecialchars($user['school']);
         $email          = htmlspecialchars($user['email']);
         $checked        = $user['share_code'] ? 'checked' : '';
-        $lang           = $user['preferred_lang'];
-        $lang_str       = "";
-        foreach ($p['lang'] as $k => $v)
-        {
-            $sel = $k == $lang ? 'selected': '';
-            $lang_str .= "<option $sel value=\"$k\">&nbsp;$v&nbsp;</option>\n";
-        }
         echo <<<eot
   <div id="tt">Modify Your Information</div> 
 <script language="javascript">
@@ -93,16 +86,12 @@ function fillSettingForm()
         <td align="left"><input size="40" type="text" name="email" value="$email" tabindex="6"/></td> 
       </tr> 
       <tr class="tro"> 
-        <td align="right"><strong>Preferred Language</strong></td> 
-        <td align="left"><select name="lang" tabindex="7">{$lang_str}</select></td> 
-      </tr> 
-      <tr class="tre"> 
         <td align="right"></td> 
-        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" $checked tabindex="8"/> I'd like to share my code with others</td> 
+        <td align="left"><input size="40" value="1" type="checkbox" name="share_code" $checked tabindex="7"/> I'd like to share my code with others</td> 
       </tr> 
       <tr class="tro"> 
         <td colspan="2" align="center"> 
-        <input type="submit" id="submit_btn" value="Submit" tabindex="9"/>
+        <input type="submit" id="submit_btn" value="Submit" tabindex="8"/>
         <input type="reset" value="Reset" name="reset" /> 
         </td> 
       </tr> 

@@ -45,10 +45,10 @@ class Main extends cframe
         $REG_share_code = isset(request::$arr_post['share_code']) ? 1 : 0;
         $sql = <<<eot
 INSERT INTO `users` 
-(`user_id`, `username`, `password`, `nickname`, `email`, `school`, `reg_time`, `last_ip`, `submit`, `solved`, `enabled`, `preferred_lang`, `share_code`, `group_ids`, `solved_list`) 
+(`user_id`, `username`, `password`, `nickname`, `email`, `school`, `reg_time`, `last_ip`, `submit`, `solved`, `enabled`, `share_code`, `group_ids`, `solved_list`) 
 VALUES
 (NULL, '$REG_username', '$REG_passEnc', '$REG_nick', '$REG_email',
-'$REG_school', '$REG_time', '$REG_ip', 0, 0, 1, $REG_lang, $REG_share_code, "", "");
+'$REG_school', '$REG_time', '$REG_ip', 0, 0, 1, $REG_share_code, "", "");
 eot;
 
         $user_id = db_insert($conn, $sql);
@@ -56,6 +56,7 @@ eot;
         db_close($conn);
 
         session::set_login($user_id);
+        session::init(session::DO_UPDATE);
         return true;
     }
 

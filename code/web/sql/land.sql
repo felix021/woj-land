@@ -41,7 +41,6 @@ CREATE TABLE `users`
  `submit` int default 0,
  `solved` int default 0,
  `enabled` tinyint DEFAULT 1,
- `preferred_lang` tinyint DEFAULT 1,
  `share_code` tinyint DEFAULT 1,
  `group_ids` varchar(200) DEFAULT "",
  `solved_list` text NOT NULL DEFAULT ""
