@@ -23,7 +23,14 @@ class TPL_Main extends ctemplate
         {
             $edit_button    = "<span class=\"bt\"><a href=\"{$web_root}/problem/edit?problem_id={$problem['problem_id']}\">Edit</a></span>";
             $file_button = "<span class=\"bt\"><a href=\"{$web_root}/files/manage?problem_id={$problem['problem_id']}\">Files</a></span>";
-            $defunct_button = "<span class=\"bt\"><a href=\"{$web_root}/problem/defuct?problem_id={$problem['problem_id']}\">Defunct</a></span>";
+            if ($problem['enabled'])
+            {
+                $defunct_button = "<span class=\"bt\"><a href=\"{$web_root}/problem/toggle?act=disable&problem_id={$problem['problem_id']}\">Disable</a></span>";
+            }
+            else
+            {
+                $defunct_button = "<span class=\"bt\"><a href=\"{$web_root}/problem/toggle?act=enable&problem_id={$problem['problem_id']}\">Enable</a></span>";
+            }
         }
 
         echo <<<eot

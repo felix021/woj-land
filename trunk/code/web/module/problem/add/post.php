@@ -21,6 +21,7 @@ class Main extends acframe
         $tl  = (int)$p['time_limit'];
         $ml  = (int)$p['memory_limit'];
         $spj = isset($p['spj']) && $p['spj'] == 1 ? 1 : 0;
+        $ena = isset($p['enable']) && $p['enable'] == 1 ? 1 : 0;
 
         $sql = <<<eot
 INSERT INTO `problems` 
@@ -29,7 +30,7 @@ INSERT INTO `problems`
 VALUES
 (NULL, '{$p['title']}', '{$p['description']}', '{$p['input']}', '{$p['output']}', 
  '{$p['sample_input']}', '{$p['sample_output']}', '{$p['hint']}', '{$p['source']}',
- $cid, $tl, $ml, $spj, 0)
+ $cid, $tl, $ml, $spj, $ena)
 eot;
 
         $pid = db_insert($conn, $sql);

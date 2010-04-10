@@ -106,9 +106,18 @@ class TPL_Main extends ctemplate
                     <td></td> 
                 </tr> 
                 <tr class="tre"> 
+                    <td></td> 
+                    <td align="right"></td> 
+                    <td align="left">&nbsp;&nbsp;
+                        <input type="checkbox" name="enable" tabindex="14" id="spj" class="formEle" value="1"/>
+                        Enable this problem immediately.
+                    </td> 
+                    <td></td> 
+                </tr> 
+                <tr class="tre"> 
                     <td colspan="4" align="center"> 
-                        <input type="submit" class="formEle" tabindex="14" name="submit" id="submit" value="Submit" />&nbsp;
-                        <input class="formEle" tabindex="15" name="reset" id="reset" type="reset" value="Reset" /> 
+                        <input type="submit" class="formEle" tabindex="15" name="submit" id="submit" value="Submit" />&nbsp;
+                        <input class="formEle" tabindex="16" name="reset" id="reset" type="reset" value="Reset" /> 
                     </td> 
                 </tr> 
         </tbody></table> 
