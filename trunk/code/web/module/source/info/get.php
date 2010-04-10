@@ -7,7 +7,20 @@ class Main extends cframe
     public function process()
     {
         $source_id = (int)request::$arr_get['source_id'];
-        $sql = 'SELECT `user_id`, `result`, `extra_info` from `sources` WHERE `source_id`=' . $source_id;
+
+        $admin = false;
+        $tbl_name = 'sources';
+        if (isset(request::$arr_get['admin']))
+        {
+            $admin = true;
+            $tbl_name = 'admin_sources';
+            if (!is_admin())
+            {
+                throw new Exception("Your don't have the permission to access this page.");
+            }
+        }
+
+        $sql = 'SELECT `user_id`, `result`, `extra_info` from `'.$tbl_name.'` WHERE `source_id`=' . $source_id;
         $conn = db_connect();
         fail_test($conn, false);
 

@@ -1,6 +1,6 @@
 <?php
 
-class Main extends cframe
+class Main extends acframe
 {
 
     protected $need_session = true;
