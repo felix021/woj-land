@@ -36,7 +36,11 @@ namespace judge_conf
 
     //参照Oak的设置，附加一段时间到time_limit里，不把运行时间限制得太死
     int time_limit_addtion          = 314;
-
+    
+    int java_time_factor            = 2;
+    
+    int java_memory_factor          = 2;
+    
     //程序的主目录(考虑做成配置)
     std::string root_dir             = "/home/felix021/woj";
 
@@ -65,6 +69,7 @@ namespace judge_conf
     const int OJ_RE_UNKNOWN     = 12;//Unknow
     const int OJ_RF             = 13;//Restricted Function
     const int OJ_SE             = 14;//System Error
+    const int OJ_RE_JAVA        = 15;//JAVA Run Time Exception
 
     //一些常量
     const int KILO              = 1024;         // 1K
@@ -175,6 +180,11 @@ void parse_arguments(int argc, char *argv[])
     }
     problem::data_file              = problem::data_dir + "/" + judge_conf::data_filename;
     problem::exec_file              = problem::temp_dir + "/" + "a.out";
+    if(problem::lang == judge_conf::LANG_JAVA) {
+        problem::exec_file          = problem::temp_dir + "/" + "Main";
+        problem::memory_limit      *= judge_conf::java_memory_factor;
+        problem::time_limit        *= judge_conf::java_time_factor;
+    }
     problem::stdout_file_compiler   = problem::temp_dir + "/" + "stdout_compiler.txt";
     problem::stderr_file_compiler   = problem::temp_dir + "/" + "stderr_compiler.txt";
     problem::stdout_file_executive  = problem::temp_dir + "/" + "stdout_executive.txt";
@@ -259,6 +269,7 @@ void set_limit()
     //堆栈空间限制
     lim.rlim_max = judge_conf::stack_size_limit * judge_conf::KILO;
     lim.rlim_cur = lim.rlim_max;
+    
     if (setrlimit(RLIMIT_STACK, &lim) < 0)
     {
         FM_LOG_WARNING("setrlimit RLIMIT_STACK failed");
@@ -306,12 +317,13 @@ void set_security_option()
         exit(judge_conf::EXIT_SET_SECURITY);
     }
     FM_LOG_DEBUG("cwd: %s", cwd);
-    
-    if (EXIT_SUCCESS != chroot(cwd))
-    {
-        FM_LOG_WARNING("chroot(%s) failed, %d: %s",
-                cwd, errno, strerror(errno));
-        exit(judge_conf::EXIT_SET_SECURITY);
+    if(problem::lang != judge_conf::LANG_JAVA) {
+        if (EXIT_SUCCESS != chroot(cwd))
+        {
+            FM_LOG_WARNING("chroot(%s) failed, %d: %s",
+                    cwd, errno, strerror(errno));
+            exit(judge_conf::EXIT_SET_SECURITY);
+        }
     }
 
     //setuid
