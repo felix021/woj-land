@@ -30,7 +30,7 @@ using namespace std;
 extern int errno;
 int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 
-int main(int argc, char *argv[])
+int main(int argc, char *argv[], char *envp[])
 {
     log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
                 break;
             
             case judge_conf::LANG_JAVA:
-                FM_LOG_TRACE("start: javac %s", problem::source_file.c_str());
+                FM_LOG_TRACE("start: javac %s -d %s", problem::source_file.c_str(), problem::temp_dir.c_str());
                 execlp("javac", "javac", 
                        problem::source_file.c_str(), "-d", problem::temp_dir.c_str(),
                        NULL);

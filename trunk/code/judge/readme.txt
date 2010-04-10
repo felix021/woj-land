@@ -1,9 +1,11 @@
 Judge约定
 
+主程序: 由judge_all.cpp judge.h rf_table.h 编译出judge_all.exe
+
 输入输出文件
 1. 所有输入输出文件保存在以题号为名的同一目录下
 2. 输入文件的命名为 [文件名].in , 输出文件则为对应的 [文件名].out
-3. 使用data.txt保存所有输入文件的文件名, 一行一个, 不需要扩展名
+3. 使用data.txt保存所有输入文件的文件名, 一行一个, 行末有回车, 不需要扩展名
 例: 1001题有输入文件a.in b.in, 对应的输出文件是a.out b.out, 对应的data.txt因该是
 a
 b
@@ -16,6 +18,7 @@ AC/PE/WA的含义
 编译器相关
 1. 编译时间限制为5s, 如果在5s内没有结束或者编译器非正常结束, 为System Error。
 2. 编译器默认使用gcc(c)、g++(c++)、fpc(pascal)、sun-jdk(java)
+3. 可能需要将/usr/lib/jvm/java-6-sun/jre/lib/i386/jli/libjli.so链接到/usr/lib
 
 Special Judge相关
 1. 如果是SPJ题目，必须在数据目录下有一个[可执行](chmod +x)的spj.exe
@@ -28,9 +31,10 @@ Special Judge相关
 参数传递
 
     输入参数通过命令行指定, 格式如下
-    ./judge -s 源文件   -n 题号     -D 数据目录 
+    ./judge -l 语言 -s 源文件   -n 题号     -D 数据目录 
             -d 临时目录 -t 时间限制 -m 内存限制 
             -o 输出限制 [-S]
+     -l 语言        C=1, C++=2, JAVA=3, PASCAL=4
      -s 源文件      包含代码, 其中JAVA源文件名必须是Main.java。
      -n 题号        题目的唯一编号, 一个正整数
      -D 数据目录    包含data.txt以及输入输出文件的目录
@@ -53,3 +57,5 @@ Special Judge相关
             stdout_executive.txt, stderr_executive.txt
             stdout_spj.txt
 
+其他：
+    其余judge_c.cpp等文件为单独实现的judge，不再更新，不应使用。

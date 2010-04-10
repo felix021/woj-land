@@ -329,7 +329,7 @@ void set_security_option()
         exit(judge_conf::EXIT_SET_SECURITY);
     }
     FM_LOG_DEBUG("cwd: %s", cwd);
-    if(problem::lang != judge_conf::LANG_JAVA) {
+    if(problem::lang != judge_conf::LANG_JAVA) { //Java不能chroot否则无法运行jvm
         if (EXIT_SUCCESS != chroot(cwd))
         {
             FM_LOG_WARNING("chroot(%s) failed, %d: %s",
