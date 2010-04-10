@@ -8,6 +8,7 @@ class TPL_Main extends ctemplate
         $user = $p['user'];
         foreach ($user as &$v) $v = htmlspecialchars($v);
         $username = $user['username'];
+        $un_eu    = urlencode($username);
         $email = str_replace('@', '[#at]', $user['email']);
         $extra_info = '';
         $edit_btn   = '';
@@ -22,8 +23,14 @@ class TPL_Main extends ctemplate
     <table><tbody align="left"> 
      <tr> 
       <th width="100"></th> 
-      <th colSpan="2">{$username}{$extra_info}</th> 
+      <th colspan="2" style="text-align:center;">{$username}{$extra_info}</th> 
       <th width="100"></th> 
+     </tr> 
+     <tr class="tre"> 
+      <td></td> 
+      <td width="125"><strong>Nickname:</strong></td> 
+      <td width="625">{$user['nickname']}</td> 
+      <td></td> 
      </tr> 
      <tr class="tro"> 
       <td></td> 
@@ -77,6 +84,7 @@ eot;
   <br /> 
     <div>
         $edit_btn
+        <span class="bt"><a href="$web_root/mail/send?username={$un_eu}">Send Mail</a></span>
         <span class="bt"><a href="$web_root/ranklist">Back To Ranklist</a></span>
     </div> 
   <br /> 

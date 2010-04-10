@@ -33,7 +33,8 @@ class Main extends cframe
         }
         else
         {
-            response::add_data('to_username', '');
+            $un = force_read(request::$arr_get, 'username');
+            response::add_data('to_username', $un);
         }
         return true;
     }
