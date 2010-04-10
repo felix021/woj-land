@@ -1,6 +1,7 @@
 <?php
 
 require_once(MODULE_ROOT . '/user/user.func.php');
+require_once(MODULE_ROOT . '/group/groups.func.php');
 
 class Main extends acframe
 {
@@ -16,13 +17,10 @@ class Main extends acframe
         $user = get_user_by_username($conn, request::$arr_get['username']);
         fail_test($user, false);
 
-        $groups = db_fetch_lines($conn, 'SELECT * FROM `groups`', -1);
-        fail_test($groups, false);
-
         db_close($conn);
 
         response::add_data('user', $user);
-        response::add_data('groups', $groups);
+        response::add_data('groups', load_all_groups());
         response::add_data('seed', session::gen_vcode());
 
         return true;
