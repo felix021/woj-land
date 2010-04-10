@@ -9,6 +9,36 @@ class TPL_Main extends ctemplate
         echo <<<eot
   <div id="tt">Manage Groups</div> 
 
+<script language="javascript">
+var seed = '{$p['seed']}';
+
+function delGroup(gid, gname)
+{
+try{
+    if (!confirm('Are you sure to delete group "' + gname + '" ?'))
+        return;
+
+    var url = '$web_root/group/del';
+    var values = 'group_id=' + encodeURIComponent(gid) + '&seed=' + encodeURIComponent(seed);
+    LoadURL('POST', url, values, ajax_del);
+}
+catch(e) {alert(e);}
+}
+
+function ajax_del(status, text)
+{
+    if (status == 200)
+    {
+        alert(text)
+        location.reload();
+    }
+    else
+    {
+        alert('Operation failed...');
+    }
+}
+</script>
+
 <style>
 td{text-align:center;}
 </style>
@@ -16,12 +46,12 @@ td{text-align:center;}
   <div id="main"> 
   <table><tbody align="left"> 
     <tr class="tro"> 
-      <th width="50"></th> 
-      <th width="100" align="center">Group ID</th> 
+      <th></th> 
+      <th width="50" align="center">ID</th> 
       <th align="center" width="150"><strong>Name</strong></th> 
       <th align="center" width="400"><b>Privileges</b></th> 
-      <th align="center" width="100"><b>Operation</b></th> 
-      <th width="50"></th> 
+      <th align="center" width="150"><b>Operation</b></th> 
+      <th></th> 
     </tr> 
 eot;
         $i = 0;
@@ -44,7 +74,7 @@ eot;
       <td><input type="hidden" value="$gid" name="group_id"/>$gid</td> 
       <td><input type="text" value="{$gname}" name="group_name"/></td> 
       <td>$priv_str</td>
-      <td><input type="submit" value="Update"/></td> 
+      <td><input type="submit" value="Update"/> <input type="button" value="Delete" onclick="javascript: delGroup($gid, '$gname');"/></td> 
       <td></td> 
     </tr> 
     </form>
