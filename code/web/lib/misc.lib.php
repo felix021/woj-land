@@ -55,6 +55,7 @@ function dump_var($var)
 
 function notify_daemon_java($src_id)
 {
+    //src_id < 0 means admin submit
     $retry = 3;
     while ($retry--)
     {

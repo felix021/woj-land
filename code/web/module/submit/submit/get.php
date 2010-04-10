@@ -6,6 +6,19 @@ class Main extends cframe
 
     public function process()
     {
+        if (isset(request::$arr_get['admin']))
+        {
+            if (!is_admin())
+            {
+                throw new Exception("You don't have permission to submit as an administrator.");
+            }
+            response::add_data('admin', 1);
+        }
+        else
+        {
+            response::add_data('admin', 0);
+        }
+
         $problem_id = 1001;
         if (isset(request::$arr_get['problem_id']))
         {

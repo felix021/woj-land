@@ -6,6 +6,18 @@ class Main extends cframe
 
     public function process()
     {
+        $tbl_name = 'sources';
+        $admin = false;
+        if (isset(request::$arr_post['admin']))
+        {
+            if (!is_admin())
+            {
+                throw new Exception("You don't have permission to submit as an administrator.");
+            }
+            $tbl_name = 'admin_sources';
+            $admin = true;
+        }
+
         $problem_id = (int)request::$arr_post['problem_id'];
         $language   = (int)request::$arr_post['lang'];
         $source     = request::$arr_post['source'];
@@ -37,7 +49,7 @@ class Main extends cframe
         $submit_ip   = request::$client_ip;
         //TODO contest_id
         $sql = <<<eot
-INSERT INTO `sources` 
+INSERT INTO `{$tbl_name}` 
 (`problem_id`, `user_id`, `username`, `contest_id`, `source_code`,
  `submit_time`, `submit_ip`, `lang`, `share`, `length`)
 VALUES
@@ -45,6 +57,9 @@ VALUES
 eot;
 
         $source_id = db_insert($conn, $sql);
+
+        if ($admin)
+            $source_id = -$source_id;
 
         //notify deamon
         notify_daemon_java($source_id);

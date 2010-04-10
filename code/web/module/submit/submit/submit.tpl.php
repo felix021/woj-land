@@ -13,6 +13,10 @@ class TPL_Main extends ctemplate
             $v = htmlspecialchars($v);
             $language .= "<option $sel value=\"$k\">&nbsp;$v&nbsp;</option>\n";
         }
+
+        $admin = '';
+        if ($p['admin'])
+            $admin = '<input type="hidden" name="admin" value="1"/>';
  
         echo <<<eot
 <div id="tt">Submit</div>
@@ -97,39 +101,6 @@ function ctrl_enter(evt)
     }
 }
 
-function guess_lang(lang, src)
-{
-    var lang_maybe  = -1;
-    if (src.indexOf('#include') >= 0 || src.indexOf('int main') >= 0)
-    { //C || C++
-        lang_maybe = 2;
-        if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0
-            || src.indexOf('cstdio')) //C++
-            lang_maybe = 2;
-        else  //C
-        {
-            lang_maybe = 1;
-            if (lang == 2)
-                lang_maybe = 2; //C++兼容C
-        }
-            
-    }
-    else if (src.indexOf('java') > 0 || src.indexOf('System.out') >= 0 
-            || src.indexOf('public class') >= 0)
-    { //Java
-        lang_maybe = 3;
-    }
-    else if ((/\bbegin\b/i).test(src) && (/\bend\b/i).test(src))
-    { //pascal
-        lang_maybe = 4;
-    }
-    else
-    { //unknown
-        lang_maybe = 0;
-    }
-    return lang_maybe;
-}
-
 function change_lang()
 {
     var lang = $('lang');
@@ -141,6 +112,7 @@ function change_lang()
 }
 </script>
     <form action="{$web_root}/submit/do_submit" method="post"  onkeypress="javascript:ctrl_enter(event);" onsubmit="javascript:return fillSubmitForm();"> 
+    $admin
     <table><tbody> 
       <tr> 
         <th width="80"></th> 

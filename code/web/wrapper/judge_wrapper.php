@@ -34,13 +34,17 @@ try
     }
 
     $src_id = (int) $argv[1];
-    FM_LOG_TRACE("src_id: %d", $src_id);
+    $admin_submit = $src_id < 0 ? true : false;
+    $src_id = abs($src_id);
+    $tbl_sources  = $admin_submit ? 'admin_sources' : 'sources';
+
+    FM_LOG_TRACE("src_id: %d, admin: %s", $src_id, $admin_submit ? "Yes" : "No");
 
     //取出该代码
     $conn = db_connect();
     fail_test($conn, false);
 
-    $sql = "SELECT * FROM `sources` WHERE `source_id`=$src_id";
+    $sql = "SELECT * FROM `{$tbl_sources}` WHERE `source_id`=$src_id";
     $source = db_fetch_line($conn, $sql);
     if (false === $source)
     {
@@ -165,7 +169,7 @@ try
         //更新sources表
         $extra_info = db_escape($conn, $extra_info);
         $sql = <<<eot
-UPDATE `sources` SET
+UPDATE `{$tbl_sources}` SET
     `judge_time`   = '$judge_time',
     `memory_usage` = $memory_usage,
     `time_usage`   = $time_usage,   
@@ -177,6 +181,13 @@ eot;
         if (false === $res || 0 == $conn->affected_rows)
         {
             FM_LOG_WARNING("update sources failed");
+            break;
+        }
+
+        if ($admin_submit)
+        {
+            $in_trans = false;
+            //如果是admin的提交，就不用更新其他信息了
             break;
         }
 
