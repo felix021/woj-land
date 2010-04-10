@@ -9,9 +9,8 @@ class TPL_Main extends ctemplate
         $do_share = $p['share_code'] == 1 ? "checked" : "";
         foreach ($p['lang'] as $k => $v)
         {
-            $sel = ($k == $p['preferred_lang']) ? "selected " : "";
             $v = htmlspecialchars($v);
-            $language .= "<option $sel value=\"$k\">&nbsp;$v&nbsp;</option>\n";
+            $language .= "<option value=\"$k\">&nbsp;$v&nbsp;</option>\n";
         }
 
         $admin = '';
