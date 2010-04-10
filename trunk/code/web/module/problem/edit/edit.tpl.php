@@ -9,6 +9,7 @@ class TPL_Main extends ctemplate
         $pid = (int)$problem['problem_id'];
         foreach ($problem as &$v) $v = htmlspecialchars($v);
         $contest_opt = '<option value="0">No Contest</option>';
+        $is_spj = $problem['spj'] ? 'checked' : '';
         echo <<<eot
 <div id="tt"> 
     Edit Problem {$pid}
@@ -107,9 +108,18 @@ class TPL_Main extends ctemplate
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
+                    <td></td> 
+                    <td align="right"><strong>Special Judge:</strong>&nbsp;&nbsp;</td> 
+                    <td align="left">&nbsp;&nbsp;
+                        <input {$is_spj} tabindex="13" type="checkbox" name="spj" id="spj" class="formEle" value="1"/>
+                        This is a spj problem.
+                    </td> 
+                    <td></td> 
+                </tr> 
+                <tr class="tre"> 
                     <td colspan="4" align="center"> 
-                        <input type="submit" class="formEle" tabindex="13" name="submit" id="submit" value="Submit" />&nbsp;
-                        <input class="formEle" tabindex="14" name="reset" id="reset" type="reset" value="Reset" /> 
+                        <input type="submit" class="formEle" tabindex="14" name="submit" id="submit" value="Submit" />&nbsp;
+                        <input class="formEle" tabindex="15" name="reset" id="reset" type="reset" value="Reset" /> 
                     </td> 
                 </tr> 
         </tbody></table> 

@@ -16,6 +16,10 @@ SELECT `problem_id`, `title`, `submitted`, `accepted`
   FROM `problems`
   WHERE `problem_id` >= $start AND `problem_id` <=$end
 eot;
+        if (!is_admin())
+        {
+            $sql .= ' AND `enabled`=1';
+        }
         $conn = db_connect();
         fail_test($conn, false);
         $problems = db_fetch_lines($conn, $sql, land_conf::PROBLEMS_PER_VOLUME);
