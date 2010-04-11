@@ -157,10 +157,49 @@ try{
 }catch(e){alert(e); }
     return true;
 }
+
+function checkSPJ()
+{
+    var spj = $('spj');
+    var reg = /\.(cpp|exe)$/;
+    if (reg.test(spj.value))
+        return true;
+    alert('spj file should be a cpp source or an exe file');
+    return false;
+}
 </script>
 
+    <br/>
 
+  <table><tbody align="left">
+    <tr class="tro">
+      <th width="50"></th>
+      <th align="center" colspan="2"><strong>SPJ</strong></th>
+      <th width="50"></th>
+    </tr>
+eot;
+        if ($p['spj'])
+        {
+            echo <<<eot
+    <tr class="tro">
+      <td widtd="50"></td>
+      <td align="center" width="400"><strong>spj.exe</strong></td>
+      <td align="center" width="100">  Remove </td>
+      <td widtd="50"></td>
+    </tr>
+eot;
+        }
+        echo <<<eot
 
+  <form action="$web_root/files/spj" method="post" enctype="multipart/form-data" onsubmit="javascript: return checkSPJ();">
+    <tr class="tre">
+      <td widtd="50"><input type="hidden" name="seed" value="{$p['seed']}"/> <input type="hidden" name="problem_id" value="{$pid}"/></td>
+      <td align="center" width="400">Upload a cpp source or spj.exe here: <input type="file" name="spj" id="spj"/></td>
+      <td align="center" width="100"><input type="submit" value="Upload"/> </td>
+      <td widtd="50"></td>
+    </tr>
+  </form>
+  </tbody></table>
   </div> 
 eot;
         return true;
