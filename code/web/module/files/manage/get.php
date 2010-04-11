@@ -11,7 +11,8 @@ class Main extends acframe
         $problem_id = (int)request::$arr_get['problem_id'];
         response::add_data('problem_id', $problem_id);
 
-        $data_txt = wrapper_conf::DATA_PATH . '/' . $problem_id . '/data.txt';
+        $data_prefix = wrapper_conf::DATA_PATH . '/' . $problem_id . '/';
+        $data_txt = $data_prefix . 'data.txt';
 
         $files = array();
         if (is_readable($data_txt))
@@ -31,6 +32,16 @@ class Main extends acframe
 
         response::add_data('files', $files);
         response::add_data('seed', session::gen_vcode());
+
+        $spj_exe = $data_prefix . '/spj.exe';
+        if (file_exists($spj_exe))
+        {
+            response::add_data('spj', true);
+        }
+        else
+        {
+            response::add_data('spj', false);
+        }
 
         return true;
     }
