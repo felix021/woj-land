@@ -9,8 +9,16 @@ class TPL_Main extends ctemplate
         $is_admin = is_admin() ? 1 : 0;
         echo <<<eot
 <script language="javascript">
+var solved_list = '{$p['solved']}';
 var problem_data = $problem_data;
 var is_admin = $is_admin;
+
+function is_solved(pid)
+{
+    var reg = new RegExp("\\\\b" + pid + "\\\\b", "");
+    return reg.test(solved_list);
+}
+
 function show_problem_data(data)
 {
 try
@@ -59,6 +67,8 @@ try
         tr = document.createElement('tr');
         tr.className = tr_class;
         td = document.createElement('td');
+        if (is_solved(data[i].problem_id))
+            td.innerHTML = '<img src="$web_root/img/accepted.gif" border="0"/>';
         tr.appendChild(td);
         td = document.createElement('td');
         td.innerHTML = data[i].problem_id;

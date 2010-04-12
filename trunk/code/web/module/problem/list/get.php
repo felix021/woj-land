@@ -39,6 +39,8 @@ eot;
         }
         response::add_data('problems', $problems);
         response::add_data('volume', $volume);
+        $solved_list = session::$is_login ? session::$user_info['solved_list'] : '';
+        response::add_data('solved', $solved_list);
 
         return true;
     }
