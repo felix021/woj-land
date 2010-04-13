@@ -111,6 +111,8 @@ int RF_JAVA[512] =
     SYS_exit_group,     -1,
     SYS_exit,           -1,
     SYS_mprotect,       -1,
+    SYS_getdents64,     -1,
+    SYS_fcntl64,        -1,
     0
 };
 
