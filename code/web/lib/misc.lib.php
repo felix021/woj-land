@@ -205,4 +205,18 @@ function is_admin()
     return (isset(session::$priv['admin']) && session::$priv['admin'] == 1);
 }
 
+function has_private_privilege()
+{
+    return (isset(session::$priv['private_contest']) && session::$priv['private_contest'] == 1);
+}
+
+//time_str: yyyy-mm-dd HH:MM:SS (format for date(): Y-m-d H:i:s)
+function time_check($time_str)
+{
+    $pattern = "/^ *\\d{4}-\\d{1,2}-\\d{1,2} +\\d{1,2}:\\d{1,2}:\\d{1,2} *$/";
+    if (!preg_match($pattern, $time_str))
+        return false;
+    return strtotime($time_str);
+}
+
 ?>
