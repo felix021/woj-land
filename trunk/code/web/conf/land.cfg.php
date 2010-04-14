@@ -54,6 +54,9 @@ final class land_conf
     const MAILS_PER_PAGE        = 20; 
     const MAIL_SLICE_LEN        = 200; //characters
 
+    //contest
+    const CONTESTS_PER_PAGE     = 20;
+
     //status
     const STATUS_PER_PAGE       = 20;
     const OJ_WAIT               = 0; //Queue
