@@ -56,6 +56,13 @@ final class land_conf
 
     //contest
     const CONTESTS_PER_PAGE     = 20;
+    const PENALTY_FACTOR        = 1200; //secons
+
+    //contest status
+    const CONTEST_UNKNOWN       = 0;
+    const CONTEST_PENDING       = 1;
+    const CONTEST_RUNNING       = 2;
+    const CONTEST_FINISHED      = 3;
 
     //status
     const STATUS_PER_PAGE       = 20;

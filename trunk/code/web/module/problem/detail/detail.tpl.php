@@ -6,6 +6,9 @@ class TPL_Main extends ctemplate
     {
         $web_root = land_conf::$web_root;
         $problem = $p['problem'];
+        $disp_char = $problem['problem_id'];
+        if (!empty($p['seq_char']))
+            $disp_char = $p['seq_char'];
         $edit_button = '';
         $file_button = '';
         $defunct_button = '';
@@ -34,7 +37,7 @@ class TPL_Main extends ctemplate
         }
 
         echo <<<eot
-  <div id="tt"> Problem {$problem['problem_id']} - {$problem['title']} </div> 
+  <div id="tt"> Problem {$disp_char} - {$problem['title']} </div> 
   
   <div class="ifm"> 
     <strong>Time Limit</strong>: {$problem['time_limit']}MS &nbsp;

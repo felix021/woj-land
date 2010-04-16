@@ -119,27 +119,28 @@ CREATE TABLE `contests`
 
 CREATE TABLE `user_at_contest`
 (
- `user_id` int,
- `contest_id` int,
- `accepts` int,
- `penalty` int,
- `info_json` text,
+ `user_id` int NOT NULL,
+ `contest_id` int NOT NULL,
+ `accepts` int NOT NULL DEFAULT 0,
+ `penalty` int NOT NULL DEFAULT 0,
+ `info_json` text NOT NULL, 
  primary key (`user_id`, `contest_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 CREATE TABLE `problem_at_contest`
 (
- `problem_id` int,
- `contest_id` int,
- `AC` int,
- `PE` int,
- `CE` int,
- `WA` int,
- `RE` int,
- `TLE` int,
- `MLE` int,
- `OLE` int,
- `total` int
+ `problem_id` int NOT NULL,
+ `contest_id` int NOT NULL,
+ `AC` int NOT NULL DEFAULT 0,
+ `PE` int NOT NULL DEFAULT 0,
+ `CE` int NOT NULL DEFAULT 0,
+ `WA` int NOT NULL DEFAULT 0,
+ `RE` int NOT NULL DEFAULT 0,
+ `TLE` int NOT NULL DEFAULT 0,
+ `MLE` int NOT NULL DEFAULT 0,
+ `OLE` int NOT NULL DEFAULT 0,
+ `total` int NOT NULL DEFAULT 0,
+ primary key(`problem_id`, `contest_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 CREATE TABLE `mails`

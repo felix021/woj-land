@@ -21,7 +21,7 @@ class TPL_Main extends ctemplate
 <div id="main"> 
     <table><tbody> 
         <tr> 
-            <th width="420">Title</th> 
+            <th>Title</th> 
             <th width="80">Status</th> 
             <th width="140">Start</th> 
             <th width="140">End</th> 

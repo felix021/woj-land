@@ -12,12 +12,11 @@ class Main extends cframe
     {
         if (!isset(request::$arr_get['contest_id']))
             throw new Exception('');
+
         $contest_id = (int)request::$arr_get['contest_id'];
         $contest = get_contest_by_id($contest_id);
 
-        $ended = (time() > strtotime($contest['end_time']));
-        //没结束的private比赛，只有 “管理员” 和 “有private权限的” 才能访问
-        if ($contest['private'] && !$ended && !is_admin() && !has_private_privilege())
+        if (!check_private($contest))
         {
             throw new Exception("This is a private contest, please try another one :)");
         }
