@@ -16,6 +16,9 @@ require_once(CONF_ROOT . "/wrapper.cfg.php");
 require_once(LIB_ROOT . "/logger.lib.php");
 require_once(LIB_ROOT . "/misc.lib.php");
 require_once(LIB_ROOT . "/db.lib.php");
+require_once(MODULE_ROOT . "/problem/problem.func.php");
+require_once(MODULE_ROOT . "/problem/problem_contest_info.class.php");
+require_once(MODULE_ROOT . "/contest/contest.func.php");
 
 $temp_dir = "/tmp/should_not_exist_dir";
 
@@ -51,6 +54,7 @@ try
         FM_LOG_WARNING("not existed source id: %d", $src_id);
         throw new Exception("");
     }
+    $submit_time = strtotime($source['submit_time']);
 
     //取出代码对应的题目
     $problem_id = (int)$source['problem_id'];
@@ -61,6 +65,23 @@ try
         FM_LOG_WARNING("not existed problem id: %d", $problem_id);
         throw new Exception("");
     }
+
+    $in_contest = false;
+    $contest_id = (int)$problem['contest_id'];
+    if (!$admin_submit && $contest_id > 0)
+    {
+        $sql = 'SELECT * FROM `contests` WHERE `contest_id`=' . $contest_id;
+        $contest = db_fetch_line($conn, $sql);
+        if (false === $source)
+        {
+            FM_LOG_WARNING("not existed problem id: %d", $problem_id);
+            throw new Exception("");
+        }
+        $status = contest_status($contest['start_time'], $contest['end_time']);
+        if ($status == land_conf::CONTEST_RUNNING)
+            $in_contest = true;
+    }
+
     //judge过程比较耗时,暂时关闭连接
     db_close($conn);
 
@@ -117,6 +138,7 @@ try
     $output = system($cmd, $status);
     FM_LOG_TRACE("exit status: %d; output: %s", $status, $output);
 
+
     //解析结果
     $result = 0; $memory_usage = 0; $time_usage = 0;
     if ($status != 0)
@@ -149,14 +171,9 @@ try
     $extra_info = str_replace($temp_dir . '/', '', $extra_info);
     $extra_info = str_replace($data_dir, '', $extra_info);
 
+    //-----------------------分割线-----------------------------------
     //将judge结果更新到数据库
-        //TODO  problem_at_contenst 和 user_at_contest 表
 
-        //TODO  admin提交的情况
-        
-        //TODO  rejudge的情况
-
-    //以下是普通情况(非比赛、非admin、非rejudge)
     $conn = db_connect();
     fail_test($conn);
 
@@ -183,6 +200,7 @@ eot;
             FM_LOG_WARNING("update sources failed");
             break;
         }
+        FM_LOG_TRACE('%s updated', $tbl_sources);
 
         if ($admin_submit)
         {
@@ -201,14 +219,12 @@ eot;
         }
 
         $need_update  = true;
-        $submit       = $user['submit'];
         $solved       = $user['solved'];
         $arr_solved   = explode("|", $user['solved_list']);
         $has_accepted = in_solved_list($problem_id, $user['solved_list']);
         if (false === $is_rejudge)
         {
             //如果不是rejudge
-            $submit++; //多提交了一次
             if (!$has_accepted && $result == land_conf::OJ_AC)
             {
                 //如果是第一次ac这题
@@ -247,10 +263,10 @@ eot;
         }
         if ($need_update)
         {
+            $arr_solved  = sort($arr_solved);
             $solved_list = implode('|', array_unique($arr_solved));
             $sql = <<<eot
 UPDATE `users` SET
-    `submit`=$submit,
     `solved`=$solved,
     `solved_list`='$solved_list'
 WHERE `user_id`=$user_id
@@ -262,6 +278,7 @@ eot;
                 break;
             }
         }
+        FM_LOG_TRACE('users updated');
 
         //更新problems表
         $need_update = true;
@@ -269,10 +286,13 @@ eot;
         if (false == $is_rejudge)
         {
             //不是rejudge
-            $sql .= '`submitted`=`submitted`+1 ';
             if ($result == land_conf::OJ_AC)
             {
-                $sql .= ', `accepted`=`accepted`+1 ';
+                $sql .= ' `accepted`=`accepted`+1 ';
+            }
+            else
+            {
+                $need_update  = false;
             }
         }
         else
@@ -281,12 +301,12 @@ eot;
             if ($source['result'] == land_conf::OJ_AC && $result != land_conf::OJ_AC)
             {
                 //如果之前是AC, 而这次没AC
-                $sql .= '`accepted`=`accepted`-1 ';
+                $sql .= ' `accepted`=`accepted`-1 ';
             }
             else if ($source['result'] != land_conf::OJ_AC && $result == land_conf::OJ_AC)
             {
                 //如果之前没AC, 这次AC
-                $sql .= '`accepted`=`accepted`+1 ';
+                $sql .= ' `accepted`=`accepted`+1 ';
             }
             else
             {
@@ -305,7 +325,107 @@ eot;
                 break;
             }
         }
+        FM_LOG_TRACE('users updated');
 
+        if (!$admin_submit && $in_contest)
+        {
+            //更新problem_at_contest
+            $field = '';
+            switch ($result)
+            {
+            case land_conf::OJ_AC:  $field = 'AC'; break;
+            case land_conf::OJ_PE:  $field = 'PE'; break;
+            case land_conf::OJ_CE:  $field = 'CE'; break;
+            case land_conf::OJ_WA:  $field = 'WA'; break;
+            case land_conf::OJ_RE:  $field = 'RE'; break;
+            case land_conf::OJ_TLE: $field = 'TLE'; break;
+            case land_conf::OJ_MLE: $field = 'MLE'; break;
+            case land_conf::OJ_OLE: $field = 'OLE'; break;
+            default: /* ignore */ break;
+            }
+            if (!empty($field))
+            {
+                $sql = <<<EOT
+UPDATE `problem_at_contest` SET `$field`=`$field`+1
+    WHERE `contest_id`=$contest_id AND `problem_id`=$problem_id
+EOT;
+                $res = db_query($conn, $sql);
+                if (false == $res || 0 == $conn->affected_rows)
+                {
+                    FM_LOG_WARNING("update problem_at_contenst failed");
+                    break;
+                }
+            }
+            FM_LOG_TRACE('problem_at_contest updated');
+
+            //更新user_at_contest
+            $sql = <<<eot
+SELECT * FROM `user_at_contest` 
+    WHERE `user_id`=$user_id AND `contest_id`=$contest_id
+eot;
+            $user_contest_info = db_query($conn, $sql);
+            if (false == $user_contest_info)
+            {
+                FM_LOG_WARNING('select from user_at_contest failed');
+                break;
+            }
+
+            $info_json = json_decode($user_contest_info['info_json']);
+            if (null === $info_json || !is_array($info_json))
+            {
+                $info_json = array();
+            }
+            $pinfo = null;
+            $seq = $problem['contest_seq'];
+            if (isset($info_json[$seq]))
+            {
+                $pinfo = $info_json[$seq];
+            }
+            else
+            {
+                $pinfo = new problem_contest_info();
+                $pinfo->submits = 1;
+            }
+
+
+            $sql = 'UPDATE `user_at_contest` SET ';
+            if ($result == land_conf::OJ_AC)
+            {
+                if ($is_rejudge) //如果是rejudge, 那么AC以后的记录全部都去掉
+                {
+                    $pinfo->wrongs = array_filter($pinfo->wrongs, 
+                        create_function('$a', "return \$a < $source_id;")
+                    );
+                }
+
+                $pinfo->ac_time = $submit_time - strtotime($contest['start_time']);
+                $accepts = 0;
+                $penalty = 0;
+                foreach ($info_json as $pif)
+                {
+                    if ($pif->ac_time > 0)
+                    {
+                        $accepts++;
+                        $penalty += $pif->ac_time //A题时间
+                                 +  count($pif->wrongs) * land_conf::PENALTY_FACTOR; //WA的罚时
+                    }
+                }
+                $sql .= "`accepts`=$accepts, `penalty`=$penalty, ";
+            }
+            else
+            {
+                $pinfo->wrongs[] = $source_id;
+            }
+            $info_str = db_escape($conn, json_encode($pinfo));
+            $sql .= " `info_json`='$info_str' WHERE `user_id`=$user_id AND `contest_id`=$contest_id";
+            $res = db_query($conn, $sql);
+            if (false === $res || $conn->affected_rows == 0)
+            {
+                FM_LOG_WARNING('update user_at_contest failed');
+                break;
+            }
+            FM_LOG_TRACE('user_at_contest updated');
+        }
         $in_trans = false;
     }
     while (0);

@@ -117,7 +117,7 @@ try{
     <tr> 
         <th width="100"></th> 
         <th width="150">Problem Id</th> 
-        <th width="550">Title</th> 
+        <th>Title</th> 
         <th width="100"></th> 
     </tr> 
 eot;
