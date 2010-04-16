@@ -1,6 +1,8 @@
 #!/usr/bin/php
 <?php
 
+error_reporting(E_ALL);
+
 if (!defined("ROOT"))
 {
     define("ROOT", dirname(dirname(__FILE__)));
@@ -195,7 +197,7 @@ UPDATE `{$tbl_sources}` SET
   WHERE `source_id`=$src_id
 eot;
         $res = db_query($conn, $sql);
-        if (false === $res || 0 == $conn->affected_rows)
+        if (false === $res)
         {
             FM_LOG_WARNING("update sources failed");
             break;
@@ -212,7 +214,7 @@ eot;
         //更新users表
         $user_id = $source['user_id'];
         $user = db_fetch_line($conn, 'SELECT `submit`, `solved`, `solved_list` FROM `users` WHERE `user_id`=' . $user_id);
-        if (false == $user || 0 == $conn->affected_rows)
+        if (false == $user)
         {
             FM_LOG_WARNING("get user info failed");
             break;
@@ -272,7 +274,7 @@ UPDATE `users` SET
 WHERE `user_id`=$user_id
 eot;
             $res = db_query($conn, $sql);
-            if (false == $res || 0 == $conn->affected_rows)
+            if (false == $res)
             {
                 FM_LOG_WARNING("update users failed");
                 break;
@@ -319,7 +321,7 @@ eot;
         if ($need_update)
         {
             $res = db_query($conn, $sql);
-            if (false == $res || 0 == $conn->affected_rows)
+            if (false == $res)
             {
                 FM_LOG_WARNING("update problem info failed");
                 break;
@@ -327,30 +329,40 @@ eot;
         }
         FM_LOG_TRACE('users updated');
 
+        //不是管理员的提交，且比赛正在进行，则需要更新
+        // problem_at_contest 和 user_at_contest 两个表
         if (!$admin_submit && $in_contest)
         {
             //更新problem_at_contest
-            $field = '';
-            switch ($result)
+            function get_field_by_result($result)
             {
-            case land_conf::OJ_AC:  $field = 'AC'; break;
-            case land_conf::OJ_PE:  $field = 'PE'; break;
-            case land_conf::OJ_CE:  $field = 'CE'; break;
-            case land_conf::OJ_WA:  $field = 'WA'; break;
-            case land_conf::OJ_RE:  $field = 'RE'; break;
-            case land_conf::OJ_TLE: $field = 'TLE'; break;
-            case land_conf::OJ_MLE: $field = 'MLE'; break;
-            case land_conf::OJ_OLE: $field = 'OLE'; break;
-            default: /* ignore */ break;
+                $field = '';
+                switch ($result)
+                {
+                case land_conf::OJ_AC:  $field = 'AC'; break;
+                case land_conf::OJ_PE:  $field = 'PE'; break;
+                case land_conf::OJ_CE:  $field = 'CE'; break;
+                case land_conf::OJ_WA:  $field = 'WA'; break;
+                case land_conf::OJ_RE:  $field = 'RE'; break;
+                case land_conf::OJ_TLE: $field = 'TLE'; break;
+                case land_conf::OJ_MLE: $field = 'MLE'; break;
+                case land_conf::OJ_OLE: $field = 'OLE'; break;
+                default: /* ignore */ break;
+                }
+                return $field;
             }
-            if (!empty($field))
+            $field1 = get_field_by_result($result);
+            $field2 = $is_rejudge ? get_field_by_result($source['result']) : '';
+            //如果是需要更新的field，并且rejudge的结果跟之前不同, 需要更新
+            if (!empty($field1) && $result != $source['result'])
             {
+                $c_f2 = empty($field2) ? '' : ", `$field2`=`$field2`-1";
                 $sql = <<<EOT
-UPDATE `problem_at_contest` SET `$field`=`$field`+1
+UPDATE `problem_at_contest` SET `$field1`=`$field1`+1 $c_f2
     WHERE `contest_id`=$contest_id AND `problem_id`=$problem_id
 EOT;
                 $res = db_query($conn, $sql);
-                if (false == $res || 0 == $conn->affected_rows)
+                if (false == $res)
                 {
                     FM_LOG_WARNING("update problem_at_contenst failed");
                     break;
@@ -363,30 +375,25 @@ EOT;
 SELECT * FROM `user_at_contest` 
     WHERE `user_id`=$user_id AND `contest_id`=$contest_id
 eot;
-            $user_contest_info = db_query($conn, $sql);
+            $user_contest_info = db_fetch_line($conn, $sql);
             if (false == $user_contest_info)
             {
                 FM_LOG_WARNING('select from user_at_contest failed');
                 break;
             }
 
+            //获取user在这场比赛中的提交信息
             $info_json = json_decode($user_contest_info['info_json']);
             if (null === $info_json || !is_array($info_json))
             {
                 $info_json = array();
             }
-            $pinfo = null;
-            $seq = $problem['contest_seq'];
-            if (isset($info_json[$seq]))
-            {
-                $pinfo = $info_json[$seq];
-            }
-            else
-            {
-                $pinfo = new problem_contest_info();
-                $pinfo->submits = 1;
-            }
 
+            $seq = $problem['contest_seq'];
+            $idx = pgi_get_idx_by_seq($info_json, $seq);
+            $pinfo = &$info_json[$idx];
+
+            FM_LOG_DEBUG('next update');
 
             $sql = 'UPDATE `user_at_contest` SET ';
             if ($result == land_conf::OJ_AC)
@@ -394,11 +401,13 @@ eot;
                 if ($is_rejudge) //如果是rejudge, 那么AC以后的记录全部都去掉
                 {
                     $pinfo->wrongs = array_filter($pinfo->wrongs, 
-                        create_function('$a', "return \$a < $source_id;")
+                        create_function('$a', "return \$a < $src_id;")
                     );
                 }
 
-                $pinfo->ac_time = $submit_time - strtotime($contest['start_time']);
+                $start_time = strtotime($contest['start_time']);
+                FM_LOG_DEBUG('submit_time: %d, start_time: %d', $submit_time, $start_time);
+                $pinfo->ac_time = $submit_time - $start_time;
                 $accepts = 0;
                 $penalty = 0;
                 foreach ($info_json as $pif)
@@ -414,12 +423,13 @@ eot;
             }
             else
             {
-                $pinfo->wrongs[] = $source_id;
+                $pinfo->wrongs[] = $src_id;
             }
-            $info_str = db_escape($conn, json_encode($pinfo));
+            $info_json->$seq = $pinfo;
+            $info_str = db_escape($conn, json_encode($info_json));
             $sql .= " `info_json`='$info_str' WHERE `user_id`=$user_id AND `contest_id`=$contest_id";
             $res = db_query($conn, $sql);
-            if (false === $res || $conn->affected_rows == 0)
+            if (false === $res)
             {
                 FM_LOG_WARNING('update user_at_contest failed');
                 break;

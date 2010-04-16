@@ -1,7 +1,7 @@
 <?php
 
 require_once(MODULE_ROOT . '/problem/problem.func.php');
-require_once(MODULE_ROOT . '/problem/problem_contest_info.func.php');
+require_once(MODULE_ROOT . '/problem/problem_contest_info.class.php');
 require_once(MODULE_ROOT . '/contest/contest.func.php');
 
 class Main extends cframe
@@ -32,7 +32,7 @@ class Main extends cframe
         if ($cid != 0) //题目属于某个比赛
         {
             $contest = get_contest_by_id($problem['contest_id']);
-            $status  = contest_status($contest['start_time'], $contest_id['end_time']);
+            $status  = contest_status($contest['start_time'], $contest['end_time']);
 
             //比赛不允许匿名参加
             if ($status == land_conf::CONTEST_RUNNING && !session::$is_login)
@@ -41,8 +41,9 @@ class Main extends cframe
             }
 
             if ($status == land_conf::CONTEST_PENDING ||
-                check_visibility($problem, $contest))
+                false == check_visibility($problem, $contest))
             {
+                FM_LOG_WARNING('unauthorized access to pending contest, or private contest');
                 //未开始，或者不允许参加的用户
                 throw new Exception('This problem is currently unavailable.');
             }
@@ -85,13 +86,13 @@ class Main extends cframe
         $info_json = array();
         if (!$is_admin && $in_contest)
         {
-            $info_json = null;
+            $info_json = array();
             $sql = <<<eot
 SELECT `info_json` FROM `user_at_contest`
     WHERE `user_id`=$user_id AND `contest_id`=$cid
 eot;
             $line = db_fetch_line($conn, $sql);
-            if (false === $res)
+            if (false === $line)
             {
                 //第一次提交
                 $empty_arr_str = json_encode(array());
@@ -109,18 +110,10 @@ eot;
                 //第n次提交
                 $info_json = json_decode($line['info_json']);
             }
+            FM_LOG_TRACE('info_json: %s', dump_var($info_json));
             $seq = $problem['contest_seq'];
-            $pinfo = null;
-            if (isset($info_json[$seq]))
-            {
-                $pinfo = $info_json[$seq];
-            }
-            else
-            {
-                $pinfo = new problem_contest_info();
-                $pinfo->submits = 1;
-            }
-            $info_json[$seq] = $pinfo;
+            $idx = pgi_get_idx_by_seq($info_json, $seq);
+            $info_json[$idx]->submits++;
         }
 
         $res = db_query($conn, 'START TRANSACTION');
@@ -133,7 +126,7 @@ eot;
             {
                 //更新users的submit次数
                 $sql = <<<eot
-UPDATE `users` SET `submits`=`submits`+1
+UPDATE `users` SET `submit`=`submit`+1
     WHERE `user_id`=$user_id
 eot;
                 $res = db_query($conn, $sql);
