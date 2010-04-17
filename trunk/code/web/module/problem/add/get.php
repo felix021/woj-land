@@ -8,7 +8,6 @@ class Main extends acframe
 
     public function process()
     {
-        //TODO  contests info
         return true;
     }
 

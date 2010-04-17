@@ -22,6 +22,7 @@ class Main extends acframe
         $time_limit = (int)$p['time_limit'];
         $memory_limit = (int)$p['memory_limit'];
         $contest_id = (int)$p['contest_id'];
+        $old_contest_id = (int)$p['old_contest_id'];
         $spj = (isset($p['spj']) && $p['spj'] == 1) ? 1 : 0;
 
         $sql = <<<eot
@@ -43,6 +44,18 @@ eot;
 
         $res = db_query($conn, $sql);
         fail_test($res, false);
+
+        if ($contest_id != $old_contest_id)
+        {
+            remove_problem_at_contest($conn, $pid, $old_contest_id);
+        }
+
+        if ($contest_id > 0)
+        {
+            add_problem_at_contest($conn, $pid, $contest_id);
+        }
+
+        db_close($conn);
 
         response::add_link('View This Problem', land_conf::$web_root . '/problem/detail?problem_id=' .$pid);
         response::display_msg('Problem information updated.');

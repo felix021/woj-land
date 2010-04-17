@@ -8,7 +8,7 @@ class TPL_Main extends ctemplate
         $problem = $p['problem'];
         $pid = (int)$problem['problem_id'];
         foreach ($problem as &$v) $v = htmlspecialchars($v);
-        $contest_opt = '<option value="0">No Contest</option>';
+        $contest_id = (int)$problem['contest_id'];
         $is_spj = $problem['spj'] ? 'checked' : '';
         echo <<<eot
 <div id="tt"> 
@@ -99,12 +99,9 @@ class TPL_Main extends ctemplate
                 </tr> 
                 <tr class="tre"> 
                     <td></td> 
-                    <td align="right"><strong>Contest:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;
-                        <select class="formEle" tabindex="12" name="contest_id" id="contest_id"> 
-                            {$contest_opt}
-                        </select> 
-                    </td> 
+                    <td align="right"><strong>Contest_id:</strong>&nbsp;&nbsp;</td> 
+                    <td align="left">&nbsp;&nbsp;<input type="text" name="contest_id" value="{$contest_id}" tabindex="12"/> Empty/0 for no contest</td> 
+                    <input type="hidden" name="old_contest_id" value="{$contest_id}" />
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 

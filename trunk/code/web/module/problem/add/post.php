@@ -1,5 +1,7 @@
 <?php
 
+require_once(MODULE_ROOT . '/problem/problem.func.php');
+
 class Main extends acframe
 {
 
@@ -8,7 +10,6 @@ class Main extends acframe
 
     public function process()
     {
-        //TODO  contests info
         $p = request::$arr_post;
         response::add_data('problem', $p);
 
@@ -35,6 +36,11 @@ eot;
 
         $pid = db_insert($conn, $sql);
         fail_test($pid, false);
+
+        if ($cid > 0)
+        {
+            add_problem_at_contest($conn, $pid, $cid);
+        }
 
         db_close($conn);
 
