@@ -89,11 +89,7 @@ class TPL_Main extends ctemplate
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Contest:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;
-                        <select class="formEle" tabindex="12" name="contest_id" id="contest_id"> 
-                            {$contest_opt}
-                        </select> 
-                    </td> 
+                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="12" name="contest_id" id="contest_id" value="0"/> Empty/0 for no contest</td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 

@@ -50,4 +50,38 @@ function check_visibility($problem, $contest)
     return false;
 }
 
+function add_problem_at_contest($conn, $pid, $cid)
+{
+    $pid = (int)$pid;
+    $cid = (int)$cid;
+    if ($pid <= 0) return;
+    if ($cid <= 0) return;
+
+    $sql = <<<eot
+INSERT INTO `problem_at_contest`
+(`problem_id`, `contest_id`) VALUES ($pid, $cid);
+eot;
+
+    $res = db_query($conn, $sql);
+    fail_test($res, false);
+
+    return;
+}
+
+function remove_problem_at_contest($conn, $pid, $cid)
+{
+    $pid = (int)$pid;
+    $cid = (int)$cid;
+    if ($pid <= 0) return;
+    if ($cid <= 0) return;
+
+    $sql = <<<eot
+DELETE FROM `problem_at_contest` WHERE `problem_id`=$pid AND `contest_id`=$cid;
+eot;
+
+    $res = db_query($conn, $sql);
+    //fail_test($res, false);
+
+    return;
+}
 ?>
