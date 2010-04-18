@@ -120,6 +120,7 @@ CREATE TABLE `contests`
 CREATE TABLE `user_at_contest`
 (
  `user_id` int NOT NULL,
+ `username` char(20) NOT NULL,
  `contest_id` int NOT NULL,
  `accepts` int NOT NULL DEFAULT 0,
  `penalty` int NOT NULL DEFAULT 0,
