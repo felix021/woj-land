@@ -48,10 +48,6 @@ eot;
         if ($contest_id != $old_contest_id)
         {
             remove_problem_at_contest($conn, $pid, $old_contest_id);
-        }
-
-        if ($contest_id > 0)
-        {
             add_problem_at_contest($conn, $pid, $contest_id);
         }
 

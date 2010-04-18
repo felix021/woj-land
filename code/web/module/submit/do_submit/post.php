@@ -96,11 +96,12 @@ eot;
             {
                 //第一次提交
                 $empty_arr_str = json_encode(array());
+                $username = db_escape($conn, session::$user_info['username']);
                 $sql = <<<eot
 INSERT INTO `user_at_contest` 
-(`user_id`, `contest_id`, `accepts`, `penalty`, `info_json`)
+(`user_id`, `username`, `contest_id`, `accepts`, `penalty`, `info_json`)
 VALUES
-($user_id, $cid, 0, 0, '$empty_arr_str')
+($user_id, '$username', $cid, 0, 0, '$empty_arr_str')
 eot;
                 $res = db_query($conn, $sql);
                 fail_test($res, false);
