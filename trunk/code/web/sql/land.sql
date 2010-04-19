@@ -132,6 +132,7 @@ CREATE TABLE `problem_at_contest`
 (
  `problem_id` int NOT NULL,
  `contest_id` int NOT NULL,
+ `contest_seq` int NOT NULL DEFAULT 0,
  `AC` int NOT NULL DEFAULT 0,
  `PE` int NOT NULL DEFAULT 0,
  `CE` int NOT NULL DEFAULT 0,

@@ -131,7 +131,7 @@ eot;
             echo <<<eot
     <tr class="{$trc}">
         <td></td> 
-        <td>$pid Problem {$problem['char']}</td> 
+        <td>Problem {$problem['char']}</td> 
         <td><a href="$web_root/problem/detail?problem_id=$pid&contest_id=$cid">{$title}</a></td> 
         <td></td> 
     </tr>
@@ -139,17 +139,20 @@ eot;
 eot;
         }
 
+        $title = urlencode(htmlspecialchars($p['contest']['title']));
+
         echo <<<eot
 
 </tbody></table> 
-<br /> 
+<br/>
+<div style="text-indent:100px;">
 
-    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid">Standing</a></span>&nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid&title={$title}">Standing</a></span>&nbsp;
     <span class="bt"><a href="$web_root/status?contest_id=$cid">Status</a></span>&nbsp;
-    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid">Statistics</a></span> 
+    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid&title={$title}">Statistics</a></span> 
     $seq_edit_bt
-
-<br /><br /> 
+    </div>
+<br />
 </div> 
 
 <script>

@@ -16,7 +16,7 @@ class Main extends cframe
         $page = 1;
         $admin = '';
         $tbl_name = 'sources';
-        if (isset(request::$arr_get['admin']))
+        if (isset(request::$arr_get['admin']) && !empty(request::$arr_get['admin']))
         {
             if (!is_admin())
             {

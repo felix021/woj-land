@@ -35,7 +35,7 @@ class TPL_Main extends ctemplate
   <div id="main"> 
  
   <form action="$web_root/status" method="get"> 
-   <input type="hidden" name="admin" value=""/> 
+   <input type="hidden" name="admin" value="{$admin}"/> 
    <input type="hidden" name="contest_id" value="{$p['contest_id']}" /> 
    <strong>Search: </strong>
    <strong>Problem ID</strong> <input size="6" name="problem_id" value="{$p['problem_id']}"/>

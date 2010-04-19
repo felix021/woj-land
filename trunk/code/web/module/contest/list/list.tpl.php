@@ -29,6 +29,7 @@ class TPL_Main extends ctemplate
             $extra_col
         </tr> 
 eot;
+        $i = 0;
         if (is_array($p['contests']))
         foreach ($p['contests'] as $contest)
         {
@@ -62,8 +63,9 @@ eot;
             {
                 $extra_col = "<td><a href=\"$web_root/contest/edit?contest_id={$contest['contest_id']}\">Edit</a></td>";
             }
+            $trc = $i++ & 1 ? 'tro' : 'tre';
             echo <<<eot
-        <tr class="tro"> 
+        <tr class="$trc"> 
             <td><a href="$web_root/contest/detail?contest_id={$contest['contest_id']}">{$contest['title']}</a></td> 
             <td>$status</td>
             <td>{$contest['start_time']}</td>

@@ -11,6 +11,8 @@ class Main extends cframe
     public function process()
     {
         $cid = (int)request::$arr_get['contest_id'];
+        response::add_data('cid', $cid);
+
         $page = 1;
         if (isset(request::$arr_get['page']))
         {
@@ -22,6 +24,9 @@ class Main extends cframe
 
         response::add_data('page', $page);
         response::add_data('rank', $start);
+
+        $title = force_read(request::$arr_get, 'title');
+        response::add_data('title', $title);
 
         $conn  = db_connect();
         fail_test($conn, false);
@@ -39,7 +44,7 @@ class Main extends cframe
 SELECT `user_id`, `username`, `accepts`, `penalty`, `info_json` 
     FROM `user_at_contest`
     WHERE `contest_id`=$cid
-    ORDER BY `accepts` DESC, `penalty` DESC
+    ORDER BY `accepts` DESC, `penalty` ASC
     LIMIT $start,$itpp
 eot;
         $users = db_fetch_lines($conn, $sql, -1);
