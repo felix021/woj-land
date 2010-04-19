@@ -113,11 +113,12 @@ class Request extends Thread
                 //运行judge并等待其结束
                 Process p = null;
                 int retry = 3; //重试3次
-                for ( ; retry > 0; retry--);
+                for ( ; retry > 0; retry--)
                 {
                     try
                     {
                         p = Runtime.getRuntime().exec(cmd);
+                        break;
                     }
                     catch(Exception e)
                     {
