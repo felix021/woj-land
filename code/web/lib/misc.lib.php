@@ -221,6 +221,6 @@ function time_check($time_str)
 
 function time_to_str($t)
 {
-    return (floor($t / 3600) . ':' . floor($t % 3600 / 60) . ':' . $t % 36);
+    return sprintf("%d:%02d:%02d", floor($t / 3600), floor($t % 3600 / 60), $t % 60);
 }
 ?>

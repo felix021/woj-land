@@ -5,15 +5,16 @@ class TPL_Main extends ctemplate
     public function display($p)
     {
         $web_root = land_conf::$web_root;
+        $title = htmlspecialchars($p['title']);
         echo <<<eot
 <style>td{text-align:center;}</style>
-<div id="tt">Contests - Summer Practice </div> 
+<div id="tt">Contests - <a href="$web_root/contest/detail?contest_id={$p['cid']}">$title</a></div> 
 <div id="main"> 
     <table><tbody> 
         <tr> 
             <th width="50">Rank</th> 
             <th> Name </th> 
-            <th width="30">Solved</th> 
+            <th width="60">Solved</th> 
             <th width="75">Time</th> 
 
 eot;
@@ -30,7 +31,7 @@ eot;
         $i = $p['rank'];
         foreach ($p['users'] as $user)
         {
-            $trc = $i++ & 1 ? 'tro' : 'trc';
+            $trc = $i++ & 1 ? 'tro' : 'tre';
             $username = htmlspecialchars($user['username']);
             $penalty = floor($user['penalty'] / 60);
             echo <<<eot
@@ -48,12 +49,18 @@ eot;
                     $pinfo = $user['pinfo'][$seq];
                     if ($pinfo->ac_time > 0)
                     {
-                        $disp = $pinfo->submits . '/' . floor($pinfo->ac_time / 60);
+                        //$disp = $pinfo->submits . '/' . floor($pinfo->ac_time / 60);
+                        $disp = time_to_str($pinfo->ac_time);
                     }
                     else
                     {
                         $disp = $pinfo->submits . '/--';
                     }
+                    $disp .= '<br/>(' . (int)(-count($pinfo->wrongs)) . ')';
+                }
+                else
+                {
+                    //$disp = '(0)';
                 }
                 echo <<<eot
             <td> $disp </td> 
@@ -66,9 +73,22 @@ eot;
 eot;
         }
 
+
+        $page = (int)$p['page'];
+        $prev = $page - 1;
+        $next = $page + 1;
+        $title = urlencode($p['title']);
         echo <<<eot
     </tbody></table> 
-<br></div> 
+
+<br/>
+ <div> 
+    <span class="bt"><a href="javascript:history.back(1)"> Back </a></span> &nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?page=1&title=$title"> Top </a></span> &nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?page=$prev&title=$title"> Prev Page </a></span> &nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?page=$next&title=$title"> Next Page </a></span> 
+  </div><br/> 
+</div> 
 
 eot;
         return true;

@@ -57,6 +57,8 @@ eot;
         $res = db_query($conn, $sql);
         fail_test($res, false);
 
+        db_close($conn);
+
         response::add_link('View This contest', land_conf::$web_root . '/contest/detail?contest_id=' .$cid);
         response::display_msg('contest information updated.');
         return true;

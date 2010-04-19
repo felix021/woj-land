@@ -13,6 +13,16 @@ function createElement(name)
     return document.createElement(name);
 }
 
+function cmp_greater(a, b)
+{
+    return a > b;
+}
+
+function cmp_less(a, b)
+{
+    return a < b;
+}
+
 function qsort(arr, s, e, cmp)
 {
     var i = s, j = e, t = arr[s];
@@ -67,7 +77,7 @@ function guess_lang(lang, src)
     { //C || C++
         lang_maybe = 2;
         if (src.indexOf('iostream') >= 0 || src.indexOf('namespace') >= 0
-            || src.indexOf('cstdio') >= 0) //C++
+                || src.indexOf('cstdio') >= 0) //C++
         {
             lang_maybe = 2;
         }
@@ -77,7 +87,7 @@ function guess_lang(lang, src)
             if (lang == 2)
                 lang_maybe = 2; //C++兼容C
         }
-            
+
     }
     else if (src.indexOf('java') > 0 || src.indexOf('System.out') >= 0 
             || src.indexOf('public class') >= 0)
@@ -158,3 +168,4 @@ function PostURL(url, values, func)
 {
     LoadURL('POST', url, values, func);
 }
+
