@@ -51,13 +51,13 @@ eot;
                     if ($pinfo->ac_time > 0)
                     {
                         //$disp = $pinfo->submits . '/' . floor($pinfo->ac_time / 60);
-                        $disp = time_to_str($pinfo->ac_time);
+                        $disp = time_to_str($pinfo->ac_time) . '<br/>';
                     }
                     else
                     {
-                        $disp = $pinfo->submits . '/--';
+                        //$disp = $pinfo->submits . '/--';
                     }
-                    $disp .= '<br/>(' . (int)(-count($pinfo->wrongs)) . ')';
+                    $disp .= '(' . (int)(-count($pinfo->wrongs)) . ')';
                 }
                 else
                 {

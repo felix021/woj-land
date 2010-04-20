@@ -221,7 +221,9 @@ eot;
             throw new Exception('');
         }
 
-        $url = land_conf::$web_root . '/status' . ($is_admin ? '?admin' : '');
+        $url = land_conf::$web_root . '/status?username=' . $username
+             . ($is_admin ? '&admin=1' : '')
+             . ($in_contest ? '&contest_id=' . $cid : '');
         response::add_data('return_url', $url);
         response::add_data('links', array(
             'Status'    => $url,
