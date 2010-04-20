@@ -1,5 +1,7 @@
 <?php
 
+require_once(MODULE_ROOT . '/contest/contest.func.php');
+
 function get_problem_by_id($problem_id)
 {
     $conn = db_connect();
@@ -83,5 +85,53 @@ eot;
     //fail_test($res, false);
 
     return;
+}
+
+function filter_contest_problem($problems)
+{
+    $arr_cid = array();
+    foreach ($problems as $problem)
+    {
+        if ($problem['contest_id'] > 0)
+        {
+            $arr_cid[] = $problem['contest_id'];
+        }
+    }
+
+    if (count($arr_cid) == 0)
+        return $problems;
+
+    $cids = join(', ', $arr_cid);
+    $sql = <<<eot
+SELECT `contest_id`, `start_time`, `end_time`
+    FROM `contests`
+    WHERE `contest_id` IN ($cids);
+eot;
+
+    $conn = db_connect();
+    fail_test($conn, false);
+
+    $lines = db_fetch_lines($conn, $sql, -1);
+    fail_test($lines, false);
+    
+    db_close($conn);
+
+    $contests = array();
+    foreach ($lines as $line)
+    {
+        $contests[$line['contest_id']] = contest_status($line['start_time'], $line['end_time']);
+    }
+
+    $arr_pro = array();
+    foreach ($problems as $problem)
+    {
+        $cid = $problem['contest_id'];
+        //非比赛，或者比赛已经结束
+        if ($cid <= 0 || $contests[$cid] != land_conf::CONTEST_PENDING)
+        {
+            $arr_pro[] = $problem;
+        }
+    }
+    return $arr_pro;
 }
 ?>
