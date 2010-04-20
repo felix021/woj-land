@@ -56,5 +56,15 @@ function check_private($contest)
         return true;
 }
 
+function check_pending($contest)
+{
+    $status = contest_status($contest['start_time'], $contest['end_time']);
+    if (!is_admin() && $status == land_conf::CONTEST_PENDING)
+    {
+        throw new Exception("This contest is pending. Please try again later.");
+    }
+
+}
+
 //echo seq_to_char(3), char_to_seq('B');
 ?>

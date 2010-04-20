@@ -21,6 +21,8 @@ class Main extends cframe
             throw new Exception("This is a private contest, please try another one :)");
         }
 
+        check_pending($contest);
+
         response::add_data('contest', $contest);
 
         $conn = db_connect();
