@@ -73,6 +73,14 @@ function fillSubmitForm()
         pmt = 'The language of your source seems not to be supported by land, '
             + 'do you still want to submit?';
     }
+    else if (lang_maybe == 3) //JAVA, check 'class Main'
+    {
+        if (!(/public +class +Main/.test(source.value)))
+        {
+            pmt = 'Your Java code DO NOT contain a public class named "Main", '
+                + 'which may result in java_re, do you still want to submit?';
+        }
+    }
 
     if (pmt != '')
     {
