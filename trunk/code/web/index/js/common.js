@@ -169,3 +169,13 @@ function PostURL(url, values, func)
     LoadURL('POST', url, values, func);
 }
 
+function replaceTextarea(id, height, width, toolbarset)
+{
+    var oFCKeditor = new FCKeditor(id) ;
+    oFCKeditor.BasePath = '../editor/fckeditor/';
+    oFCKeditor.ToolbarSet = toolbarset;
+    oFCKeditor.Height   = height;
+    oFCKeditor.Width    = width;
+    //oFCKeditor.ReplaceTextarea() ;
+    return oFCKeditor;
+}

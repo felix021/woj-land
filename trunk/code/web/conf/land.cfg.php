@@ -14,6 +14,7 @@ final class land_conf
     const STAY_TIME             = 3; //seconds before refresh
 
     public static $web_root     = "/land";
+    const UPLOAD_PATH           = "/upload/";
 
     //daemon
     const DAEMON_HOST           = '127.0.0.1';

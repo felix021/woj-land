@@ -12,6 +12,8 @@ class TPL_Main extends ctemplate
         $edit_button = '';
         $file_button = '';
         $defunct_button = '';
+        $desc = $problem['description'];
+        $hint = $problem['hint'];
         foreach ($problem as $key => &$v)
         {
             $v = htmlspecialchars($v);
@@ -52,7 +54,7 @@ class TPL_Main extends ctemplate
   <div id="main"> 
     <div class="ptt">Description</div> 
     
-    <div class="ptx">{$problem['description']}</div> 
+    <div class="ptx">$desc</div> 
     
     <div class="ptt">Input</div> 
         
@@ -72,7 +74,7 @@ class TPL_Main extends ctemplate
     
     <div class="ptt">Hint</div> 
         
-    <div class="ptx">{$problem['hint']}</div> 
+    <div class="ptx">{$hint}</div> 
     
     <div class="ptt">Source</div> 
 
