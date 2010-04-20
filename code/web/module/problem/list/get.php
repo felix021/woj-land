@@ -1,5 +1,7 @@
 <?php
 
+require_once(MODULE_ROOT . '/problem/problem.func.php');
+
 class Main extends cframe
 {
     protected $need_login = false;
@@ -12,7 +14,7 @@ class Main extends cframe
         $end    = $start + land_conf::PROBLEMS_PER_VOLUME - 1;
 
         $sql = <<<eot
-SELECT `problem_id`, `title`, `submitted`, `accepted`
+SELECT `problem_id`, `contest_id`, `title`, `submitted`, `accepted`
   FROM `problems`
   WHERE `problem_id` >= $start AND `problem_id` <=$end
 eot;
@@ -37,6 +39,8 @@ eot;
                 $p['ratio'] = round($ac * 100 / $st, 2);
             }
         }
+        if (!is_admin())
+            $problems = filter_contest_problem($problems);
         response::add_data('problems', $problems);
         response::add_data('volume', $volume);
         $solved_list = session::$is_login ? session::$user_info['solved_list'] : '';
