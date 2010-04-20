@@ -6,7 +6,7 @@ class Main extends cframe
 {
 
     protected $need_session = true;
-    protected $need_login   = true;
+    protected $need_login   = false;
 
     public function process()
     {
@@ -25,7 +25,10 @@ class Main extends cframe
         response::add_data('page', $page);
         response::add_data('rank', $start);
 
-        $title = force_read(request::$arr_get, 'title');
+        $contest = get_contest_by_id($cid);
+        check_pending($contest);
+
+        $title = $contest['title'];
         response::add_data('title', $title);
 
         $conn  = db_connect();

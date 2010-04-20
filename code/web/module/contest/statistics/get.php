@@ -7,7 +7,7 @@ class Main extends cframe
 {
 
     protected $need_session = true;
-    protected $need_login   = true;
+    protected $need_login   = false;
 
     public function process()
     {
@@ -18,6 +18,10 @@ class Main extends cframe
             throw new Exception('');
         }
         response::add_data('contest_id', $cid);
+
+        $contest = get_contest_by_id($cid);
+        check_pending($contest);
+        response::add_data('title', $contest['title']);
 
         $sql = <<<eot
 SELECT * FROM `problem_at_contest` 
@@ -34,7 +38,6 @@ eot;
         db_close($conn);
 
         response::add_data('arr_statis', $arr_statis);
-        response::add_data('title', force_read(request::$arr_get, 'title'));
         return true;
     }
 

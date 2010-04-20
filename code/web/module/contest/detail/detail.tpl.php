@@ -37,9 +37,11 @@ class TPL_Main extends ctemplate
             $pub = '<span>Public</span>';
         }
 
+        $edit_bt = '';
         $seq_edit_bt = '';
         if (is_admin())
         {
+            $edit_bt = "<span class=\"bt\"><a href=\"$web_root/contest/edit?contest_id=$cid\">Edit</a></span>";
             $seq_edit_bt = "<span class=\"bt\"><a href=\"$web_root/contest/seqedit?contest_id=$cid\">Edit Sequence</a></span>";
         }
 
@@ -147,9 +149,10 @@ eot;
 <br/>
 <div style="text-indent:100px;">
 
-    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid&title={$title}">Standing</a></span>&nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid">Standing</a></span>&nbsp;
     <span class="bt"><a href="$web_root/status?contest_id=$cid">Status</a></span>&nbsp;
-    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid&title={$title}">Statistics</a></span> 
+    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid">Statistics</a></span> 
+    $edit_bt
     $seq_edit_bt
     </div>
 <br />

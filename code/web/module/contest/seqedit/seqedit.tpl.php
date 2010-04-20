@@ -14,7 +14,7 @@ class TPL_Main extends ctemplate
 
         echo <<<eot
 <div id="tt"> 
-    Edit Problem Sequence
+    Edit Problem Sequence for contest <a href="$web_root/contest/detail?contest_id=$cid">{$contest['title']}</a>
 </div> 
 
 <script language="javascript">

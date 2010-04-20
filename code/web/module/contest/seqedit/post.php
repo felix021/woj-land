@@ -90,6 +90,8 @@ eot;
 
         db_close($conn);
 
+        response::add_link('View the contest',
+            land_conf::$web_root . '/contest/detail?contest_id=' . $cid);
         response::display_msg('Problem sequence updated.');
         return true;
     }

@@ -6,6 +6,7 @@ class TPL_Main extends ctemplate
     {
         $web_root = land_conf::$web_root;
         $title = htmlspecialchars($p['title']);
+        $cid = $p['cid'];
         echo <<<eot
 <style>td{text-align:center;}</style>
 <div id="tt">Contests - <a href="$web_root/contest/detail?contest_id={$p['cid']}">$title</a></div> 
@@ -84,9 +85,9 @@ eot;
 <br/>
  <div> 
     <span class="bt"><a href="javascript:history.back(1)"> Back </a></span> &nbsp;
-    <span class="bt"><a href="$web_root/contest/standing?page=1&title=$title"> Top </a></span> &nbsp;
-    <span class="bt"><a href="$web_root/contest/standing?page=$prev&title=$title"> Prev Page </a></span> &nbsp;
-    <span class="bt"><a href="$web_root/contest/standing?page=$next&title=$title"> Next Page </a></span> 
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid&page=1"> Top </a></span> &nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid&page=$prev"> Prev Page </a></span> &nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid&page=$next"> Next Page </a></span> 
   </div><br/> 
 </div> 
 

@@ -29,7 +29,17 @@ class TPL_Main extends ctemplate
             <th width="100">Total</th>
         </tr>
 eot;
-        $total = array();
+        $total = array(
+            'AC'	=> 0,
+            'PE'	=> 0,
+            'CE'	=> 0,
+            'WA'	=> 0,
+            'TLE'	=> 0,
+            'RE'	=> 0,
+            'MLE'	=> 0,
+            'OLE'	=> 0,
+            'total'	=> 0,
+            );
         $i = 0;
         foreach ($p['arr_statis'] as $statis)
         {
@@ -37,15 +47,8 @@ eot;
             $pid = $statis['problem_id'];
             foreach ($statis as $k => $v)
             {
-                //var_dump($k);
                 if (isset($total[$k]))
-                {
                     $total[$k] += $v;
-                }
-                else 
-                {
-                    $total[$k] = $v;
-                }
             }
             $trc = $i++ & 1 ? 'tro' : 'tre';
             echo <<<eot

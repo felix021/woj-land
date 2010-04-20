@@ -22,8 +22,10 @@ class TPL_Main extends ctemplate
         }
         $SPJ = $problem['spj'] == 1 ? "Yes" : "No";
 
+        $admin_submit_bt = '';
         if (is_admin())
         {
+            $admin_submit_bt= "<span class=\"bt\"><a href=\"{$web_root}/submit/submit?problem_id={$problem['problem_id']}\">Submit as Admin</a></span>";
             $edit_button    = "<span class=\"bt\"><a href=\"{$web_root}/problem/edit?problem_id={$problem['problem_id']}\">Edit</a></span>";
             $file_button = "<span class=\"bt\"><a href=\"{$web_root}/files/manage?problem_id={$problem['problem_id']}\">Files</a></span>";
             if ($problem['enabled'])
@@ -80,6 +82,7 @@ class TPL_Main extends ctemplate
 
     <div> 
       <span class="bt"><a href="{$web_root}/submit/submit?problem_id={$problem['problem_id']}">Submit</a></span>  
+      $admin_submit_bt
       <!-- TODO <span class="bt"><a href="{$web_root}/discuss/list?problem_id={$problem['problem_id']}">Discuss</a></span>  -->
       <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Status</a></span> 
       $edit_button
