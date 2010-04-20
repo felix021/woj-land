@@ -407,7 +407,9 @@ eot;
 
                 $start_time = strtotime($contest['start_time']);
                 FM_LOG_DEBUG('submit_time: %d, start_time: %d', $submit_time, $start_time);
-                $pinfo->ac_time = $submit_time - $start_time;
+                $ac_time = $submit_time - $start_time;
+                if ($pinfo->ac_time > $ac_time) //后面的AC不能覆盖前面的AC时间
+                    $pinfo->ac_time = $ac_time;
                 $accepts = 0;
                 $penalty = 0;
                 foreach ($info_json as $pif)
@@ -415,7 +417,7 @@ eot;
                     if ($pif->ac_time > 0)
                     {
                         $accepts++;
-                        $penalty += $pif->ac_time //A题时间
+                        $penalty += $pif->ac_time //AC题的时间
                                  +  count($pif->wrongs) * land_conf::PENALTY_FACTOR; //WA的罚时
                     }
                 }
@@ -423,7 +425,11 @@ eot;
             }
             else
             {
-                $pinfo->wrongs[] = $src_id;
+                //如果没有AC, 那么就算进罚时
+                if (!$pinfo->ac_time > 0)
+                {
+                    $pinfo->wrongs[] = $src_id;
+                }
             }
             $info_json->$seq = $pinfo;
             $info_str = db_escape($conn, json_encode($info_json));
