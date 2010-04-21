@@ -2,6 +2,11 @@ Judge约定
 
 主程序: 由judge_all.cpp judge.h rf_table.h 编译出judge_all.exe
 
+由于使用了setuid和chroot，必须以root身份运行，最合适的方式是设置SUID位
+具体操作：以root权限执行以下两条命令：
+# chown root:root judge_all.exe
+# chmod 4755 judge_all.exe
+
 输入输出文件
 1. 所有输入输出文件保存在以题号为名的同一目录下
 2. 输入文件的命名为 [文件名].in , 输出文件则为对应的 [文件名].out
