@@ -224,6 +224,7 @@ eot;
         $solved       = $user['solved'];
         $arr_solved   = explode("|", $user['solved_list']);
         $has_accepted = in_solved_list($problem_id, $user['solved_list']);
+        FM_LOG_DEBUG("solved: %s, has_acc: %s", print_r($arr_solved, true), $has_accepted?'Yes':'No');
         if (false === $is_rejudge)
         {
             //如果不是rejudge
@@ -265,8 +266,11 @@ eot;
         }
         if ($need_update)
         {
-            $arr_solved  = sort($arr_solved);
-            $solved_list = implode('|', array_unique($arr_solved));
+            $arr_solved  = array_filter($arr_solved, create_function('$a', 'return $a > 0;'));
+            $arr_solved  = array_unique($arr_solved);
+            //$arr_solved  = sort($arr_solved);
+            $solved_list = implode('|', $arr_solved);
+            FM_LOG_DEBUG("solved_list: %s", $solved_list);
             $sql = <<<eot
 UPDATE `users` SET
     `solved`=$solved,
