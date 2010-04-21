@@ -26,7 +26,10 @@ class Main extends cframe
         $problem = get_problem_by_id($problem_id);
 
         $status = land_conf::CONTEST_UNKNOWN;
-        $cid    = $problem['contest_id'];
+
+        //如果是admin提交 则不计入contest
+        $cid    = $is_admin ? 0 : $problem['contest_id'];
+
         $in_contest = false;
         //判断该题目是否处于比赛、该用户是否可以提交
         if ($cid != 0) //题目属于某个比赛
@@ -37,7 +40,7 @@ class Main extends cframe
             //比赛不允许匿名参加
             if ($status == land_conf::CONTEST_RUNNING && !session::$is_login)
             {
-                throw new Exception("Please login first.");
+                throw new Exception('Anonymous user are not allowed to attend contests. Please login first.');
             }
 
             if ($status == land_conf::CONTEST_PENDING ||

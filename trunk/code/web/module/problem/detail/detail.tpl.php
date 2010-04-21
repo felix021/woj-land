@@ -7,8 +7,12 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         $problem = $p['problem'];
         $disp_char = $problem['problem_id'];
+        $contest_var = '';
         if (!empty($p['seq_char']))
+        {
             $disp_char = $p['seq_char'];
+            $contest_var = '&contest_id=' . $problem['contest_id'];
+        }
         $edit_button = '';
         $file_button = '';
         $defunct_button = '';
@@ -83,7 +87,7 @@ class TPL_Main extends ctemplate
     <br /> 
 
     <div> 
-      <span class="bt"><a href="{$web_root}/submit/submit?problem_id={$problem['problem_id']}">Submit</a></span>  
+      <span class="bt"><a href="{$web_root}/submit/submit?problem_id={$problem['problem_id']}{$contest_var}">Submit</a></span>  
       $admin_submit_bt
       <!-- TODO <span class="bt"><a href="{$web_root}/discuss/list?problem_id={$problem['problem_id']}">Discuss</a></span>  -->
       <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Status</a></span> 

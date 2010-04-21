@@ -26,6 +26,11 @@ eot;
         $lines = db_fetch_lines($conn, $sql, -1);
         fail_test($lines);
 
+        if (count($lines) == 0)
+        {
+            throw new Exception("Please add problems first!");
+        }
+
         response::add_data('pid_seq', $lines);
         response::add_data('contest', $contest);
         response::add_data('seed', session::gen_vcode());

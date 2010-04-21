@@ -29,6 +29,13 @@ class Main extends cframe
         {
             $share_code     = session::$user_info['share_code'];
         }
+        else
+        {
+            if (isset(request::$arr_get['contest_id']))
+            {
+                throw new Exception('Anonymous user are not allowed to attend contests. Please login first.');
+            }
+        }
         response::add_data('anonymous_name', session::ANONYMOUS_NAME);
         response::add_data('share_code', $share_code);
         response::add_data('problem_id', $problem_id);
