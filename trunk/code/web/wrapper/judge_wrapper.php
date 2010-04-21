@@ -412,7 +412,7 @@ eot;
                 $start_time = strtotime($contest['start_time']);
                 FM_LOG_DEBUG('submit_time: %d, start_time: %d', $submit_time, $start_time);
                 $ac_time = $submit_time - $start_time;
-                if ($pinfo->ac_time > $ac_time) //后面的AC不能覆盖前面的AC时间
+                if ($pinfo->ac_time == 0 || $pinfo->ac_time > $ac_time) //后面的AC不能覆盖前面的AC时间
                     $pinfo->ac_time = $ac_time;
                 $accepts = 0;
                 $penalty = 0;
