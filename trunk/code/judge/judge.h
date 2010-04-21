@@ -22,6 +22,12 @@ extern "C"
 
 namespace judge_conf
 {
+    //配置文件名
+    const std::string config_file   = "config.ini";
+
+    //日志文件路径
+    std::string log_file;
+
     //judge本身的时限(ms)           
     int judge_time_limit            = 15000;
 
@@ -32,7 +38,7 @@ namespace judge_conf
     int spj_time_limit              = 5000;
 
     //程序运行的栈空间大小(KB)
-    int stack_size_limit            = 4096;
+    int stack_size_limit            = 8192;
 
     //参照Oak的设置，附加一段时间到time_limit里，不把运行时间限制得太死
     int time_limit_addtion          = 314;
@@ -41,17 +47,65 @@ namespace judge_conf
     
     int java_memory_factor          = 2;
     
-    //程序的主目录(考虑做成配置)
-    std::string root_dir             = "/home/felix021/woj";
+    void load()
+    {
+        int n, i, j;
 
-    const std::string log_file       = "/log/judge.log";
+        //获得judge所在的目录
+        char buf[1024] = {0};
+        n = readlink("/proc/self/exe", buf, sizeof(buf));
+        if (n < 0)
+        {
+            fprintf(stderr, "can't read /proc/self/exe");
+            exit(3);
+        }
+        for (i = strlen(buf) - 1; i >= 0 && buf[i] != '/'; i--);
+        buf[i + 1] = '\0';
 
-    //临时文件夹
-    const std::string temp_dir      = "/temp";
+        //拼出config文件的目录
+        strncat(buf, judge_conf::config_file.c_str(), sizeof(buf));
+
+        FILE *fp = fopen(buf, "r");
+        if (fp == NULL)
+        {
+            fprintf(stderr, "can't open configuration file!");
+            exit(3);
+        }
+        char line[1024];
+        while (true)
+        {
+            (void) fgets(line, 1023, fp);
+            if (feof(fp)) break;
+            for (i = 0; line[i] != '\0'; i++)
+            {
+                if (line[i] == '=') break;
+            }
+
+            std::string key;
+            if (line[i] == '=')
+            {
+                line[i] = 0;
+                key = std::string(line);
+                for (j = i + 1; line[j] != '\0' && line[j] != '\n'; j++);
+                if (line[j] == '\n') line[j] = '\0';
+
+                if (key == "log_file")
+                {
+                    judge_conf::log_file = std::string(line + i + 1);
+                }
+                else
+                {
+                    fprintf(stderr, "unknown param: %s => %s\n", key.c_str(), line + i + 1);
+                }
+            }
+        }
+        fclose(fp);
+    }
+
+    //--------------以下是常量-------------
 
     //输入文件列表文件名
     const std::string data_filename = "data.txt"; 
-
 
     //OJ结果代码
     const int OJ_WAIT           = 0; //Queue

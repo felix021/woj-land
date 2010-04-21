@@ -32,7 +32,8 @@ int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
 
 int main(int argc, char *argv[], char *envp[])
 {
-    log_open((judge_conf::root_dir + judge_conf::log_file).c_str());
+    judge_conf::load();
+    log_open(judge_conf::log_file.c_str());
     FM_LOG_DEBUG("\n\x1b[31m-----a new start-----\x1b[0m");
     if (geteuid() != 0)
     {
