@@ -1,9 +1,9 @@
 #!/bin/bash
 host=localhost
 port=9527
-src_id=
+src_ids=
 
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
     echo Usage: $0 src_id [host [port]]
     exit;
 fi
