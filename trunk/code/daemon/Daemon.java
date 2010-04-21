@@ -2,26 +2,91 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 import java.text.*;
+import java.util.regex.MatchResult;
+import java.util.regex.Pattern;
 
 class Config
 {
     //监听的端口
-    public static final int LISTEN_PORT     = 9527;
+    public static int LISTEN_PORT     = 9527;
 
     //用于启动judge线程的数量
-    public static final int MAX_THREADS     = 4;
+    public static int MAX_THREADS     = 4;
 
     //Daemon轮询时间间隔
-    public static final int QUERY_INTERVAL  = 1000; //ms
+    public static int QUERY_INTERVAL  = 1000; //ms
 
     //调试模式
-    public static final boolean DEBUG       = true;
+    public static boolean DEBUG       = true;
 
     //Log文件路径
-    public static final String LOG_PATH     = "/home/felix021/woj/log/daemon.log";
+    public static String LOG_PATH     = "";
 
     //judge_wrapper路径
-    public static final String JUDGE_PATH   = "/home/felix021/svn/woj-land/code/web/wrapper/judge_wrapper.php";
+    public static String JUDGE_PATH   = "";
+
+    public static void load()
+    {
+        try {
+            Scanner sin = new Scanner(new File("config.ini"));
+            Pattern pat;
+            String key, value, line;
+            pat = Pattern.compile("(.*?)=(.*)");
+            while (sin.hasNextLine())
+            {
+                line = sin.nextLine();
+                if (line.indexOf('=') >= 0)
+                {
+                    Scanner in = new Scanner(line);
+                    in.findInLine(pat);
+                    MatchResult mat = in.match();
+                    if (mat.groupCount() == 2)
+                    {
+                        key     = mat.group(1);
+                        value   = mat.group(2);
+                        if (key.equals("PORT"))
+                        {
+                            Config.LISTEN_PORT = Integer.parseInt(value);
+                        }
+                        else if (key.equals("DEBUG"))
+                        {
+                            if (value.equals("TRUE"))
+                            {
+                                Config.DEBUG = true;
+                            }
+                            else 
+                                Config.DEBUG = false;
+                        }
+                        else if (key.equals("MAX_THREADS"))
+                        {
+                            Config.MAX_THREADS = Integer.parseInt(value);
+                        }
+                        else if (key.equals("QUERY_INTERVAL"))
+                        {
+                            Config.QUERY_INTERVAL = Integer.parseInt(value);
+                        }
+                        else if (key.equals("LOG_PATH"))
+                        {
+                            Config.LOG_PATH = value;
+                        }
+                        else if (key.equals("JUDGE_PATH"))
+                        {
+                            Config.JUDGE_PATH = value;
+                        }
+                        else
+                        {
+                            logger.log("Unknown Config");
+                        }
+                    }
+                }
+            }
+        }
+        catch(Exception e)
+        {
+            logger.log("Config load failed: " + e);
+            System.exit(1);
+        }
+    }
 }
 
 public class Daemon extends Thread
@@ -29,6 +94,8 @@ public class Daemon extends Thread
     public static void main(String args[])
     {
         logger.log("Daemon starts");
+
+        Config.load();
 
         //初始化多个Request线程, 等待请求以启动judge
         Request.init(Config.MAX_THREADS, Config.JUDGE_PATH);
