@@ -67,7 +67,7 @@ class TPL_Main extends ctemplate
       <td><strong>Solved Problem:</strong></td> 
       <td> 
 eot;
-        $arr_solved = explode("|", $user['solved_list']);
+        $arr_solved = $p['arr_solved'];
         foreach ($arr_solved as $pid)
         {
             $pid = (int)$pid;

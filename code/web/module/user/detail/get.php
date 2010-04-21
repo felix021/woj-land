@@ -46,7 +46,10 @@ eot;
         $rank = db_count($conn, $sql) + 1;
 
         $user['rank'] = $rank;
+        $arr_solved = explode('|', $user['solved_list']);
+        sort($arr_solved);
         response::add_data('user', $user);
+        response::add_data('arr_solved', $arr_solved);
         return true;
     }
 

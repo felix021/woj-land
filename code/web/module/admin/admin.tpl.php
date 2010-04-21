@@ -7,7 +7,7 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         echo <<<eot
 <style>td{text-align:center;}</style>
-  <div id="tt">Welcome to Noah Admin Home</div> 
+  <div id="tt">Welcome to Land Admin Home</div> 
   <div id="main"> 
     <table><tbody> 
     <tr><th>Quick Launch</th></tr> 
