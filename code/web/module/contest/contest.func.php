@@ -15,6 +15,24 @@ function get_contest_by_id($contest_id)
     return $contest;
 }
 
+function load_unfinished_contests()
+{
+    $now = date("Y-m-d H:i:s");
+    $sql = <<<eot
+SELECT `contest_id`, `title` FROM `contests`
+    WHERE `end_time`>'$now'
+    ORDER BY `start_time` DESC, `contest_id` DESC
+eot;
+    $conn = db_connect();
+    fail_test($conn, false);
+
+    $contests = db_fetch_lines($conn, $sql, -1);
+    fail_test($conn, false);
+
+    db_close($conn);
+    return $contests;
+}
+
 function seq_to_char($seq)
 {
     return chr(ord('A') + $seq - 1);

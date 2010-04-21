@@ -24,6 +24,11 @@ class TPL_Main extends ctemplate
     function FillEditSeqForm()
     {
         var seqs = document.getElementsByName('seq[]');
+        if (seqs.length == 0)
+        {
+            alert('Please add problems first!');
+            return false;
+        }
         var seqv = new Array();
         for (var i = 0; i < lines; i++)
         {

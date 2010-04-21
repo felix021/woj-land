@@ -9,6 +9,15 @@ class TPL_Main extends ctemplate
         $pid = (int)$problem['problem_id'];
         foreach ($problem as &$v) $v = htmlspecialchars($v);
         $contest_id = (int)$problem['contest_id'];
+        $sel = $contest_id == 0 ? 'selected' : '';
+        $contest_opt = '<option $sel value="0">&nbsp;No Contest&nbsp;</option>' . "\n";
+        foreach ($p['contests'] as $contest)
+        {
+            $cid = $contest['contest_id'];
+            $sel = $contest_id == $cid ? 'selected' : '';
+            $title = htmlspecialchars($contest['title']);
+            $contest_opt .= "<option $sel value=\"$cid\">&nbsp;{$title}&nbsp;</option>\n";
+        }
         $is_spj = $problem['spj'] ? 'checked' : '';
         echo <<<eot
 <div id="tt"> 
@@ -19,7 +28,13 @@ class TPL_Main extends ctemplate
 <script language="javascript">
     function FillEditProblemForm()
     {
-        //for further check
+        var title = $('title');
+        if (title.value.length == 0)
+        {
+            alert('Please type in the title!.');
+            title.focus();
+            return false;
+        }
         return true;
     }
 
@@ -110,8 +125,12 @@ class TPL_Main extends ctemplate
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Contest_id:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input type="text" name="contest_id" value="{$contest_id}" tabindex="12"/> Empty/0 for no contest</td> 
-                    <input type="hidden" name="old_contest_id" value="{$contest_id}" />
+                    <td align="left">
+                        <select id="contest_id" name="contest_id" tabindex="12">
+                        $contest_opt
+                        </select>
+                        <input type="hidden" name="old_contest_id" value="{$contest_id}" />
+                    </td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 

@@ -5,7 +5,13 @@ class TPL_Main extends ctemplate
     public function display($p)
     {
         $web_root = land_conf::$web_root;
-        $contest_opt = '<option value="0">No Contest</option>';
+        $contest_opt = '<option selected value="0">&nbsp;No Contest&nbsp;</option>' . "\n";
+        foreach ($p['contests'] as $contest)
+        {
+            $cid = $contest['contest_id'];
+            $title = htmlspecialchars($contest['title']);
+            $contest_opt .= "<option value=\"$cid\">&nbsp;{$title}&nbsp;</option>\n";
+        }
         echo <<<eot
 <div id="tt"> 
     Add a new problem 
@@ -16,6 +22,13 @@ class TPL_Main extends ctemplate
     function FillAddProblemForm()
     {
         //for further check
+        var title = $('title');
+        if (title.value.length == 0)
+        {
+            alert('Please type in the title!');
+            title.focus();
+            return false;
+        }
         return true;
     }
 
@@ -98,7 +111,11 @@ class TPL_Main extends ctemplate
                 <tr class="tre"> 
                     <td></td> 
                     <td align="right"><strong>Contest:</strong>&nbsp;&nbsp;</td> 
-                    <td align="left">&nbsp;&nbsp;<input class="formEle" tabindex="12" name="contest_id" id="contest_id" value="0"/> Empty/0 for no contest</td> 
+                    <td align="left">&nbsp;&nbsp;
+                        <select id="contest_id" name="contest_id" tabindex="12">
+                        $contest_opt
+                        </select>
+                    </td> 
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
@@ -119,7 +136,7 @@ class TPL_Main extends ctemplate
                     </td> 
                     <td></td> 
                 </tr> 
-                <tr class="tre"> 
+                <tr class="tro"> 
                     <td colspan="4" align="center"> 
                         <input type="submit" class="formEle" tabindex="15" name="submit" id="submit" value="Submit" />&nbsp;
                         <input class="formEle" tabindex="16" name="reset" id="reset" type="reset" value="Reset" /> 
