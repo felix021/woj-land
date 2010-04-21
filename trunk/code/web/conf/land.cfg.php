@@ -2,24 +2,24 @@
 
 final class land_conf
 {
+    public static $web_root     = "/land";
+    const UPLOAD_PATH           = "/upload/";
+
     const LOG_FILE              = "/home/felix021/woj/log/php.log";
-
-    const ERROR_REPORT_LEVEL    = E_ALL;
-
-    const DEFAULT_CFRAME_CLASS  = "Main";
-    const DEFAULT_TPL_CLASS     = "TPL_Main";
 
     const DEBUG                 = true;
 
-    const STAY_TIME             = 3; //seconds before refresh
-
-    public static $web_root     = "/land";
-    const UPLOAD_PATH           = "/upload/";
+    const ERROR_REPORT_LEVEL    = E_ALL;
 
     //daemon
     const DAEMON_HOST           = '127.0.0.1';
     const DAEMON_PORT           = 9527;
     const DAEMON_TIME_OUT       = 5; //seconds
+
+    const DEFAULT_CFRAME_CLASS  = "Main";
+    const DEFAULT_TPL_CLASS     = "TPL_Main";
+
+    const STAY_TIME             = 3; //seconds before refresh
 
     //privileges
     public static $priv_fields = array(
