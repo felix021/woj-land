@@ -11,17 +11,17 @@ CREATE TABLE `problems`
  `output` text,
  `sample_input` text,
  `sample_output` text,
- `hint` text default NULL,
- `source` text default NULL,
- `contest_id` int default 0,
- `contest_seq` int default 0,
- `time_limit` int default 1000,
- `memory_limit` int default 65536,
- `spj` tinyint default 0,
- `accepted` int default 0,
- `submitted` int default 0,
- `enabled` tinyint default 1,
- `reserved` text DEFAULT NULL
+ `hint` text,
+ `source` text,
+ `contest_id` int NOT NULL default 0,
+ `contest_seq` int NOT NULL default 0,
+ `time_limit` int NOT NULL default 1000,
+ `memory_limit` int NOT NULL default 65536,
+ `spj` tinyint NOT NULL default 0,
+ `accepted` int NOT NULL default 0,
+ `submitted` int NOT NULL default 0,
+ `enabled` tinyint NOT NULL default 1,
+ `reserved` text
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1001; 
 
 INSERT INTO `problems` 
@@ -38,12 +38,12 @@ CREATE TABLE `users`
  `school` varchar(100),
  `reg_time` datetime,
  `last_ip` char(20) default NULL,
- `submit` int default 0,
- `solved` int default 0,
- `enabled` tinyint DEFAULT 1,
- `share_code` tinyint DEFAULT 1,
+ `submit` int NOT NULL default 0,
+ `solved` int NOT NULL default 0,
+ `enabled` tinyint NOT NULL DEFAULT 1,
+ `share_code` tinyint NOT NULL DEFAULT 1,
  `group_ids` varchar(200) DEFAULT "",
- `solved_list` text NOT NULL DEFAULT ""
+ `solved_list` text
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 ALTER TABLE  `users` ADD INDEX (  `username` );
 
@@ -57,10 +57,10 @@ CREATE TABLE `groups`
  `group_id` int primary key auto_increment,
  `group_name` char(50) NOT NULL,
  `description` varchar(200),
- `view_src` tinyint DEFAULT 0,
- `private_contest` tinyint DEFAULT 0,
- `admin` tinyint DEFAULT 0,
- `reserved` text default ""
+ `view_src` tinyint NOT NULL DEFAULT 0,
+ `private_contest` tinyint NOT NULL DEFAULT 0,
+ `admin` tinyint NOT NULL DEFAULT 0,
+ `reserved` text NOT NULL default ""
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 INSERT INTO `groups` VALUES
@@ -68,11 +68,11 @@ INSERT INTO `groups` VALUES
 
 CREATE TABLE `sources`
 (
- `source_id` int primary key auto_increment,
- `problem_id` int,
- `user_id` int,
+ `source_id` int auto_increment,
+ `problem_id` int NOT NULL,
+ `user_id` int NOT NULL,
  `username` char(20) NOT NULL,
- `contest_id` int,
+ `contest_id` int NOT NULL DEFAULT 0,
  `source_code` text,
  `length` int NOT NULL DEFAULT 0,
  `submit_time` datetime,
@@ -83,16 +83,17 @@ CREATE TABLE `sources`
  `memory_usage` int NOT NULL,
  `time_usage` int NOT NULL,
  `result` int NOT NULL DEFAULT 0,
- `extra_info` text
+ `extra_info` text,
+ primary key(`source_id`, `problem_id`, `user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 CREATE TABLE `admin_sources`
 (
- `source_id` int primary key auto_increment,
- `problem_id` int,
- `user_id` int,
+ `source_id` int auto_increment,
+ `problem_id` int NOT NULL,
+ `user_id` int NOT NULL,
  `username` char(20) NOT NULL,
- `contest_id` int,
+ `contest_id` int NOT NULL DEFAULT 0,
  `source_code` text,
  `length` int NOT NULL DEFAULT 0,
  `submit_time` datetime,
@@ -100,10 +101,11 @@ CREATE TABLE `admin_sources`
  `lang` tinyint NOT NULL,
  `share` tinyint NOT NULL,
  `judge_time` datetime,
- `memory_usage` int NOT NULL,
- `time_usage` int NOT NULL,
+ `memory_usage` int NOT NULL DEFAULT 0,
+ `time_usage` int NOT NULL DEFAULT 0,
  `result` int NOT NULL DEFAULT 0,
- `extra_info` text
+ `extra_info` text,
+ primary key(`source_id`, `problem_id`, `user_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 CREATE TABLE `contests`
@@ -111,10 +113,10 @@ CREATE TABLE `contests`
  `contest_id` int primary key auto_increment,
  `title` varchar(200),
  `description` text,
- `private` tinyint DEFAULT 0,
+ `private` tinyint NOT NULL DEFAULT 0,
  `start_time` datetime,
  `end_time` datetime,
- `enabled` tinyint DEFAULT 1
+ `enabled` tinyint NOT NULL DEFAULT 1
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8; 
 
 CREATE TABLE `user_at_contest`
