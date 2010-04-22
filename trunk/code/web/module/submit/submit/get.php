@@ -6,6 +6,12 @@ class Main extends cframe
 
     public function process()
     {
+        if (is_admin())
+        {
+            //强制管理员只能提交admin的代码，避免误操作
+            request::$arr_get['admin'] = true;
+        }
+
         if (isset(request::$arr_get['admin']))
         {
             if (!is_admin())
