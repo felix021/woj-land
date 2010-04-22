@@ -118,13 +118,17 @@ function cmp_ratio(a, b)
 
 function cmp_accepted(a, b)
 {
-    var result = (a.accepted < b.accepted);
+    var x = new Number(a.accepted);
+    var y = new Number(b.accepted);
+    var result = (x < y); 
     return fuck_cmp_flag ? result : !result;
 }
 
 function cmp_total(a, b)
 {
-    var result = (a.submitted < b.submitted);
+    var x = new Number(a.submitted);
+    var y = new Number(b.submitted);
+    var result = (x < y); 
     return fuck_cmp_flag ? result : !result;
 }
 
