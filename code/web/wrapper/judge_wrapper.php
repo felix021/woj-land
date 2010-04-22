@@ -39,6 +39,7 @@ try
     }
 
     $src_id = (int) $argv[1];
+    logger::log_add_info("src_id:" . $src_id);
     $admin_submit = $src_id < 0 ? true : false;
     $src_id = abs($src_id);
     $tbl_sources  = $admin_submit ? 'admin_sources' : 'sources';
@@ -83,6 +84,8 @@ try
         if ($status == land_conf::CONTEST_RUNNING)
             $in_contest = true;
     }
+
+    FM_LOG_TRACE("in_contest: %s", $in_contest ? "YES" : "NO");
 
     //judge过程比较耗时,暂时关闭连接
     db_close($conn);
@@ -331,12 +334,13 @@ eot;
                 break;
             }
         }
-        FM_LOG_TRACE('users updated');
+        FM_LOG_TRACE('problems updated');
 
         //不是管理员的提交，且比赛正在进行，则需要更新
         // problem_at_contest 和 user_at_contest 两个表
         if (!$admin_submit && $in_contest)
         {
+            FM_LOG_TRACE("update contest related tables");
             //更新problem_at_contest
             function get_field_by_result($result)
             {
@@ -347,7 +351,13 @@ eot;
                 case land_conf::OJ_PE:  $field = 'PE'; break;
                 case land_conf::OJ_CE:  $field = 'CE'; break;
                 case land_conf::OJ_WA:  $field = 'WA'; break;
-                case land_conf::OJ_RE:  $field = 'RE'; break;
+                case land_conf::OJ_RE_SEGV:
+                case land_conf::OJ_RE_FPE: 
+                case land_conf::OJ_RE_BUS: 
+                case land_conf::OJ_RE_ABRT: 
+                case land_conf::OJ_RE_UNKNOWN: 
+                case land_conf::OJ_RE_JAVA: 
+                                        $field = 'RE'; break;
                 case land_conf::OJ_TLE: $field = 'TLE'; break;
                 case land_conf::OJ_MLE: $field = 'MLE'; break;
                 case land_conf::OJ_OLE: $field = 'OLE'; break;
