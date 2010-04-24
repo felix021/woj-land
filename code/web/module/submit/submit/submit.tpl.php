@@ -81,6 +81,20 @@ function fillSubmitForm()
                 + 'which may result in java_re, do you still want to submit?';
         }
     }
+    else if (lang_maybe == 1 || lang_maybe == 2) //C or C++, check 'I64d', freopen
+    {
+        if (/"[^"]*?%I64d[^"]*?"/.test(source.value))
+        {
+            pmt = "It seems that your source code used '%I64d' to print long long, "
+                + "but Land is running on Linux, which supports '%lld' only. "
+                + "Do you still want to submit?";
+        }
+        else if (/freopen/.test(source.value.replace(/\/\/ *freopen/g, ''))) //有freopen
+        {
+            pmt = "It seems that you have left 'freopen' uncommented in your source, "
+                + "which may result in 'Restricted Function'. Do you still want to submit?";
+        }
+    }
 
     if (pmt != '')
     {
