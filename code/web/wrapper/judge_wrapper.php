@@ -167,11 +167,14 @@ try
         $stderr_compiler = $temp_dir . '/' . 'stderr_compiler.txt';
         $extra_info = file_get_contents($stderr_compiler);
     }
+    /*
     else 
     {
+        //用户程序的stderr信息不能暴露给用户
         $stderr_executive = $temp_dir . '/' . 'stderr_executive.txt';
         $extra_info = file_get_contents($stderr_executive);
     }
+     */
     //把具体的目录名称过滤, 不暴露给用户
     $extra_info = str_replace($temp_dir . '/', '', $extra_info);
     $extra_info = str_replace($data_dir, '', $extra_info);
