@@ -125,97 +125,65 @@ public class Main
     </div> 
     <div class="ptt">Q: What are the meanings of the judge's replies?</div> 
     <div class="ptx">A: Here is a list of the judge's replies and their 
-    meanings:<br /> 
-    <span class="styRed">Running</span>: The judge is so busy that it can't 
+    meanings:<br /> <br/>
+    <span class="styRed"><a name="WAIT"></a>Queuing</span>: The judge is so busy that it can't 
     judge your submission or your submission is running at the moment. Usually 
     you just need to wait several seconds and your submission will be judged.
-    <br /> 
-    <span class="styRed">Accepted</span> (AC): Congratulations! Your program is 
-    correct!<br /> 
-    <span class="styRed">Presentation Error</span> (PE): Your output format is 
+    <br /> <br /> 
+    <span class="styRed"><a name="AC"></a>Accepted</span> (AC): Congratulations! Your program is 
+    correct!
+    <br /> <br /> 
+    <span class="styRed"><a name="PE"></a>Presentation Error</span> (PE): Your output format is 
 		not exactly the same as the judge's output, although your answer to the 
 		problem is correct. Check your output for spaces, blank lines, etc. 
-		against the problem output specification.<br /> 
-    <span class="styRed">Wrong Answer</span> (WA): Expected output not reached 
+		against the problem output specification.
+    <br /> <br /> 
+    <span class="styRed"><a name="WA"></a>Wrong Answer</span> (WA): Expected output not reached 
 		for the input. The input and output data that we use to test the programs 
 		are not public (it is recommendable to get accustomed to a true contest 
 		dynamic ;-). For some problem <span class="styRed">Presentation Error</span> 
 		is considented as <span class="styRed">Wrong Answer</span> if the problem 
-		is just test your presentation.<br /> 
-    <span class="styRed">Runtime Error</span> (RE): Your program failed during 
+		is just test your presentation.
+    <br /> <br /> 
+    <span class="styRed"><a name="RE"></a>Runtime Error</span> (RE): Your program failed during 
 		the execution (illegal file access, stack overflow, pointer reference out 
 		of range, floating point exception, division by zero...).<br /> 
-    &nbsp;&nbsp;&nbsp;The following messages will not be shown to you in 
-    contest. Here we just provide some tips:<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIGSEGV --- Segment Fault. The possible 
+    &nbsp; &nbsp;The following messages may also be shown to you. Here we just provide some tips:<br /> 
+    &nbsp; &nbsp; &nbsp; <a name="RE_SEGV"></a>SIGSEGV --- Segment Fault. The possible 
     cases of your encountering this error are:<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;1.buffer overflow --- 
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;1.buffer overflow --- 
     usually caused by a pointer reference out of range.<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;2.stack overflow  --- 
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;2.stack overflow  --- 
     please keep in mind that the default stack size is 8192K(Notice: In GCC a 
     little overflow will not get a Runtime Error).<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;3.illegal file access 
+    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;3.illegal file access 
     --- file operations are forbidden on our judge system.<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIGFPE  --- Divided by 0<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIGBUS  --- Hardware Error. //please 
+    &nbsp; &nbsp; &nbsp; <a name="RE_FPE"></a>SIGFPE  --- Divided by 0<br /> 
+    &nbsp; &nbsp; &nbsp; <a name="RE_BUS"></a>SIGBUS  --- Hardware Error. //please 
     contact us<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;SIGABRT --- Programme aborted before it 
+    &nbsp; &nbsp; &nbsp; <a name="RE_ABRT"></a>SIGABRT --- Programme aborted before it 
     should be finished.<br /> 
-    &nbsp;&nbsp;&nbsp;man 7 signal under Linux for more information<br /> 
-    <br /> 
-    &nbsp;&nbsp;&nbsp;Free Pascal Runtime Error Numbers are refer to here 
-    <a href="http://community.freepascal.org:10000/docs-html/user/userch14.html" target="_blank"> 
-    http://community.freepascal.org:10000/docs-html/user/userch14.html</a> for detailed runtime 
-    error informations. We list some frequently used error numbers here:<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;200 Division by zero<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;201 Range check error<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;202 Stack overflow error<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;203 Heap overflow error<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;204 Invalid pointer operation<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;205 floating point overflow<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;206 floating point underflow<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;207 invalid floating point operation<br /> 
-    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;216 General Protection fault<br /> 
-    &nbsp;&nbsp;&nbsp;Both <span class="styRed">Runtime Error(Pascal)</span> 
-    and <span class="styRed">Runtime Error(JAVA)</span> is allow you to click 
-    on the link at the Judge's reply  to see the actual error message.<br /> 
-    <br /> 
-    <span class="styRed">Time Limit Exceeded</span> (TLE): Your program tried 
-    to run for too much time.<br /> 
-    &nbsp;&nbsp;&nbsp;Now each problem have two time limits - TOTAL TIME LIMIT 
-    and CASE TIME LIMIT. When our judge runs your program, it redirects your 
-    program's standard input to the input files, then you can just read from 
-    standard input. One problem may have several input files. When your program 
-    finishes one input file and produce correct output, the judge then restarts 
-    your program to deal with next input file. Each input file's format is 
-    exactly as the problem's input specification. The CASE TIME LIMIT is the 
-    maximum time your program is allowed to use for a single input file, and 
-    the TOTAL TIME LIMIT is the maximum time for your program to handle all 
-    input files. If your program exceed any of these two limits, you will 
-    receive Time Limit Exceeded.<br /> 
-    &nbsp;&nbsp;&nbsp;As most problems only have one or two input files 
-    (one or two corresponding output files of course), then its CASE TIME LIMIT 
-    is trivially set be the same as the TOTAL TIME LIMIT and the phrase "CASE 
-    TIME LIMIT" will not show up in the problem description.<br /> 
-    &nbsp;&nbsp;&nbsp;So when you get Time Limit Exceeded and find the time 
-    your program used is much less than the TOTAL TIME LIMIT, your program must 
-    exceeded the CASE TIME LIMIT.<br /> 
-    <span class="styRed">Memory Limit Exceeded</span> (MLE): Your program tried 
-    to use more memory than the judge default settings.<br /> 
-    <span class="styRed">Output Limit Exceeded</span> (OLE): Your program tried 
+    &nbsp; &nbsp;man 7 signal under Linux for more information<br /> 
+    And, <span class="styRed"><a name="RE_JAVA"></a>Runtime Error(JAVA)</span> means that your java program failed during run time.
+    <br /> <br /> 
+    <span class="styRed"><a name="RF"></a>Restricted Function</span>: means that your program tried to do something forbidden, such as file or network access. Occationally, when Runtime Error occurs, glibc will write debug infomation to /dev/tty(or open /proc/self/maps or other files) which will be also judged as Restricted Function.
+    <br /> <br /> 
+    <span class="styRed"><a name="TLE"></a>Time Limit Exceeded</span> (TLE): Your program tried 
+    to run for too much time.
+    <br /> <br /> 
+    <span class="styRed"><a name="MLE"></a>Memory Limit Exceeded</span> (MLE): Your program tried 
+    to use more memory than the judge default settings.
+    <br /> <br /> 
+    <span class="styRed"><a name="OLE"></a>Output Limit Exceeded</span> (OLE): Your program tried 
     to output too much. This usually occurs when your program goes into an 
     infinite loop. Currently the output limit is twice the standard output 
-    file's size.<br /> 
-    <span class="styRed">Compile Error</span> (CE): The compiler could not 
-    compile your program. Warning messages are not considered errors. Click on 
-    the link(<span class="styRed">Compile Error</span>) at the judge's reply 
-    to see the actual error messages.<br /> 
-    <span class="styRed">Invalid problem ID</span>: Either you have submitted 
-    with a nonexistent problem id or the problem is currently unavailable 
-    (probably reserved for coming contests).<br /> 
-    <span class="styRed">System Error</span>: System can't run your program. 
-    Such as your program require too many memory (much more beyond the physical 
-    memory).
+    file's size.
+    <br /> <br /> 
+    <span class="styRed"><a name="CE"></a>Compile Error</span> (CE): The compiler could not 
+    compile your program. Warning messages are not considered errors. Click on the link
+    (<span class="styRed">Compile Error</span>) at the judge's reply to see the actual error messages.
+    <br /> <br /> 
+    <span class="styRed"><a name="SE"></a>System Error</span>: Errors occur due to the system's bugs. We'll appreciate if you report such issue to us.
     </div>
     <div class="ptt">Q: How should I determine the end of input?</div> 
     <div class="ptx"> 

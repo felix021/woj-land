@@ -77,13 +77,40 @@ eot;
             $result_color   = land_conf::$result_color[$result];
             $lang           = $p['lang'][$line['lang']];
             $lang           = "<a href=\"source?source_id={$line['source_id']}&{$admin}\">$lang</a>";
+            $result_link    = '';
+            if ($result == land_conf::OJ_CE)
+            {
+                $result_link = "$web_root/source/info?source_id={$line['source_id']}&$admin";
+            }
+            else
+            {
+
+                $result_link = "$web_root/faq#";
+                switch ($result)
+                {
+                    case land_conf::OJ_AC: $result_link .= 'AC'; break;
+                    case land_conf::OJ_WA: $result_link .= 'WA'; break;
+                    case land_conf::OJ_PE: $result_link .= 'PE'; break;
+                    case land_conf::OJ_TLE: $result_link .= 'TLE'; break;
+                    case land_conf::OJ_MLE: $result_link .= 'MLE'; break;
+                    case land_conf::OJ_OLE: $result_link .= 'OLE'; break;
+                    case land_conf::OJ_SE: $result_link .= 'SE'; break;
+                    case land_conf::OJ_RE_JAVA : $result_link .= 'RE_JAVA'; break;
+                    case land_conf::OJ_RE_SEGV: $result_link .= 'RE_SEGV'; break;
+                    case land_conf::OJ_RE_ABRT: $result_link .= 'RE_ABRT'; break;
+                    case land_conf::OJ_RE_FPE: $result_link .= 'RE_FPE'; break;
+                    case land_conf::OJ_RE_BUS: $result_link .= 'RE_BUS'; break;
+                    case land_conf::OJ_RF: $result_link .= 'RF'; break;
+                    default: break;
+                }
+            }
             echo <<<eot
    <tr class="$tr_class"> 
     <td style="text-align:center;">{$line['source_id']}</td> 
     <td style="text-align:center;"><a href="$web_root/user/detail?username={$username}">$username</a></td> 
     <td style="text-align:center;"><a href="$web_root/problem/detail?problem_id={$problem_id}">{$problem_id}</a></td> 
     <td style="text-align:center;"> 
-       <span class="STYLE7"><a href="$web_root/source/info?source_id={$line['source_id']}&$admin"><font color="$result_color">$result_name</font></a></span> 
+       <span class="STYLE7"><a href="{$result_link}"><font color="$result_color">$result_name</font></a></span> 
     </td> 
 	<td style="text-align:center;">{$line['memory_usage']}</td> 
     <td style="text-align:center;">{$line['time_usage']}</td> 

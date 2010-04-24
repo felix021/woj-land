@@ -27,10 +27,16 @@ class Main extends cframe
         $source = db_fetch_line($conn, $sql);
         fail_test($conn, false);
 
-        if ($source['user_id'] != session::ANONYMOUS_ID && $source['user_id'] != session::$user_id)
+        if (!is_admin() && 
+            $source['user_id'] != session::ANONYMOUS_ID && $source['user_id'] != session::$user_id)
         {
             FM_LOG_WARNING("unauthorized access to source_extra_info");
             throw new Exception("You don't have permission to this page :(");
+        }
+
+        if ($source['result'] != land_conf::OJ_CE)
+        {
+            throw new Exception('No compilation error info');
         }
 
         $info = land_conf::$result_name[$source['result']];
