@@ -82,16 +82,23 @@ namespace judge_conf
             }
 
             std::string key;
+            char *value = NULL;
             if (line[i] == '=')
             {
                 line[i] = 0;
                 key = std::string(line);
                 for (j = i + 1; line[j] != '\0' && line[j] != '\n'; j++);
                 if (line[j] == '\n') line[j] = '\0';
+                value = line + i + 1;
 
                 if (key == "log_file")
                 {
-                    judge_conf::log_file = std::string(line + i + 1);
+                    judge_conf::log_file = std::string(value);
+                }
+                else if (key == "spj_time_limit")
+                {
+                    judge_conf::spj_time_limit = atoi(value);
+                    judge_conf::judge_time_limit += judge_conf::spj_time_limit;
                 }
                 else
                 {
