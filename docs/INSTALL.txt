@@ -28,13 +28,19 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
     假设导入的数据库主机在127.0.0.1且库名就是land, 并且假设
     有用户root密码123456可以访问该数据库
 
-4. apache
+4. apache/php
     启用mod_rewrite, 执行 sudo a2enmod rewrite
     修改配置文件，在ubuntu下是/etc/apache2/sites-enabled/000-default
     找到<Directory /var/www>这一节
     将 AllowOverride None 改成 AllowOverride All
     如果没有 Option FollowSymlinks 也加上一行
+
+    对于PHP, 需要开启date.timezone, 比如填写Asis/Chongqing
+    打开/etc/php5/apache2/php.ini, 找到date.timezone这一行修改为
+      date.timezone = Asia/Chongqing
+
     重启apache
+
 
 5. 在apache的根目录下, 默认是/var/www执行
     $ ln -s /home/www-data/land/code/web/index land
