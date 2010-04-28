@@ -56,7 +56,7 @@ static char LOG_LEVEL_NOTE[][10] =
 #define FM_LOG_DEBUG(x...)   log_write(LOG_DEBUG, __FILE__, __LINE__, ##x)
 #define FM_LOG_TRACE(x...)   log_write(LOG_TRACE, __FILE__, __LINE__, ##x)
 #define FM_LOG_NOTICE(x...)  log_write(LOG_NOTICE, __FILE__, __LINE__, ##x)
-#define FM_LOG_MOITOR(x...)  log_write(LOG_MONITOR, __FIL __LINE__, ##x)
+#define FM_LOG_MONITOR(x...)  log_write(LOG_MONITOR, __FILE__ __LINE__, ##x)
 #define FM_LOG_WARNING(x...) log_write(LOG_WARNING, __FILE__, __LINE__, ##x)
 #define FM_LOG_FATAL(x...)   log_write(LOG_FATAL, __FILE__, __LINE__, ##x)
 
