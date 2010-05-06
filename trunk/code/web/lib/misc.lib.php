@@ -175,7 +175,7 @@ function land_err_handler($errno, $errstr, $errfile, $errline)
             $level_str = "UNKNOWN";
             break;
     }
-    if (logger::$log_opened)
+    if (logger::log_opened())
     {
         FM_LOG_FATAL("PHP_%s: [%s:%s] %d: %s",
             $level_str, $errfile, $errline, $errno, $errstr);

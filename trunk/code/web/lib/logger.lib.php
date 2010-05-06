@@ -11,26 +11,29 @@ class logger
 
     const BUFF_SIZE     = 4096;
 
-    static $log_buff;
-    static $log_extra_info;
+    protected static $log_buff;
+    protected static $log_buff_wf;
+    protected static $log_extra_info;
 
-    static $log_filename;
-    static $log_fp;
+    protected static $log_filename;
+    protected static $log_filename_wf;
+    protected static $log_fp;
+    protected static $log_fp_wf;
 
-    static $log_opened  = false;
+    protected static $log_opened  = false;
 
-    static $errno;
+    public static $errno;
 
-    static $LOG_LEVEL = array(
-            self::LOG_FATAL     => "FATAL",
-            self::LOG_WARNING   => "WARNING",
-            self::LOG_MONITOR   => "MONITOR",
+    public static $LOG_LEVEL = array(
+            self::LOG_FATAL    => "FATAL",
+            self::LOG_WARNING  => "WARNING",
+            self::LOG_MONITOR  => "MONITOR",
             self::LOG_NOTICE   => "NOTICE",
             self::LOG_TRACE   => "TRACE",
             self::LOG_DEBUG   => "DEBUG",
         );
 
-    static $err_info = array(
+    public static $err_info = array(
             0   => "ok",
             1   => "log_open: log already opened",
             2   => "log_open: open log file failed",
@@ -38,7 +41,12 @@ class logger
             4   => "log_write: unknown log_level",
             );
 
-    static function log_open ($filename)
+    public static function log_opened()
+    {
+        return self::$log_opened;
+    }
+
+    public static function log_open ($filename)
     {
         self::$errno = 0;
         if (true == self::$log_opened)
@@ -46,9 +54,11 @@ class logger
             self::$errno = 1;
             return false;
         }
-        self::$log_filename = $filename;
-        self::$log_fp = fopen($filename, "a");
-        if (!self::$log_fp)
+        self::$log_filename     = $filename;
+        self::$log_filename_wf  = $filename . ".wf";
+        self::$log_fp           = fopen($filename, "a");
+        self::$log_fp_wf        = fopen(self::$log_filename_wf, "a");
+        if (!self::$log_fp || !self::$log_fp_wf) 
         {
             self::$errno = 2;
             return false;
@@ -59,23 +69,44 @@ class logger
         return true;
     }
 
-    static function log_close()
+    public static function log_close()
     {
         if (true == self::$log_opened)
         {
             FM_LOG_TRACE("log_close");
-            if (strlen(self::$log_buff) > 0)
-            {
-                fwrite(self::$log_fp, self::$log_buff);
-            }
+            self::flush();
+            self::flush(true);
             fclose(self::$log_fp);
+            fclose(self::$log_fp_wf);
             self::$log_fp           = false;
+            self::$log_fp_wf        = false;
             self::$log_filename     = "";
+            self::$log_filename_wf  = "";
             self::$log_opened       = false;
         }
     }
 
-    static function log_write($level)
+    public static function flush($wf = false)
+    {
+        if (!$wf)
+        {
+            if (strlen(self::$log_buff) > 0)
+            {
+                fwrite(self::$log_fp, self::$log_buff);
+                self::$log_buff = '';
+            }
+        }
+        else 
+        {
+            if (strlen(self::$log_buff_wf) > 0)
+            {
+                fwrite(self::$log_fp_wf, self::$log_buff_wf);
+                self::$log_buff_wf = '';
+            }
+        }
+    }
+
+    public static function log_write($level)
     {
         self::$errno = 0;
         if (false == self::$log_opened)
@@ -98,24 +129,35 @@ class logger
                 break;
             }
         }
-        $str_common = sprintf("%s\x7 [%s]\x7 [%s:%d]%s\x7 ",
+        $str_common = sprintf("%s\x6 [%s]\x6 [%s:%d]%s\x6 ",
                 self::$LOG_LEVEL[$level], $now, $info['file'], $info['line'], self::$log_extra_info);
         $params = func_get_args();
         array_shift($params);
         $str_user   = call_user_func_array('sprintf', $params);
-        self::$log_buff .= sprintf("%s%s\x7\n", $str_common, $str_user);
+        if ($level == self::LOG_WARNING || $level == self::LOG_FATAL)
+        {
+            self::$log_buff_wf .= sprintf("%s%s\x6\n", $str_common, $str_user);
+        }
+        else
+        {
+            self::$log_buff .= sprintf("%s%s\x6\n", $str_common, $str_user);
+        }
+        //echo self::$log_buff, "\n", self::$log_buff_wf;
+
         if (strlen(self::$log_buff) > self::BUFF_SIZE)
         {
-            //fwrite in php is atomic
-            fwrite(self::$log_fp, self::$log_buff);
-            self::$log_buff = "";
+            self::flush();
+        }
+        if (strlen(self::$log_buff_wf) > self::BUFF_SIZE)
+        {
+            self::flush(true);
         }
         return true;
     }
 
     static function log_add_info($info)
     {
-        $str_tmp = sprintf("\x7 [%s]", $info);
+        $str_tmp = sprintf("\x6 [%s]", $info);
         self::$log_extra_info .= $str_tmp;
     }
 }
@@ -179,4 +221,17 @@ function FM_LOG_FATAL()
     call_user_func_array("logger::log_write", $args);
 }
 
+/*
+logger::log_open("/tmp/test.log");
+if (logger::$errno)
+{
+    echo logger::$err_info[logger::$errno];
+    exit;
+}
+FM_LOG_DEBUG("debug");
+FM_LOG_WARNING("debug");
+FM_LOG_TRACE("debug");
+FM_LOG_FATAL("debug");
+FM_LOG_MONITOR("debug");
+*/
 ?>
