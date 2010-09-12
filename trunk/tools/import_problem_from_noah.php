@@ -27,6 +27,7 @@ while ($row = $result->fetch_assoc()) {
     {
         //$value = trim($value);
         $value = decode_html($value);
+        $value = translate_img_path($value);
         $value = $land->real_escape_string($value);
     }
     extract($row, EXTR_PREFIX_ALL, 'R');
@@ -43,6 +44,17 @@ eot;
 
 function decode_html(&$s) {
     $s = html_entity_decode($s, ENT_NOQUOTES, 'utf-8');
+    return $s;
+}
+
+function replace_path($s) {
+    $x = $s[1] . str_replace("image/", "upload/image/", $s[2]) . '"';
+    $x = str_replace('/oak', '..', $x);
+    return $x;
+}
+
+function translate_img_path($s) {
+    $s = preg_replace_callback('/(<img\s*src=")([^"]*?)"/i', 'replace_path', $s);
     return $s;
 }
 ?>
