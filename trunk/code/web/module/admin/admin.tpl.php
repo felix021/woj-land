@@ -31,8 +31,9 @@ class TPL_Main extends ctemplate
           </form>
         </td>
     </tr> 
-    <tr class="tro"><td><a href="$web_root/group">Group Management</a></td></tr> 
-    <tr class="tre"><td><a href="$web_root/notice">Set Notice</a></td></tr> 
+    <tr class="tro"><td><a href="$web_root/user/import">Batch user import</a></td></tr> 
+    <tr class="tre"><td><a href="$web_root/group">Group Management</a></td></tr> 
+    <tr class="tro"><td><a href="$web_root/notice">Set Notice</a></td></tr> 
     </tbody></table> 
   </div> 
 <br/>
