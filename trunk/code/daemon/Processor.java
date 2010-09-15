@@ -23,7 +23,8 @@ class Processor extends Thread
             //TODO add a list of permitted address
             logger.log("new conn from: " + addr);
             os = new OutputStreamWriter(conn.getOutputStream());
-            if (!addr.toString().trim().equals("/127.0.0.1"))
+            if (!addr.toString().trim().equals("/127.0.0.1") && 
+                !addr.toString().trim().equals("/0:0:0:0:0:0:0:1"))
             {
                 //logger.log("WARNING: Unauthorized address");
                 throw new Exception("Unauthorized address");
