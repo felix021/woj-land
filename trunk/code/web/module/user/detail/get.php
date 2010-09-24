@@ -1,6 +1,7 @@
 <?php
 
 require_once(MODULE_ROOT . '/user/user.func.php');
+require_once(MODULE_ROOT . '/user/score.func.php');
 
 class Main extends cframe
 {
@@ -48,6 +49,10 @@ eot;
         $user['rank'] = $rank;
         $arr_solved = explode('|', $user['solved_list']);
         sort($arr_solved);
+
+        $score = get_score($user['easy'], $user['medium'], $user['difficult']);
+        response::add_data('score', $score);
+
         response::add_data('user', $user);
         response::add_data('arr_solved', $arr_solved);
         return true;
