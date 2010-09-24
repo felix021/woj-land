@@ -1,6 +1,7 @@
 #ifndef __RF_TABLE__
 #define __RF_TABLE__
 
+#include <sys/syscall.h>
 #include "logger.h"
 
 /*
@@ -23,98 +24,185 @@ short RF_table[1024] = {0};
  * 最后一个syscall_id存放的是非正值，表示结束
  * 未指定的syscall_id的次数将被自动初始化为0
  */
+#if __WORDSIZE == 32    //x86_32
 //c or c++
 int RF_C[512] =
 {
-    SYS_execve,         1,
-    SYS_brk,            -1,
     SYS_access,         -1,
-    SYS_mmap2,          -1,
-    SYS_fstat64,        -1,
+    SYS_brk,            -1,
     SYS_close,          -1,
-    SYS_read,           -1,
-    SYS_set_thread_area,-1,
+    SYS_execve,         1,
+    SYS_exit_group,     -1,
+    SYS_fstat64,        -1,
+    SYS_mmap2,          -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
-    SYS_write,          -1,
-    SYS_exit_group,     -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
     SYS_uname,          -1,
-    0
+    SYS_write,          -1,
+    -1
 };
 
 int RF_CPP[512] =
 {
-    SYS_execve,         1,
-    SYS_brk,            -1,
     SYS_access,         -1,
-    SYS_mmap2,          -1,
-    SYS_fstat64,        -1,
+    SYS_brk,            -1,
     SYS_close,          -1,
-    SYS_read,           -1,
-    SYS_set_thread_area,-1,
+    SYS_execve,         1,
+    SYS_exit_group,     -1,
+    SYS_fstat64,        -1,
+    SYS_mmap2,          -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
-    SYS_write,          -1,
-    SYS_exit_group,     -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
     SYS_uname,          -1,
-    0
+    SYS_write,          -1,
+    -1
 };
 
 //Pascal
 int RF_PASCAL[512] = 
 {
-    SYS_execve,         1,
-    SYS_ugetrlimit,     -1,
-    SYS_rt_sigaction,   -1,
-    SYS_ioctl,          -1,
-    SYS_readlink,       -1,
-    SYS_read,           -1,
-    SYS_write,          -1,
     SYS_close,          -1,
+    SYS_execve,         1,
     SYS_exit_group,     -1,
+    SYS_ioctl,          -1,
     SYS_mmap,           -1,
     SYS_munmap,         -1,
-    0
+    SYS_read,           -1,
+    SYS_readlink,       -1,
+    SYS_rt_sigaction,   -1,
+    SYS_ugetrlimit,     -1,
+    SYS_write,          -1,
+    -1
 };
 
 //Java (TODO暂未测试)
 int RF_JAVA[512] = 
 {
-    SYS_execve,         -1,
-    SYS_ugetrlimit,     -1,
-    SYS_futex,          -1,
-    SYS_read,           -1,
-    SYS_mmap,           -1,
-    SYS_mmap2,          -1,
-    SYS_stat64,         -1,
-    SYS_open,           -1,
-    SYS_close,          -1,
     SYS_access,         -1,
     SYS_brk,            -1,
-    SYS_readlink,       -1,
-    SYS_munmap,         -1,
-    SYS_close,          -1,
-    SYS_uname,          -1,
     SYS_clone,          -1,
-    SYS_rt_sigprocmask, -1,
-    SYS_rt_sigaction,   -1,
-    SYS_sigprocmask,    -1,
-    SYS_getrlimit,      -1,
+    SYS_close,          -1,
+    SYS_execve,         -1,
+    SYS_exit,           -1,
+    SYS_exit_group,     -1,
+    SYS_fcntl64,        -1,
     SYS_fstat64,        -1,
-    SYS_getuid32,       -1,
-    SYS_getgid32,       -1,
-    SYS_geteuid32,      -1,
+    SYS_futex,          -1,
+    SYS_getdents64,     -1,
     SYS_getegid32,      -1,
+    SYS_geteuid32,      -1,
+    SYS_getgid32,       -1,
+    SYS_getrlimit,      -1,
+    SYS_getuid32,       -1,
+    SYS_mmap,           -1,
+    SYS_mmap2,          -1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_open,           -1,
+    SYS_read,           -1,
+    SYS_readlink,       -1,
+    SYS_rt_sigaction,   -1,
+    SYS_rt_sigprocmask, -1,
+    SYS_set_robust_list,-1,
     SYS_set_thread_area,-1,
     SYS_set_tid_address,-1,
-    SYS_set_robust_list,-1,
-    SYS_exit_group,     -1,
-    SYS_exit,           -1,
-    SYS_mprotect,       -1,
-    SYS_getdents64,     -1,
-    SYS_fcntl64,        -1,
-    0
+    SYS_sigprocmask,    -1,
+    SYS_stat64,         -1,
+    SYS_ugetrlimit,     -1,
+    SYS_uname,          -1,
+    -1
 };
+
+#elif defined __x86_64__
+int RF_C[512] =
+{
+    SYS_arch_prctl,     -1,
+    SYS_brk,            -1,
+    SYS_close,          -1,
+    SYS_execve,          1,
+    SYS_exit_group,     -1,
+    SYS_fstat,          -1,
+    SYS_mmap,           -1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
+    SYS_uname,          -1,
+    SYS_write,          -1,
+    -1
+};
+
+int RF_CPP[512] = 
+{
+    SYS_access,         -1,
+    SYS_arch_prctl,     -1,
+    SYS_brk,            -1,
+    SYS_close,          -1,
+    SYS_execve,          1,
+    SYS_exit_group,     -1,
+    SYS_fstat,          -1,
+    SYS_mmap,           -1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_read,           -1,
+    SYS_set_thread_area,-1,
+    SYS_uname,          -1,
+    SYS_write,          -1,
+    -1
+};
+
+int RF_PASCAL[512] = 
+{
+    SYS_close,          -1,
+    SYS_execve,         1,
+    SYS_exit_group,     -1,
+    SYS_getrlimit,      -1,
+    SYS_ioctl,          -1,
+    SYS_mmap,           -1,
+    SYS_munmap,         -1,
+    SYS_read,           -1,
+    SYS_readlink,       -1,
+    SYS_rt_sigaction,   -1,
+    SYS_write,          -1,
+    -1
+};
+
+int RF_JAVA[512] = 
+{
+    SYS_access,         -1,
+    SYS_arch_prctl,     -1,
+    SYS_brk,            -1,
+    SYS_clone,          -1,
+    SYS_close,          -1,
+    SYS_execve,         -1,
+    SYS_exit_group,     -1,
+    SYS_fstat,          -1,
+    SYS_futex,          -1,
+    SYS_getegid,        -1,
+    SYS_geteuid,        -1,
+    SYS_getgid,         -1,
+    SYS_getrlimit,      -1,
+    SYS_getuid,         -1,
+    SYS_mmap,           -1,
+    SYS_mprotect,       -1,
+    SYS_munmap,         -1,
+    SYS_open,           -1,
+    SYS_read,           -1,
+    SYS_readlink,       -1,
+    SYS_rt_sigaction,   -1,
+    SYS_rt_sigprocmask, -1,
+    SYS_set_robust_list,-1,
+    SYS_set_tid_address,-1,
+    SYS_stat,           -1,
+    SYS_uname,          -1,
+    SYS_write,          -1,
+    -1
+};
+#endif
 
 //根据 RF_* 数组来初始化RF_table
 void init_RF_table(int lang)
@@ -139,7 +227,7 @@ void init_RF_table(int lang)
             break;
     }
     memset(RF_table, 0, sizeof(RF_table));
-    for (int i = 0; p[i] > 0; i += 2)
+    for (int i = 0; p[i] >= 0; i += 2)
     {
         RF_table[p[i]] = p[i+1];
     }
