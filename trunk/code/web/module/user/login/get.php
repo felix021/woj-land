@@ -36,6 +36,7 @@ class Main extends cframe
     public function display()
     {
         $this->set_my_tpl("login.tpl.php");
+        return true;
     }
 }
 
