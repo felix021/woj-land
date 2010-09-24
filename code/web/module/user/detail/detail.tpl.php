@@ -6,6 +6,7 @@ class TPL_Main extends ctemplate
     {
         $web_root = land_conf::$web_root;
         $user = $p['user'];
+        $score = $p['score'];
         foreach ($user as &$v) $v = htmlspecialchars($v);
         $username = $user['username'];
         $un_eu    = urlencode($username);
@@ -78,6 +79,12 @@ eot;
         }
         echo <<<eot
       </td> 
+      <td></td> 
+     </tr> 
+     <tr class="tro"> 
+      <td></td> 
+      <td><strong>Score:</strong></td> 
+      <td>$score</td> 
       <td></td> 
      </tr> 
     </tbody></table> 
