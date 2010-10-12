@@ -5,6 +5,8 @@ final class land_conf
     public static $web_root     = "/land";
     const UPLOAD_PATH           = "/upload/";
 
+    const TIMEZONE              = "Asia/Shanghai";
+
     const LOG_FILE              = "/home/felix021/woj/log/php.log";
 
     const DEBUG                 = true;
