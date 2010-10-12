@@ -18,14 +18,20 @@ class TPL_Main extends ctemplate
         $defunct_button = '';
         $desc = $problem['description'];
         $hint = $problem['hint'];
+        $problem['input'] = preg_replace('/<img\s*src="(.*?)".*?>/is',
+            '[img=\1]', $problem['input']); //兼容oak
         foreach ($problem as $key => &$v)
         {
             $v = htmlspecialchars($v);
             $v = str_replace("\r\n", "\n", $v);
             $v = str_replace("\r", "\n", $v);
             $v = str_replace("\n", "<br/>", $v);
-            $v = str_replace("  ", "&nbsp;", $v);
+            $v = str_replace("  ", " &nbsp;", $v);
         }
+
+        $problem['input'] = preg_replace('/\[img=(.*?)\]/',
+            '<img src="\1"/>', $problem['input']); //兼容oak
+
         $SPJ = $problem['spj'] == 1 ? "Yes" : "No";
 
         $submit_button_extra = '';
@@ -49,7 +55,9 @@ class TPL_Main extends ctemplate
   
   <div class="ifm"> 
     <strong>Time Limit</strong>: {$problem['time_limit']}MS &nbsp;
-    <strong>Memory Limit</strong>: {$problem['memory_limit']}KB<br/> 
+    <strong>Memory Limit</strong>: {$problem['memory_limit']}KB &nbsp;
+    <strong>Difficulty</strong>: {$problem['difficulty']}
+    <br/> 
     <strong>Total Submit</strong>: {$problem['submitted']}&nbsp;
     <strong>Accepted</strong>: {$problem['accepted']}&nbsp;
     <strong>Special Judge</strong>: {$SPJ}
