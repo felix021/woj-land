@@ -18,6 +18,7 @@ if (!defined("ROOT"))
 require_once(CONF_ROOT . "/land.cfg.php");
 require_once(CONF_ROOT . "/wrapper.cfg.php");
 error_reporting(land_conf::ERROR_REPORT_LEVEL);
+date_default_timezone_set(land_conf::TIMEZONE);
 
 require_once(LIB_ROOT . "/logger.lib.php");
 require_once(LIB_ROOT . "/misc.lib.php");
