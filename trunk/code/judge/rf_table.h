@@ -35,6 +35,7 @@ int RF_C[512] =
     SYS_exit_group,     -1,
     SYS_fstat64,        -1,
     SYS_futex,          -1,
+    SYS_gettimeofday,   -1,
     SYS_mmap2,          -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
@@ -43,6 +44,7 @@ int RF_C[512] =
     SYS_set_thread_area,-1,
     SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -55,6 +57,7 @@ int RF_CPP[512] =
     SYS_exit_group,     -1,
     SYS_fstat64,        -1,
     SYS_futex,          -1,
+    SYS_gettimeofday,   -1,
     SYS_mmap2,          -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
@@ -63,6 +66,7 @@ int RF_CPP[512] =
     SYS_set_thread_area,-1,
     SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -73,6 +77,7 @@ int RF_PASCAL[512] =
     SYS_execve,         1,
     SYS_exit_group,     -1,
     SYS_futex,          -1,
+    SYS_gettimeofday,   -1,
     SYS_ioctl,          -1,
     SYS_mmap,           -1,
     SYS_munmap,         -1,
@@ -81,7 +86,9 @@ int RF_PASCAL[512] =
     SYS_readlink,       -1,
     SYS_rt_sigaction,   -1,
     SYS_ugetrlimit,     -1,
+    SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -103,6 +110,7 @@ int RF_JAVA[512] =
     SYS_geteuid32,      -1,
     SYS_getgid32,       -1,
     SYS_getrlimit,      -1,
+    SYS_gettimeofday,   -1,
     SYS_getuid32,       -1,
     SYS_mmap,           -1,
     SYS_mmap2,          -1,
@@ -134,6 +142,7 @@ int RF_C[512] =
     SYS_exit_group,     -1,
     SYS_fstat,          -1,
     SYS_futex,          -1,
+    SYS_gettimeofday,   -1,
     SYS_mmap,           -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
@@ -142,6 +151,7 @@ int RF_C[512] =
     SYS_set_thread_area,-1,
     SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -155,6 +165,7 @@ int RF_CPP[512] =
     SYS_exit_group,     -1,
     SYS_fstat,          -1,
     SYS_futex,          -1,
+    SYS_gettimeofday,   -1,
     SYS_mmap,           -1,
     SYS_mprotect,       -1,
     SYS_munmap,         -1,
@@ -163,6 +174,7 @@ int RF_CPP[512] =
     SYS_set_thread_area,-1,
     SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -173,6 +185,7 @@ int RF_PASCAL[512] =
     SYS_exit_group,     -1,
     SYS_futex,          -1,
     SYS_getrlimit,      -1,
+    SYS_gettimeofday,   -1,
     SYS_ioctl,          -1,
     SYS_mmap,           -1,
     SYS_munmap,         -1,
@@ -180,7 +193,9 @@ int RF_PASCAL[512] =
     SYS_read,           -1,
     SYS_readlink,       -1,
     SYS_rt_sigaction,   -1,
+    SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 
@@ -199,6 +214,7 @@ int RF_JAVA[512] =
     SYS_geteuid,        -1,
     SYS_getgid,         -1,
     SYS_getrlimit,      -1,
+    SYS_gettimeofday,   -1,
     SYS_getuid,         -1,
     SYS_mmap,           -1,
     SYS_mprotect,       -1,
@@ -214,6 +230,7 @@ int RF_JAVA[512] =
     SYS_stat,           -1,
     SYS_uname,          -1,
     SYS_write,          -1,
+    SYS_writev,         -1,
     -1
 };
 #endif

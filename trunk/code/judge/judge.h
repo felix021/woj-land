@@ -649,16 +649,63 @@ int oj_compare_output(std::string file_std, std::string file_exec)
     return status;
 }
 
+
+//输出最终结果
+void output_result(int result, int memory_usage = 0, int time_usage = 0)
+{
+    FM_LOG_TRACE("result: %d, %dKB, %dms", result, memory_usage, time_usage);
+    printf("%d %d %d", result, memory_usage, time_usage);
+}
+
 #include "rf_table.h"
 //系统调用在进和出的时候都会暂停, 把控制权交给judge
 static bool in_syscall = true;
-bool is_valid_syscall(int lang, int syscall_id)
+bool is_valid_syscall(int lang, int syscall_id, pid_t child, user_regs_struct regs)
 {
     in_syscall = !in_syscall;
     //FM_LOG_DEBUG("syscall: %d, %s, count: %d", syscall_id, in_syscall?"in":"out", RF_table[syscall_id]);
     if (RF_table[syscall_id] == 0)
     {
         //如果RF_table中对应的syscall_id可以被调用的次数为0, 则为RF
+        long addr;
+        if(syscall_id == SYS_open)
+        {
+#if __WORDSIZE == 32
+            addr = regs.ebx;
+#else
+            addr = regs.rdi;
+#endif
+#define LONGSIZE sizeof(long)
+            union u{ unsigned long val; char chars[LONGSIZE]; }data;
+            unsigned long i = 0, j = 0, k = 0;
+            char filename[300];
+            while (true)
+            {
+                data.val = ptrace(PTRACE_PEEKDATA, child, addr + i,  NULL);
+                i += LONGSIZE;
+                for (j = 0; j < LONGSIZE && data.chars[j] > 0 && k < 256; j++) 
+                {
+                    filename[k++] = data.chars[j];
+                }
+                if (j < LONGSIZE && data.chars[j] == 0)
+                    break;
+            }
+            filename[k] = 0;
+            FM_LOG_TRACE("syscall open: filename: %s", filename);
+            if (strstr(filename, "..") != NULL)
+            {
+                return false;
+            }
+            if (strstr(filename, "/proc/") == filename)
+            {
+                return true;
+            }
+            if (strstr(filename, "/dev/tty") == filename)
+            {
+                output_result(judge_conf::OJ_RE_SEGV);
+                exit(judge_conf::EXIT_OK);
+            }
+        }
         return false;
     }
     else if (RF_table[syscall_id] > 0)
@@ -674,12 +721,5 @@ bool is_valid_syscall(int lang, int syscall_id)
         ;
     }
     return true;
-}
-
-//输出最终结果
-void output_result(int result, int memory_usage = 0, int time_usage = 0)
-{
-    FM_LOG_TRACE("result: %d, %dKB, %dms", result, memory_usage, time_usage);
-    printf("%d %d %d", result, memory_usage, time_usage);
 }
 #endif
