@@ -403,7 +403,7 @@ int main(int argc, char *argv[], char *envp[])
                 //此处是从bnuoj直接copy过来的，没有用i386平台测试过...
                 syscall_id = regs.orig_rax;
 #endif
-                if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id))
+                if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id, executive, regs))
                 {
                     FM_LOG_TRACE("restricted function, syscall_id: %d", syscall_id);
                     problem::result = judge_conf::OJ_RF;
