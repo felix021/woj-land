@@ -73,11 +73,11 @@ int main(int argc, char *argv[], char *envp[])
         switch (problem::lang)
         {
             case judge_conf::LANG_C:
-                FM_LOG_TRACE("start: gcc -static -w -O2 -DOJ -o %s %s",
+                FM_LOG_TRACE("start: gcc -static -w -lm -std=c99 -O2 -DOJ -o %s %s /usr/bin/libm.a",
                         problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("gcc", "gcc", "-static", "-w", "-O2", "-DOJ",
+                execlp("gcc", "gcc", "-static", "-w", "-lm", "-std=c99", "-O2", "-DOJ", 
                        "-o", problem::exec_file.c_str(),
-                       problem::source_file.c_str(),
+                       problem::source_file.c_str(), "/usr/lib/libm.a",
                        NULL);
                 break;
             
