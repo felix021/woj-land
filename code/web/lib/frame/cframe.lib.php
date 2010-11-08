@@ -22,7 +22,7 @@ class cframe implements iframe
             {
                 FM_LOG_WARNING("User not login");
                 $return_url = urlencode($_SERVER['REQUEST_URI']);
-                if ($SERVER['REQUEST_METHOD'] == 'POST')
+                if ($_SERVER['REQUEST_METHOD'] == 'POST')
                 {
                     $return_url = urlencode(force_read($_SERVER, 'HTTP_REFERER'));
                 }
