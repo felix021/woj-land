@@ -41,10 +41,10 @@ eot;
   </tbody></table> 
   <br /> 
   <div> 
-    <form method="post" action="{$web_root}/problem/search"> 
-    <strong>Search By Problem Title: </strong>
+    <form method="get" action="{$web_root}/problem/search"> 
+    <strong>Search By Problem Title or ID: </strong>
     <input name="key" type="text" value='' size="50" maxlength="255" />
-    <input type="submit" value="Go" /> 
+    <input type="submit" value="Good Luck!" /> 
     </form> 
   </div> 
   </div> 

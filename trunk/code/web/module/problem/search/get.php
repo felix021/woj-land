@@ -8,7 +8,9 @@ class Main extends cframe
 
     public function process()
     {
-        $search = request::$arr_post['key'];
+        $search = '';
+        if (isset(request::$arr_get['key']))
+            $search = request::$arr_get['key'];
         if (empty($search))
         {
             throw new Exception("Please provide the search field.");
@@ -16,7 +18,7 @@ class Main extends cframe
         $sql = <<<eot
 SELECT `problem_id`, `contest_id`, `title`, `submitted`, `accepted`
   FROM `problems`
-  WHERE `title` LIKE '%$search%'
+  WHERE `title` LIKE '%$search%' OR `problem_id` LIKE '%$search%'
 eot;
         if (!is_admin())
         {
@@ -25,6 +27,11 @@ eot;
         $conn = db_connect();
         fail_test($conn, false);
         $problems = db_fetch_lines($conn, $sql, -1);
+        if (count($problems) == 1)
+        {
+            $url = land_conf::$web_root . "/problem/detail?problem_id=" . $problems[0]['problem_id'];
+            response::set_redirect($url);
+        }
         db_close($conn);
         foreach ($problems as &$p)
         {
