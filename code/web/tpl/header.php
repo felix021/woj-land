@@ -38,6 +38,7 @@ class header implements itemplate
     <link href="{$web_root}/css/noah.css" rel="stylesheet" type="text/css"/>
     <script src="{$web_root}/js/common.js" language="javascript"></script> 
     <script src="{$web_root}/js/md5-min.js" language="javascript"></script> 
+    <link title="Search Problems" rel="search"  type="application/opensearchdescription+xml"  href="{$web_root}/problem/opensearch" /> 
 </head> 
 <body> 
 <center> 
