@@ -73,20 +73,18 @@ int main(int argc, char *argv[], char *envp[])
         switch (problem::lang)
         {
             case judge_conf::LANG_C:
-                FM_LOG_TRACE("start: gcc -static -w -lm -std=c99 -O2 -DOJ -o %s %s /usr/bin/libm.a",
+                FM_LOG_TRACE("start: gcc -o %s %s -static -w -lm -std=c99 -O2 -DOJ",
                         problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("gcc", "gcc", "-static", "-w", "-lm", "-std=c99", "-O2", "-DOJ", 
-                       "-o", problem::exec_file.c_str(),
-                       problem::source_file.c_str(), "/usr/lib/libm.a",
+                execlp("gcc", "gcc", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
+                        "-static", "-w", "-lm", "-std=c99", "-O2", "-DOJ", 
                        NULL);
                 break;
             
             case judge_conf::LANG_CPP:
-                FM_LOG_TRACE("start: g++ -static -w -O2 -DOJ -o %s %s",
+                FM_LOG_TRACE("start: g++ -o %s %s -static -w -O2 -DOJ",
                         problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("g++", "g++", "-static", "-w", "-O2", "-DOJ",
-                       "-o", problem::exec_file.c_str(),
-                       problem::source_file.c_str(),
+                execlp("g++", "g++", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
+                        "-static", "-w", "-O2", "-DOJ", 
                        NULL);
                 break;
             
