@@ -71,7 +71,8 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
           JUDGE_PATH_ROOT    = "/home/www-data/land/code/judge/";
 
 7. 跑起Daemon, 设置judge
-    $ cd /home/www-data/land/daemon
+    $ cd /home/www-data/land/code/daemon
+    $ sudo su www-data
     $ screen java Daemon  # 或者 setsid java Daemon > daemon.log 2>&1
     默认应该会正常启动几个线程，并没有错误出现
 
