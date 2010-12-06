@@ -349,16 +349,18 @@ void set_limit()
         exit(judge_conf::EXIT_SET_LIMIT);
     }
 
+    log_close(); //必须在先关闭log，防止log > 输出文件限制，造成OLE
+
     //输出文件大小限制
     lim.rlim_max = problem::output_limit * judge_conf::KILO;
     lim.rlim_cur = lim.rlim_max;
     if (setrlimit(RLIMIT_FSIZE, &lim) < 0)
     {
-        FM_LOG_WARNING("setrlimit RLIMIT_FSIZE failed");
+        perror("setrlimit RLIMIT_FSIZE failed");
         exit(judge_conf::EXIT_SET_LIMIT);
     }
 
-    FM_LOG_TRACE("set limit ok");
+    //FM_LOG_TRACE("set limit ok");
 }
 
 /*

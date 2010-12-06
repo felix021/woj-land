@@ -215,12 +215,9 @@ int main(int argc, char *argv[], char *envp[])
             //安全相关, 包括seteuid, chroot
             set_security_option();
 
-            //设置 memory, time, output 限制..
-            set_limit();
+            FM_LOG_DEBUG("tl: %d, tu: %d, tla: %d", problem::time_limit,
+                    problem::time_usage, judge_conf::time_limit_addtion);
 
-            FM_LOG_DEBUG("tl: %d, tu: %d, tla: %d",
-                    problem::time_limit, problem::time_usage,
-                    judge_conf::time_limit_addtion);
             int real_time_limit = problem::time_limit //总时限
                                 - problem::time_usage //已用时间
                                 + judge_conf::time_limit_addtion; //误差调整
@@ -232,7 +229,10 @@ int main(int argc, char *argv[], char *envp[])
             }
 
             FM_LOG_TRACE("begin executive: %s", problem::exec_file.c_str());
-            log_close();
+
+            //设置 memory, time, output 限制..
+            set_limit(); //log_close in set_limit()
+
             if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0)
             {
                 //无法打日志了，因为已经close日志且chroot了, 所以给出更详细的退出值
