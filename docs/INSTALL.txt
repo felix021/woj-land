@@ -96,3 +96,5 @@ $ w3m http://localhost/land
 (f) 如果提交java代码编译，出现system_error，检查一下wrapper在[TEMP_PATH]/[SRC_ID]目录生成的stderr_compiler.txt，内容如果是
     javac: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory
 那么需要在/usr/lib下面建立一个libjli.so的链接，指向地址是 find /usr/lib/jvm -name libjli.so
+
+(g) 由于纯文本的log膨胀很快，建议增加一个cron任务，每天对log进行一次打包，可以使用tools/log_rotate.sh这个脚本
