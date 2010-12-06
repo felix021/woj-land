@@ -2,7 +2,7 @@
 
 系统需求：Linux(以Ubuntu 9.10为例), Apache + mod_rewrite, PHP5, Mysql, Sun-JDK, GCC, G++, FreePascal
 一键安装： 
-sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-server-5.0 fpc sun-java6-jdk gcc g++
+sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-server-5.0 fpc sun-java6-jdk gcc g++ php5-cli
 
 *假设是直接用www-data用户搭建, 建议
 0. 使用root创建 /home/www-data 并修改所有者
