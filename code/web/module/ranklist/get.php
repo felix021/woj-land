@@ -19,6 +19,7 @@ class Main extends cframe
         $sql = <<<eot
 SELECT `user_id`, `username`, `nickname`, `solved`, `submit`, (`solved`/`submit`) as `ratio`
   FROM `users`
+  WHERE `enabled`=1
   ORDER BY `solved` DESC, `ratio` DESC, `submit` DESC
   LIMIT $start,$itpp
 eot;

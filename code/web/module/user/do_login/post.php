@@ -28,7 +28,7 @@ class Main extends cframe
         $username = db_escape($conn, $username);
         $sql = <<<eot
 SELECT `user_id`, `password`
-  FROM `users` WHERE `username`='$username'
+  FROM `users` WHERE `username`='$username' AND `enabled`=1
 eot;
         $line = db_fetch_line($conn, $sql);
         db_close($conn);
