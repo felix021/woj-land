@@ -123,5 +123,6 @@ final class land_conf
         self::OJ_RE_JAVA            => "green",
         );
 
+    public static $page_title;
 }
 ?>
