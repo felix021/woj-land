@@ -29,12 +29,17 @@ class header implements itemplate
             $nav1 =  '<a href="' . $web_root . '/user/login">Login</a> | ';
             $nav2 = '<a href="' . $web_root . '/user/register">Register</a> | ';
         }
+
+        $title = "Land - Online Judge of Wuhan Univ.";
+        if (!empty(land_conf::$page_title))
+            $title = land_conf::$page_title;
+        $title = htmlspecialchars($title);
         echo <<<eot
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"> 
 <html> 
 <head> 
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
-    <title>HomePage of Wuhan Univ. Online Judge</title>    
+    <title>$title</title>    
     <link href="{$web_root}/css/noah.css" rel="stylesheet" type="text/css"/>
     <script src="{$web_root}/js/common.js" language="javascript"></script> 
     <script src="{$web_root}/js/md5-min.js" language="javascript"></script> 
