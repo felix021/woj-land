@@ -46,6 +46,8 @@ try
     logger::log_add_info('ip:' . request::$client_ip);
     logger::log_add_info('uri:' . request::$uri);
 
+    session::init(session::DO_UPDATE);
+
     $dispatch_filename = MODULE_ROOT . request::$uri .
         '/' . strtolower(request::$method) . '.php';
     FM_LOG_TRACE('after dispatch: %s', $dispatch_filename);
