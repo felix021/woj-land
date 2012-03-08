@@ -7,7 +7,7 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         echo <<<eot
   <div id="tt"> 
-    Frequently Asked Questions
+    Frequently Asked Questions (<a href="faq1">中文版</a>)
   </div> 
 
   <style type="text/css"> 
