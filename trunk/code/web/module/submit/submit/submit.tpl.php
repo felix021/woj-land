@@ -81,7 +81,7 @@ function fillSubmitForm()
                 + 'which may result in java_re, do you still want to submit?';
         }
     }
-    else if (lang_maybe == 1 || lang_maybe == 2) //C or C++, check 'I64d', freopen
+    else if (lang_maybe == 1 || lang_maybe == 2) //C or C++, check 'I64d', freopen, system
     {
         if (/"[^"]*?%I64d[^"]*?"/.test(source.value))
         {
@@ -92,6 +92,11 @@ function fillSubmitForm()
         else if (/freopen/.test(source.value.replace(/\/\/ *freopen/g, ''))) //有freopen
         {
             pmt = "It seems that you have left 'freopen' uncommented in your source, "
+                + "which may result in 'Restricted Function'. Do you still want to submit?";
+        }
+        else if (/system/.test(source.value.replace(/\/\/ *system/g, ''))) //有system
+        {
+            pmt = "It seems that you have left 'system' uncommented in your source, "
                 + "which may result in 'Restricted Function'. Do you still want to submit?";
         }
     }
