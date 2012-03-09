@@ -25,7 +25,8 @@ class TPL_Main extends ctemplate
 
     <div id="tt">Source - {$source['source_id']}</div> 
     <div class="ifm"> 
-    <strong>Problem id</strong>: {$source['problem_id']}&nbsp;&nbsp;<strong>Username</strong>: {$username}<br /> 
+    <strong>Problem id</strong>: <a href="problem/detail?problem_id={$source['problem_id']}">{$source['problem_id']}</a>&nbsp;&nbsp;
+    <strong>Username</strong>: <a href="user/detail?username={$username}">{$username}</a><br /> 
     <strong>Memory</strong>: {$source['memory_usage']}KB&nbsp;&nbsp;<strong>Time</strong>: {$source['time_usage']}ms<br /> 
     <strong>Language</strong>: {$language}&nbsp;&nbsp;<strong>Result</strong>: {$result}<br /> 
     </div> 
