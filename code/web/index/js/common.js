@@ -128,6 +128,32 @@ function getXmlHTTP()
     return xmlHttp;
 }
 
+function LoadURLSync(method, url, values)
+{
+    var xml = getXmlHTTP();
+    if (xml == null)
+    {
+        alert('Operation failed');
+        return null;
+    }
+    try
+    {
+        xml.open(method, url, false);
+        if (method == 'POST')
+        {
+            xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+            xml.setRequestHeader("X-Requested-With", "XMLHttpRequest");
+        }
+        xml.send(values);
+        return xml.responseText;
+    }
+    catch(e)
+    {
+        alert(e);
+        return null;
+    }
+}
+
 function LoadURL(method, url, values, func)
 {
     var xml = getXmlHTTP();
@@ -154,6 +180,7 @@ function LoadURL(method, url, values, func)
         if (method == 'POST')
         {
             xml.setRequestHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+            xml.setRequestHeader("X-Requested-With", "XMLHttpRequest");
         }
         xml.send(values);
     }
