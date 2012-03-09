@@ -4,6 +4,7 @@ class TPL_Main extends ctemplate
 {
     public function display($p)
     {
+        $web_root = land_conf::$web_root;
         $last_url = htmlspecialchars($p['last_url']);
         echo <<<eot
   <div id="tt"> 
@@ -22,9 +23,9 @@ eot;
 
         echo <<<eot
 <script language="javascript">
-
 function fillLoginForm()
 {
+    $('seed').value = LoadURLSync("POST", "$web_root/ajax/vcode", '');
     var password    = $('password');
     if (password.value == '')
     {

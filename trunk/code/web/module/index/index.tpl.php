@@ -37,7 +37,7 @@ class TPL_Main extends ctemplate
 		<div class="hpb"> 
 		&nbsp;&nbsp;&nbsp;Choose a problem from <a href="problem/volume">problem sets</a>, 
 		then solve it, <a href="submit/submit">submit</a> your code if you are sure that your 
-		code is right. Sometimes there is hints after a problem, it will be useful.<br /> 
+		code is right. Sometimes there are hints after a problem, which are useful.<br /> 
 		<a href="faq.html"><img src="img/faq2.jpg" alt="Frequently Asked Questions" align="right"  /></a> 
     &nbsp;&nbsp;&nbsp;<a href="contest/list">Contests</a> will be hold with a fixed schedule, you can take part in anyone to show yourself.<br /> 
     &nbsp;&nbsp;&nbsp;Read <a href="faq.html">FAQ</a> carefully first when you have any problem on how to use this system, 
