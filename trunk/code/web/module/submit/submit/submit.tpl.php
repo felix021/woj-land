@@ -89,12 +89,12 @@ function fillSubmitForm()
                 + "but Land is running on Linux, which supports '%lld' only. "
                 + "Do you still want to submit?";
         }
-        else if (/freopen/.test(source.value.replace(/\/\/ *freopen/g, ''))) //有freopen
-        {
+        else if (/\bfreopen *\(/.test(source.value.replace(/\/\/ *freopen *\(/g, ''))) //有freopen
+        {   
             pmt = "It seems that you have left 'freopen' uncommented in your source, "
                 + "which may result in 'Restricted Function'. Do you still want to submit?";
-        }
-        else if (/system/.test(source.value.replace(/\/\/ *system/g, ''))) //有system
+        }   
+        else if (/\bsystem *\(/.test(source.value.replace(/\/\/ *system *\(/g, ''))) //有system
         {
             pmt = "It seems that you have left 'system' uncommented in your source, "
                 + "which may result in 'Restricted Function'. Do you still want to submit?";
