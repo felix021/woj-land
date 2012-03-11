@@ -40,7 +40,7 @@ eot;
         $lines = db_fetch_lines($conn, $sql, -1);
         response::add_data('statuses', $lines);
 
-        $sql = 'SELECT `result`, COUNT(*) as `num` FROM `sources` GROUP BY `result`';
+        $sql = 'SELECT `result`, COUNT(*) as `num` FROM `sources` WHERE problem_id=' . $pid . ' GROUP BY `result`';
         $lines = db_fetch_lines($conn, $sql, -1);
         $results = array(
             'AC'    => 0,
