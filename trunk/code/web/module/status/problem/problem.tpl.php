@@ -70,9 +70,10 @@ eot;
             $tr_class = $i++ & 1 ? 'tro' : 'tre';
             foreach ($status as &$v) $v = htmlspecialchars($v);
             $lang = land_conf::$lang[$status['lang']];
+            $rank = $i + land_conf::STATUS_PER_PAGE * ($page - 1);
             echo <<<eot
       <tr class="{$tr_class}"> 
-        <td>{$i}</td> 
+        <td>{$rank}</td> 
         <td>{$status['source_id']}</td> 
         <td><a href="$web_root/user/detail?username={$status['username']}">{$status['username']}</a></td> 
         <td>{$status['time_usage']}</td> 

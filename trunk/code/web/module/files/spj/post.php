@@ -23,26 +23,21 @@ class Main extends acframe
         }
 
         $data_prefix = wrapper_conf::DATA_PATH . '/' . $pid . '/';
-        $spj_src     = $data_prefix . $_FILES['spj']['name'];
+        if (!is_dir($data_prefix)) @mkdir($data_prefix);
         $spj_src_cpp = $data_prefix . 'spj.cpp';
-        if (!move_uploaded_file($_FILES['spj']['tmp_name'], $spj_src))
+        if (!move_uploaded_file($_FILES['spj']['tmp_name'], $spj_src_cpp))
         {
             FM_LOG_WARNING("move_uploaded_file failed");
             throw new Exception("Upload spj failed.");
         }
+
         $spj_exe     = $data_prefix . 'spj.exe';
-        if (substr($spj_src, -4) == '.cpp')
-        {
-            system("mv $spj_src $spj_src_cpp");
-            $cmd = "g++ -O2 -o $spj_exe $spj_src_cpp 2>&1";
-        }
-        else
-        {
-            $cmd = "cp $spj_src $spj_exe 2>&1 ; chmod +x $spj_exe 2>&1";
-        }
+        $cmd = "g++ -O2 -Wall -Wno-unused-result -o $spj_exe $spj_src_cpp 2>&1";
         FM_LOG_TRACE("cmd: %s", $cmd);
+
         $ret = -1;
-        $msg = system($cmd, $ret);
+        $output = null;
+        exec($cmd, $output, $ret);
 
         if ($ret == 0 && file_exists($spj_exe))
         {
@@ -50,7 +45,7 @@ class Main extends acframe
         }
         else
         {
-            throw new Exception ('Failed: ' . $msg);
+            throw new Exception ('Failed: ' . join(';', $output));
         }
 
         return true;

@@ -161,10 +161,10 @@ try{
 function checkSPJ()
 {
     var spj = $('spj');
-    var reg = /\.(cpp|exe)$/;
+    var reg = /\.(cpp|c)$/;
     if (reg.test(spj.value))
         return true;
-    alert('spj file should be a cpp source or an exe file');
+    alert('spj file should be a c/cpp source file');
     return false;
 }
 </script>
@@ -194,7 +194,7 @@ eot;
   <form action="$web_root/files/spj" method="post" enctype="multipart/form-data" onsubmit="javascript: return checkSPJ();">
     <tr class="tre">
       <td widtd="50"><input type="hidden" name="seed" value="{$p['seed']}"/> <input type="hidden" name="problem_id" value="{$pid}"/></td>
-      <td align="center" width="400">Upload a cpp source or spj.exe here: <input type="file" name="spj" id="spj"/></td>
+      <td align="center" width="400">Upload a c/cpp source here: <input type="file" name="spj" id="spj"/></td>
       <td align="center" width="100"><input type="submit" value="Upload"/> </td>
       <td widtd="50"></td>
     </tr>
