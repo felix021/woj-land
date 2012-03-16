@@ -283,7 +283,9 @@ int main(int argc, char *argv[], char *envp[])
                         {
                             //SPJ，由SPJ程序判结果
                             result = oj_compare_output_spj(problem::output_file_std, 
+                                                       problem::input_file,
                                                        problem::stdout_file_executive,
+                                                       problem::source_file,
                                                        problem::spj_exe_file,
                                                        problem::stdout_file_spj);
                         }

@@ -364,6 +364,29 @@ void set_limit()
 }
 
 /*
+ * 设置安全相关 for spj.exe
+ */
+void set_security_option_spj()
+{
+    struct passwd *nobody = getpwnam("nobody");
+    if (nobody == NULL)
+    {
+        FM_LOG_WARNING("no user named 'nobody'? %d: %s", errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+
+    //setuid
+    if (EXIT_SUCCESS != setuid(nobody->pw_uid))
+    {
+        FM_LOG_WARNING("setuid(%d) failed, %d: %s", 
+                nobody->pw_uid, errno, strerror(errno));
+        exit(judge_conf::EXIT_SET_SECURITY);
+    }
+
+    FM_LOG_TRACE("set_security_option_spj ok");
+}
+
+/*
  * 设置安全相关，比如chroot和setuid
  */
 void set_security_option()
@@ -434,11 +457,14 @@ int strincmp(const char *s1, const char *s2, int n)
 }
 
 //使用spj.exe来判断
+            //spj.exe  ans_stdout  ans_stdin  user_stdout  source_code
 int oj_compare_output_spj(
-        std::string file_std, //用户程序的输出文件
-        std::string file_exec, //用户程序的输出文件
+        std::string ans_stdout, //标准答案.out
+        std::string ans_stdin, //标准答案.in
+        std::string user_stdout, //用户程序的输出文件
+        std::string source_code, //源代码路径
         std::string spj_exec,  //spj.exe的路径
-        std::string file_spj)  //spj.exe的输出文件
+        std::string spj_stdout)  //spj.exe的输出文件
 {
     FM_LOG_TRACE("start compare spj");
     pid_t pid_spj = fork();
@@ -451,8 +477,8 @@ int oj_compare_output_spj(
     else if (pid_spj == 0)
     {
         log_add_info("spj");
-        stdin  = freopen(file_exec.c_str(), "r", stdin);
-        stdout = freopen(file_spj.c_str(),  "w", stdout);
+        stdin  = freopen(user_stdout.c_str(), "r", stdin);
+        stdout = freopen(spj_stdout.c_str(),  "w", stdout);
         if (stdin == NULL || stdout == NULL)
         {
             FM_LOG_WARNING("failed to open files: stdin(%p), stdout(%p)", stdin, stdout);
@@ -462,8 +488,16 @@ int oj_compare_output_spj(
         if (EXIT_SUCCESS == malarm(ITIMER_REAL, judge_conf::spj_time_limit))
         {
             FM_LOG_TRACE("load spj.exe");
+            set_security_option_spj();
             log_close();
-            execlp(spj_exec.c_str(), "spj.exe", file_std.c_str(), NULL);
+
+            //spj.exe  ans_stdout  ans_stdin  user_stdout  source_code
+            execlp(spj_exec.c_str(), "spj.exe", 
+                    ans_stdout.c_str(), 
+                    ans_stdin.c_str(),
+                    user_stdout.c_str(),
+                    source_code.c_str(),
+                    NULL);
             exit(judge_conf::EXIT_COMPARE_SPJ_FORK);
         }
         else
@@ -485,7 +519,7 @@ int oj_compare_output_spj(
             if (WEXITSTATUS(status) == EXIT_SUCCESS)
             {
                 //返回值是0, 正常结束
-                FILE *fp = fopen(file_spj.c_str(), "r");
+                FILE *fp = fopen(spj_stdout.c_str(), "r");
                 if (fp == NULL)
                 {
                     FM_LOG_WARNING("open stdout_file_spj failed");
