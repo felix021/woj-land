@@ -24,6 +24,7 @@ void answer_wa();
 string file_get_contents(string filename);
 string filter_space(string s);
 int strpos(string, string, int);
+void rtrim(string &s);
 
 int check_code() {
     string code = file_get_contents(src_file_path);
@@ -34,10 +35,12 @@ int check_code() {
 
 void judge()
 {
+    //if (!check_code()) answer_wa();
+
     string user_out = file_get_contents(user_out_path);
     string ans_out = file_get_contents(ans_out_path);
-
-    //if (!check_code()) answer_wa();
+    rtrim(user_out);
+    rtrim(ans_out);
 
     if (user_out != ans_out) {
         user_out = filter_space(user_out);
@@ -132,3 +135,9 @@ int strpos(string str, string substr, int offset)
     return -1;
 }
 
+#define is_space(t) (t=='\t'||t==' '||t=='\n'||t=='\r')
+void rtrim(string &s) {
+    int i = s.size() - 1;
+    while (is_space(s[i])) i--;
+    s.erase(i + 1);
+}
