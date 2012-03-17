@@ -23,6 +23,8 @@ final class land_conf
 
     const STAY_TIME             = 3; //seconds before refresh
 
+    const UPDATE_KEY            = "woj-land";
+
     //privileges
     public static $priv_fields = array(
         'admin',
