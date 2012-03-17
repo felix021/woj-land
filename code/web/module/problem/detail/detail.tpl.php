@@ -96,7 +96,8 @@ class TPL_Main extends ctemplate
     <div> 
       <span class="bt"><a href="{$web_root}/submit/submit?problem_id={$problem['problem_id']}{$contest_var}">Submit $submit_button_extra</a></span> &nbsp;
       <!-- TODO <span class="bt"><a href="{$web_root}/discuss/list?problem_id={$problem['problem_id']}">Discuss</a></span> -->
-      <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Status</a></span> 
+      <span class="bt"><a href="{$web_root}/status/problem?problem_id={$problem['problem_id']}">Statistics</a></span> 
+      <span class="bt"><a href="{$web_root}/status?problem_id={$problem['problem_id']}">Status</a></span> 
       $edit_button
       $file_button
       $defunct_button
