@@ -2,16 +2,17 @@
 
 系统需求：Linux(以Ubuntu 9.10为例), Apache + mod_rewrite, PHP5, Mysql, Sun-JDK, GCC, G++, FreePascal
 一键安装： 
-sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-server-5.0 fpc sun-java6-jdk gcc g++ php5-cli
+sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-server-5.0 fpc sun-java6-jdk gcc g++ php5-cli daemontools
+    p.s. 从Ubuntu10.x开始，源里没有sun-jdk了，我不确定使用openjdk是否能够完全兼容，建议还是到Java官网下载安装。
 
-*假设是直接用www-data用户搭建, 建议
+(*) 假设是直接用www-data用户搭建(因为apache默认使用这个用户运行), 建议
 0. 使用root创建 /home/www-data 并修改所有者
     # mkdir /home/www-data
     # sudo chown -R www-data:www-data /home/www-data
     然后切换用户
     # su www-data
 
-1. co代码，没什么好说了，假设是执行如下命令
+1. svn checkout代码，没什么好说了，假设是执行如下命令
     $ cd /home/www-data
     $ svn co http://woj-land.googlecode.com/svn/trunk land
    也就是说所有东西都在land目录里面 
@@ -41,9 +42,11 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
 
     重启apache
 
-
 5. 在apache的根目录下, 默认是/var/www执行
     $ ln -s /home/www-data/land/code/web/index land
+    p.s. 如果建立的符号链接不是land（比如是XXX），请【一定】要修改 land/code/web/index/.htaccess 里面的 
+        RewriteBase /land 为 RewriteBase /XXX
+    p.s. 使用lighttpd/nginx或者其他webserver的同学请自行参照.htaccess写个Rewrite。
 
 6. 修改配置
     $ cd /home/www-data/land/code/
@@ -52,18 +55,20 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
     $ vim judge/config.ini; #将log_file=后面的路径修改为/home/www-data/woj/log/judge.log
 
     //daemon的配置
-    $ vim daemon/config.ini; #将judge_path=后面的路径修改为/home/www-data/land/code/web/wrapper/judge_wrapper.php，LOG_PATH不用理会，是个没用的东西=,=
-        # 其他配置可以不用修改，根据具体情况
+    $ vim daemon/config.ini; #将judge_path=后面的路径修改为/home/www-data/land/code/web/wrapper/judge_wrapper.php，
+        # LOG_PATH不用理会，是个没用的东西=,=
+        # 其他配置可以不用修改，根据具体情况（比如多核CPU的话，可以把线程数适当增加）
 
     //web端和wrapper的配置
     $ cd web/conf
     $ vim db.cfg.php; #修改对应的数据库参数
     $ vim land.cfg.php; #修改对应的值
-        # $web_root: 如果前面建立的符号链接不是 land ，那么一定要修改，同时对应修改 land/code/web/index/.htaccess 里面的 /land
-        # UPLOAD_PATH 如果前面用的不是upload目录，也要记得修改
+        # $web_root: 如果第5步建立的符号链接不是 land ，那么一定要修改！！！
+        # UPLOAD_PATH 如果第2步最后用的不是upload目录，也要记得修改
         # LOG_FILE 修改为 /home/www-data/woj/log/php.log
         # DEBUG 建议修改为 false
-        # DAEMON_HOST/PORT根据前面daemon/config.ini里面的进行修改，默认不用动
+        # DAEMON_HOST/PORT根据前面daemon/config.ini里面的进行修改，默认不用动，都是127.0.0.1:9527
+        #    如果换成其他的IP的话，记得要修改Daemon里头的IP限制噢（很弱的-。-）
     $ vim wrapper.cfg.php #修改相应的路径
           LOG_PATH      = "/home/www-data/woj/log/wrapper.log";
           DATA_PATH     = "/home/www-data/woj/data";
@@ -74,27 +79,47 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
     $ cd /home/www-data/land/code/daemon
     $ sudo su www-data
     $ screen java Daemon  # 或者 setsid java Daemon > daemon.log 2>&1
-    默认应该会正常启动几个线程，并没有错误出现
+      # 默认应该会正常启动几个线程，并没有错误出现，然后可以先结束Daemon，再用supervise启动
+    $ setsid supervise /home/www-data/land/code/daemon
+      # supervise会监视Daemon，一旦结束，1s后自动重启。
+      # 然后将启动命令加入到/etc/rc.local中，这样服务器重启后可以再启动：
+      # sudo -u www-data setsid supervise /home/www-data/land/code/daemon/ &
 
     $ cd ../judge
     $ su root #切换到root
     $ ./setsuid.sh #给judge_all.exe设置suid位
 
-8. 访问一下服务器的/land试试？
+8. 纯文本的log膨胀很快，所以要增加一个cron任务，每天对log打包，
+    先将 land/tools/log_rotate.sh 拷贝到 woj/log 目录，然后增加一行到crontab -e
+    0 0 * * * cd /home/www-data/woj/log && ./log_rotate.sh
+
+9. 访问一下服务器的/land试试？
+
 $ w3m http://localhost/land
 
-(a) code/web下的wrapper目录包含的是judge_wrapper, 不是由apache运行的, 是由Daemon调用, 封装judge的。
 
-(b) 调用关系是web_php -> daemon -> judge_wrapper -> judge, 四者可分别以不同的用户运行, 但是必须保证它们都可以写自己的日志文件。
+==== 纯洁的分割线 ====
 
-(c) judge虽然可以以普通用户运行,但是属主是root且有suid权限位, 实际上是以root运行的, 可能有一定安全隐患。
+其他说明:
 
-(d) 也可以为其他用户专门编译安装一套apache+php，然后通过apache的mod_proxy_http来实现转发访问
+(a) Land的默认管理员用户名密码: root 123456
 
-(e) Land的默认管理员用户名密码: root 123456
+(b) code/web下的wrapper目录包含的是judge_wrapper, 不是由apache运行的, 是由Daemon调用, 封装judge的, 如果默认的php安装不是在/usr/bin/php，那么需要修改wrapper第一行。。
+
+(c) 调用关系是web_php -> daemon -> judge_wrapper -> judge, 四者可分别以不同的用户运行, 但是必须保证它们都可以写自己的日志文件。
+
+(d) judge虽然可以以普通用户运行,但是属主是root且有suid权限位, 实际上是以root运行的, 可能有一定安全隐患（不过用户提交的程序和SPJ程序都是使用nobody运行的，所以不用担心这俩)。
+
+(e) 也可以为其他用户专门编译安装一套apache+php，然后通过apache的mod_proxy_http来实现转发访问
 
 (f) 如果提交java代码编译，出现system_error，检查一下wrapper在[TEMP_PATH]/[SRC_ID]目录生成的stderr_compiler.txt，内容如果是
     javac: error while loading shared libraries: libjli.so: cannot open shared object file: No such file or directory
 那么需要在/usr/lib下面建立一个libjli.so的链接，指向地址是 find /usr/lib/jvm -name libjli.so
 
-(g) 由于纯文本的log膨胀很快，建议增加一个cron任务，每天对log进行一次打包，可以使用tools/log_rotate.sh这个脚本
+(g) 由于建议增加一个cron任务，每天对log进行一次打包，可以使用tools/log_rotate.sh这个脚本
+
+(h) land/tools/notify_daemon.sh 是一个很有用的脚本哟，例如 
+    ./notify_daemon.sh 10  可以通知Daemon Rejudge编号为10的用户提交
+    ./notify_daemon.sh -10 可以通知Daemon Rejudge编号为10的admin提交
+    
+(i) 如果希望修改默认的页面标题，请移步 code/web/tpl/header.tpl ，在这个蛋疼的文件里。
