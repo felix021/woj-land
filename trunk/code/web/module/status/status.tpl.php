@@ -7,7 +7,7 @@ class TPL_Main extends ctemplate
         //FM_LOG_DEBUG("%s", dump_var($p));
         $web_root = land_conf::$web_root;
         header("Refresh: 30");
-        $admin = $p['admin'];
+        $admin = $p['admin'] ? 'admin' : '';
 
         $result_opt = '<option value="">&nbsp;All&nbsp;</option>' . "\n";
         $result_s = is_null($p['result']) ? -1 : (int)$p['result'];
@@ -28,9 +28,12 @@ class TPL_Main extends ctemplate
         }
  
         $username = htmlspecialchars($p['username']);
+        $user = '';
+        if (!empty($username))
+            $user = " of &lt;<a href=\"$web_root/user/detail?username=$username\">$username</a>&gt;";
         echo <<<eot
 <meta http-equiv="Refresh" content="30"/>
-  <div id="tt">$admin Status</div> 
+  <div id="tt">$admin Status {$user}</div> 
  
   <div id="main"> 
  
