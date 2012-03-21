@@ -20,6 +20,15 @@ final class session
         self::$sess_id = land_conf::$web_root;
         if (isset($_SESSION[self::$sess_id]['is_login']))
         {
+            //防止盗用session_id
+            $ua = @$_SERVER['HTTP_USER_AGENT'];
+            $verify = @$_SESSION[self::$sess_id]['verify'];
+            if ($verify != md5(request::$client_ip . $ua))
+            {
+                self::$is_login = false;
+                return;
+            }
+
             self::$is_login  = true;
             self::$user_id   = $_SESSION[self::$sess_id]['user_id'];
 
@@ -49,11 +58,19 @@ final class session
         //匿名用户不允许登录
         if ($user_id != self::ANONYMOUS_ID)
         {
+            if (@request::$arr_post['remember'] == 1)
+                setcookie(session_name(), session_id(), time() + 86400 * 30, '/');
+            else 
+                setcookie(session_name(), session_id(), 0, '/');
+
             $_SESSION[self::$sess_id]['is_login']  = true;
             self::$is_login             = true;
             
             $_SESSION[self::$sess_id]['user_id']   = $user_id;
             self::$user_id              = $user_id;
+
+            $ua = @$_SERVER['HTTP_USER_AGENT'];
+            $_SESSION[self::$sess_id]['verify'] = md5(request::$client_ip . $ua);
         }
         else
         {
