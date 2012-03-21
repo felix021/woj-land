@@ -85,6 +85,7 @@ eot;
     <div>
         $edit_btn
         <span class="bt"><a href="$web_root/mail/send?username={$un_eu}">Send Mail</a></span>
+        <span class="bt"><a href="$web_root/status?username={$un_eu}">Status</a></span>
         <span class="bt"><a href="$web_root/ranklist">Back To Ranklist</a></span>
     </div> 
   <br /> 
