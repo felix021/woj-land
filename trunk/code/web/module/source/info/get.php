@@ -20,7 +20,11 @@ class Main extends cframe
             }
         }
 
-        $sql = 'SELECT `user_id`, `result`, `extra_info` from `'.$tbl_name.'` WHERE `source_id`=' . $source_id;
+        $sql = <<<eot
+SELECT `user_id`, `result`, `source_code`, `extra_info` 
+    FROM `$tbl_name` 
+    WHERE `source_id`=$source_id
+eot;
         $conn = db_connect();
         fail_test($conn, false);
 
@@ -41,6 +45,8 @@ class Main extends cframe
 
         $info = land_conf::$result_name[$source['result']];
         response::add_data('info', $info);
+        response::add_data('user_id', $source['user_id']);
+        response::add_data('source_code', $source['source_code']);
         response::add_data('extra_info', $source['extra_info']);
         return true;
     }
