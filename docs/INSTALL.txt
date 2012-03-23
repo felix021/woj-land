@@ -100,9 +100,9 @@ $ w3m http://localhost/land
 10. 为了更新首页的most diligent programmer，需要增加三个crontab任务
     分别在每天、每周、每月开始的时候 计算上个周期的结果。
     1) 修改 land/code/web/conf/land.conf.php 里面的UPDATE_KEY，比如改成123
-        0 0 * * * wget http://HOST/land/user/diligent?key=123&type=day
-        0 0 * * 1 wget http://HOST/land/user/diligent?key=123&type=week
-        0 0 1 * * wget http://HOST/land/user/diligent?key=123&type=month
+        0 0 * * * wget "http://HOST/land/user/diligent?key=123&type=day" -O /dev/null
+        1 0 * * 1 wget "http://HOST/land/user/diligent?key=123&type=wee" -O /dev/null
+        2 0 1 * * wget "http://HOST/land/user/diligent?key=123&type=mont" -O /dev/null
     p.s. 为了防止他人随意调用更新结果，请修改成一个不容易猜测的KEY
 
 
