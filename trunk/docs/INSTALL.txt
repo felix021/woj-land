@@ -47,6 +47,12 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
     p.s. 如果建立的符号链接不是land（比如是XXX），请【一定】要修改 land/code/web/index/.htaccess 里面的 
         RewriteBase /land 为 RewriteBase /XXX
     p.s. 使用lighttpd/nginx或者其他webserver的同学请自行参照.htaccess写个Rewrite。
+        nginx版本：
+            location /land {
+                if (!-f $request_filename) {
+                    rewrite ^(.*)$ /land/index.php;
+                }
+            }
 
 6. 修改配置
     $ cd /home/www-data/land/code/
@@ -54,10 +60,14 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
     //judge的配置
     $ vim judge/config.ini; #将log_file=后面的路径修改为/home/www-data/woj/log/judge.log
 
-    //daemon的配置
+    //daemon的配置(两个选一个就行了)
+    # Java版
     $ vim daemon/config.ini; #将judge_path=后面的路径修改为/home/www-data/land/code/web/wrapper/judge_wrapper.php，
         # LOG_PATH不用理会，是个没用的东西=,=
         # 其他配置可以不用修改，根据具体情况（比如多核CPU的话，可以把线程数适当增加）
+    # Python版
+    $ vim pydaemon/conf.py
+        # 修改judge_path（同java版）、MAX_THREADS
 
     //web端和wrapper的配置
     $ cd web/conf
@@ -75,12 +85,17 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
           TEMP_PATH     = "/home/www-data/woj/temp";
           JUDGE_PATH_ROOT    = "/home/www-data/land/code/judge/";
 
-7. 跑起Daemon, 设置judge
-    $ cd /home/www-data/land/code/daemon
+7. 跑起Daemon(Java/Python二选一), 设置judge
     $ sudo su www-data
-    $ screen java Daemon  # 或者 setsid java Daemon > daemon.log 2>&1
+    # Java版本
+        $ cd /home/www-data/land/code/daemon
+    # Python版本
+        $ cd /home/www-data/land/code/pydaemon
+    $ ./run
       # 默认应该会正常启动几个线程，并没有错误出现，然后可以先结束Daemon，再用supervise启动
-    $ setsid supervise /home/www-data/land/code/daemon
+
+    $ setsid supervise /home/www-data/land/code/daemon    #java
+    $ setsid supervise /home/www-data/land/code/pydaemon  #python
       # supervise会监视Daemon，一旦结束，1s后自动重启。
       # 然后将启动命令加入到/etc/rc.local中，这样服务器重启后可以再启动：
       # sudo -u www-data setsid supervise /home/www-data/land/code/daemon/ &
