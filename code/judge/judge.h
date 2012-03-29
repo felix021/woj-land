@@ -340,13 +340,26 @@ void set_limit()
 */
 
     //堆栈空间限制
-    lim.rlim_max = judge_conf::stack_size_limit * judge_conf::KILO;
-    lim.rlim_cur = lim.rlim_max;
-    
-    if (setrlimit(RLIMIT_STACK, &lim) < 0)
+    getrlimit(RLIMIT_STACK, &lim);
+    FM_LOG_DEBUG("Current RLIMIT_STACK: max(%d) cur(%d)",
+            lim.rlim_max, lim.rlim_cur);
+
+    int rlim = judge_conf::stack_size_limit * judge_conf::KILO;
+    if (lim.rlim_max <= rlim)
     {
-        FM_LOG_WARNING("setrlimit RLIMIT_STACK failed");
-        exit(judge_conf::EXIT_SET_LIMIT);
+        FM_LOG_WARNING("can't set stack size to higher(%d <= %d)",
+                lim.rlim_max, rlim);
+    }
+    else
+    {
+        lim.rlim_max = rlim;
+        lim.rlim_cur = rlim;
+
+        if (setrlimit(RLIMIT_STACK, &lim) < 0)
+        {
+            FM_LOG_WARNING("setrlimit RLIMIT_STACK failed: %s", strerror(errno));
+            exit(judge_conf::EXIT_SET_LIMIT);
+        }
     }
 
     log_close(); //必须在先关闭log，防止log > 输出文件限制，造成OLE
