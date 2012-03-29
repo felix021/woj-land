@@ -48,7 +48,7 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
         RewriteBase /land 为 RewriteBase /XXX
     p.s. 使用lighttpd/nginx或者其他webserver的同学请自行参照.htaccess写个Rewrite。
         nginx版本：
-            location /land {
+            location /land/ {
                 if (!-f $request_filename) {
                     rewrite ^(.*)$ /land/index.php;
                 }
@@ -57,19 +57,21 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
 6. 修改配置
     $ cd /home/www-data/land/code/
 
-    //judge的配置
-    $ vim judge/config.ini; #将log_file=后面的路径修改为/home/www-data/woj/log/judge.log
+    6.1 judge的配置
+        $ vim judge/config.ini; #将log_file=后面的路径修改为/home/www-data/woj/log/judge.log
 
-    //daemon的配置(两个选一个就行了)
-    # Java版
-    $ vim daemon/config.ini; #将judge_path=后面的路径修改为/home/www-data/land/code/web/wrapper/judge_wrapper.php，
-        # LOG_PATH不用理会，是个没用的东西=,=
-        # 其他配置可以不用修改，根据具体情况（比如多核CPU的话，可以把线程数适当增加）
-    # Python版
-    $ vim pydaemon/conf.py
-        # 修改judge_path（同java版）、MAX_THREADS
+    6.2 daemon的配置 (两个选一个就行了)
+        python版代码较少较清晰，如有需要，修改起来更快
+        java版本需要依赖jvm虚拟机，对于小内存的VPS会撑不住
 
-    //web端和wrapper的配置
+        # Python版(推荐)
+            $ vim pydaemon/conf.py
+                # 将judge_path的值修改为/home/www-data/land/code/web/wrapper/judge_wrapper.php
+                # 如果CPU处理能力较好，适当增加MAX_THREADS的值
+        # Java版
+            $ vim daemon/config.ini (同python版本)
+
+    6.3 web端和wrapper的配置
     $ cd web/conf
     $ vim db.cfg.php; #修改对应的数据库参数
     $ vim land.cfg.php; #修改对应的值
@@ -77,31 +79,37 @@ sudo apt-get install apache2 php5 php5-mysql php5-mysqli php5-mcrypt mysql-serve
         # UPLOAD_PATH 如果第2步最后用的不是upload目录，也要记得修改
         # LOG_FILE 修改为 /home/www-data/woj/log/php.log
         # DEBUG 建议修改为 false
-        # DAEMON_HOST/PORT根据前面daemon/config.ini里面的进行修改，默认不用动，都是127.0.0.1:9527
+        # DAEMON_HOST/PORT根据[6.2]daemon里面的进行修改，默认不用动，都是127.0.0.1:9527
         #    如果换成其他的IP的话，记得要修改Daemon里头的IP限制噢（很弱的-。-）
+        #    那样pydaemon里面绑定的IP也要改成0.0.0.0，不能是127.0.0.1
     $ vim wrapper.cfg.php #修改相应的路径
           LOG_PATH      = "/home/www-data/woj/log/wrapper.log";
           DATA_PATH     = "/home/www-data/woj/data";
           TEMP_PATH     = "/home/www-data/woj/temp";
           JUDGE_PATH_ROOT    = "/home/www-data/land/code/judge/";
 
-7. 跑起Daemon(Java/Python二选一), 设置judge
+7. 跑起Daemon(Python/Java二选一), 设置judge
     $ sudo su www-data
-    # Java版本
-        $ cd /home/www-data/land/code/daemon
+
     # Python版本
         $ cd /home/www-data/land/code/pydaemon
-    $ ./run
-      # 默认应该会正常启动几个线程，并没有错误出现，然后可以先结束Daemon，再用supervise启动
+        $ ./run
 
-    $ setsid supervise /home/www-data/land/code/daemon    #java
+    # Java版本
+        $ cd /home/www-data/land/code/daemon
+        $ ./run
+    
+    # 默认应该会正常启动几个线程，并没有错误出现，然后可以先结束Daemon，再用supervise启动
+
     $ setsid supervise /home/www-data/land/code/pydaemon  #python
+    $ setsid supervise /home/www-data/land/code/daemon    #java
       # supervise会监视Daemon，一旦结束，1s后自动重启。
       # 然后将启动命令加入到/etc/rc.local中，这样服务器重启后可以再启动：
-      # sudo -u www-data setsid supervise /home/www-data/land/code/daemon/ &
+      # PYTHON版： sudo -u www-data setsid supervise /home/www-data/land/code/pydaemon/ &
+      # JAVA版本： sudo -u www-data setsid supervise /home/www-data/land/code/daemon/ &
 
     $ cd ../judge
-    $ su root #切换到root
+    $ sudo su root #切换到root
     $ ./setsuid.sh #给judge_all.exe设置suid位
 
 8. 纯文本的log膨胀很快，所以要增加一个cron任务，每天对log打包，
