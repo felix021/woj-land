@@ -26,7 +26,8 @@ class TPL_Main extends ctemplate
             $v = str_replace("\r\n", "\n", $v);
             $v = str_replace("\r", "\n", $v);
             $v = str_replace("\n", "<br/>", $v);
-            $v = str_replace("  ", " &nbsp;", $v);
+            $v = str_replace("  ", "&nbsp; ", $v); //如果都替换成&nbsp;会导致不能自动换行
+            $v = str_replace("  ", "&nbsp; ", $v); //如果有奇数个空格，不会少掉一个...
         }
 
         $problem['input'] = preg_replace('/\[img=(.*?)\]/',
