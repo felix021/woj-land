@@ -8,6 +8,7 @@ class TPL_Main extends ctemplate
         $web_root = land_conf::$web_root;
         header("Refresh: 30");
         $admin = $p['admin'] ? 'admin' : '';
+        $adminq = $p['admin'] ? '&admin=1' : '';
 
         $result_opt = '<option value="">&nbsp;All&nbsp;</option>' . "\n";
         $result_s = is_null($p['result']) ? -1 : (int)$p['result'];
@@ -79,11 +80,11 @@ eot;
             $result_name    = htmlspecialchars(land_conf::$result_name[$result]);
             $result_color   = land_conf::$result_color[$result];
             $lang           = $p['lang'][$line['lang']];
-            $lang           = "<a href=\"source?source_id={$line['source_id']}&{$admin}\">$lang</a>";
+            $lang           = "<a href=\"source?source_id={$line['source_id']}{$adminq}\">$lang</a>";
             $result_link    = '';
             if ($result == land_conf::OJ_CE)
             {
-                $result_link = "$web_root/source/info?source_id={$line['source_id']}&$admin";
+                $result_link = "$web_root/source/info?source_id={$line['source_id']}$adminq";
             }
             else
             {
@@ -145,9 +146,9 @@ eot;
  
   <br /> 
   <div> 
-       <span class="bt"><a href="$web_root/status?$admin&page=1&$query">Top</a></span> 
-       <span class="bt"><a href="$web_root/status?$admin&page=$last_page&$query">Previous Page</a></span> 
-       <span class="bt"><a href="$web_root/status?$admin&page=$next_page&$query">Next Page</a></span> 
+       <span class="bt"><a href="$web_root/status?$adminq&page=1&$query">Top</a></span> 
+       <span class="bt"><a href="$web_root/status?$adminq&page=$last_page&$query">Previous Page</a></span> 
+       <span class="bt"><a href="$web_root/status?$adminq&page=$next_page&$query">Next Page</a></span> 
   </div> 
   <br/>
 eot;
