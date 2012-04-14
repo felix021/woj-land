@@ -29,9 +29,10 @@ class TPL_Main extends ctemplate
         }
  
         $username = htmlspecialchars($p['username']);
+        $username_url = urlencode($p['username']);
         $user = '';
         if (!empty($username))
-            $user = " of &lt;<a href=\"$web_root/user/detail?username=$username\">$username</a>&gt;";
+            $user = " of &lt;<a href=\"$web_root/user/detail?username={$username_url}\">$username</a>&gt;";
         echo <<<eot
 <meta http-equiv="Refresh" content="30"/>
   <div id="tt">$admin Status {$user}</div> 
@@ -75,6 +76,7 @@ eot;
             $i++;
             $tr_class       = $i & 1 ? 'tro' : 'tre';
             $username       = htmlspecialchars($line['username']);
+            $username_url   = urlencode($line['username']);
             $problem_id     = (int)$line['problem_id'];
             $result         = $line['result'];
             $result_name    = htmlspecialchars(land_conf::$result_name[$result]);
@@ -111,7 +113,7 @@ eot;
             echo <<<eot
    <tr class="$tr_class"> 
     <td style="text-align:center;">{$line['source_id']}</td> 
-    <td style="text-align:center;"><a href="$web_root/user/detail?username={$username}">$username</a></td> 
+    <td style="text-align:center;"><a href="$web_root/user/detail?username={$username_url}">$username</a></td> 
     <td style="text-align:center;"><a href="$web_root/problem/detail?problem_id={$problem_id}">{$problem_id}</a></td> 
     <td style="text-align:center;"> 
        <span class="STYLE7"><a href="{$result_link}"><font color="$result_color">$result_name</font></a></span> 

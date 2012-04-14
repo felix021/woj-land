@@ -58,7 +58,7 @@ final class session
         //匿名用户不允许登录
         if ($user_id != self::ANONYMOUS_ID)
         {
-            if (@request::$arr_post['remember'] == 1)
+            if (isset(request::$arr_post['remember']) && request::$arr_post['remember'] == 1)
                 setcookie(session_name(), session_id(), time() + 86400 * 30, '/');
             else 
                 setcookie(session_name(), session_id(), 0, '/');
