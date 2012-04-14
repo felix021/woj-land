@@ -9,6 +9,7 @@ class TPL_Main extends ctemplate
         $language   = land_conf::$lang[$source['lang']];
         $result     = land_conf::$result_name[$source['result']];
         $username   = htmlspecialchars($source['username']);
+        $username_url = urlencode($source['username']);
 
         $code = htmlspecialchars($source['source_code']);
         $code = str_replace("\r\n", "\n", $code);
@@ -26,7 +27,7 @@ class TPL_Main extends ctemplate
     <div id="tt">Source - {$source['source_id']}</div> 
     <div class="ifm"> 
     <strong>Problem id</strong>: <a href="problem/detail?problem_id={$source['problem_id']}">{$source['problem_id']}</a>&nbsp;&nbsp;
-    <strong>Username</strong>: <a href="user/detail?username={$username}">{$username}</a><br /> 
+    <strong>Username</strong>: <a href="user/detail?username={$username_url}">{$username}</a><br /> 
     <strong>Memory</strong>: {$source['memory_usage']}KB&nbsp;&nbsp;<strong>Time</strong>: {$source['time_usage']}ms<br /> 
     <strong>Language</strong>: {$language}&nbsp;&nbsp;<strong>Result</strong>: {$result}<br /> 
     </div> 

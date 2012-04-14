@@ -25,6 +25,7 @@ class Main extends cframe
 SELECT `username`, COUNT(DISTINCT(problem_id)) as `solved` FROM `sources`
     WHERE `result` = $AC_RESULT
       AND `submit_time` >= '$from'
+      AND `username` != 'anonymous'
     GROUP BY `user_id`
     ORDER BY `solved` DESC
     LIMIT 0, 1
