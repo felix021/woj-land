@@ -63,6 +63,12 @@ class Main extends cframe
             throw new Exception("You don't have permission to access this page :(");
         }
 
+        if (isset(request::$arr_get['format']) && request::$arr_get['format'] == 1)
+        {
+            include_once(dirname(__FILE__) . "/source.inc.php");
+            $source['source_code'] = format_code($source['source_code']);
+        }
+
         response::add_data('source', $source);
         return true;
     }
