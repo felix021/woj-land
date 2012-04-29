@@ -18,6 +18,10 @@ class TPL_Main extends ctemplate
         $code = str_replace("  ", "&nbsp; ", $code);
         $code = str_replace("\t", "&nbsp; &nbsp; ", $code);
 
+        $fmturl = "source?source_id={$source['source_id']}&format=1";
+        if (isset(request::$arr_get['admin']))
+            $fmturl .= "&admin=1";
+
         echo <<<eot
 
     <link href="$web_root/css/codeh.css" rel="stylesheet" type="text/css"/>
@@ -33,7 +37,7 @@ class TPL_Main extends ctemplate
     </div> 
  
     <div id="main"> 
-    <div class="ptt">Code</div> 
+    <div class="ptt">Code [<a href="$fmturl" target="_blank">format this code</a>]</div> 
     <div class="code" id="code">$code</div> 
     </div> 
 
