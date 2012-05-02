@@ -21,9 +21,8 @@ final class session
         if (isset($_SESSION[self::$sess_id]['is_login']))
         {
             //防止盗用session_id
-            $ua = @$_SERVER['HTTP_USER_AGENT'];
             $verify = @$_SESSION[self::$sess_id]['verify'];
-            if ($verify != md5(request::$client_ip . $ua))
+            if ($verify != md5(request::$client_ip))
             {
                 self::$is_login = false;
                 return;
@@ -69,8 +68,7 @@ final class session
             $_SESSION[self::$sess_id]['user_id']   = $user_id;
             self::$user_id              = $user_id;
 
-            $ua = @$_SERVER['HTTP_USER_AGENT'];
-            $_SESSION[self::$sess_id]['verify'] = md5(request::$client_ip . $ua);
+            $_SESSION[self::$sess_id]['verify'] = md5(request::$client_ip);
         }
         else
         {
