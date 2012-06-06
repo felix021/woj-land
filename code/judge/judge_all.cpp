@@ -406,7 +406,14 @@ int main(int argc, char *argv[], char *envp[])
                 if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id, executive, regs))
                 {
                     FM_LOG_TRACE("restricted function, syscall_id: %d", syscall_id);
-                    problem::result = judge_conf::OJ_RF;
+                    if (syscall_id == SYS_rt_sigprocmask) //occur when glibc fail
+                    {
+                        problem::result = judge_conf::OJ_RE_SEGV;
+                    }
+                    else
+                    {
+                        problem::result = judge_conf::OJ_RF;
+                    }
                     ptrace(PTRACE_KILL, executive, NULL, NULL);
                     break;
                 }
