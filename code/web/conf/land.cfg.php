@@ -104,6 +104,7 @@ final class land_conf
         self::OJ_RF                 => "Restricted Function",
         self::OJ_SE                 => "System Error",
         self::OJ_RE_JAVA            => "Java Runtime Error",
+        self::OJ_TLE_COMPILE        => "Compilation Timed Out",
         );
 
     public static $result_color = array(
@@ -123,6 +124,7 @@ final class land_conf
         self::OJ_RF                 => "green",
         self::OJ_SE                 => "green",
         self::OJ_RE_JAVA            => "green",
+        self::OJ_TLE_COMPILE        => "green",
         );
 
     public static $page_title;
