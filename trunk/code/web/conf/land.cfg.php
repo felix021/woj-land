@@ -87,6 +87,7 @@ final class land_conf
     const OJ_RF                 = 13;//Restricted Function
     const OJ_SE                 = 14;//System Error
     const OJ_RE_JAVA            = 15;//OJ_SE Java
+    const OJ_TLE_COMPILE        = 16;//COMPILER TLE
     public static $result_name  = array(
         self::OJ_WAIT               => "Queuing",
         self::OJ_AC                 => "Accepted",
