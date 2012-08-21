@@ -143,7 +143,11 @@ int main(int argc, char *argv[], char *envp[])
             if (WIFSIGNALED(status))
             {
                 if (SIGALRM == WTERMSIG(status))
+                {
                     FM_LOG_WARNING("compiler time limit exceeded");
+                    output_result(judge_conf::OJ_TLE_COMPILE);
+                    exit(judge_conf::EXIT_OK);
+                }
                 else
                     FM_LOG_WARNING("unknown signal(%d)", WTERMSIG(status));
             }

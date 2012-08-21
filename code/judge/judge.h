@@ -131,6 +131,7 @@ namespace judge_conf
     const int OJ_RF             = 13;//Restricted Function
     const int OJ_SE             = 14;//System Error
     const int OJ_RE_JAVA        = 15;//JAVA Run Time Exception
+    const int OJ_TLE_COMPILE    = 16;//compiler TLE
 
     //一些常量
     const int KILO              = 1024;         // 1K
