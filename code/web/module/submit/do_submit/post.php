@@ -81,6 +81,22 @@ class Main extends cframe
             $user_id  = session::$user_id;
             $username = session::$user_info['username'];
         }
+        else 
+        {
+            $forbidden = array(
+                '<a href=',
+                '</a>',
+                '[url=',
+                '[/url]',
+                '[link=',
+                '[/link]',
+            );
+            foreach ($forbidden as $f) {
+                if (strpos($source, $f) !== false) {
+                    throw new Exception("Hello, robot!");
+                }
+            }
+        }
 
         $conn = db_connect();
         fail_test($conn, false);
