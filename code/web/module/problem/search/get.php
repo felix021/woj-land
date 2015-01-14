@@ -15,17 +15,19 @@ class Main extends cframe
         {
             throw new Exception("Please provide the search field.");
         }
-        $sql = <<<eot
-SELECT `problem_id`, `contest_id`, `title`, `submitted`, `accepted`
-  FROM `problems`
-  WHERE `title` LIKE '%$search%' OR `problem_id` LIKE '%$search%'
-eot;
         if (!is_admin())
         {
             $sql .= ' AND `enabled`=1';
         }
         $conn = db_connect();
         fail_test($conn, false);
+
+        $search = db_escape($conn, $search);
+        $sql = <<<eot
+SELECT `problem_id`, `contest_id`, `title`, `submitted`, `accepted`
+  FROM `problems`
+  WHERE `title` LIKE '%$search%' OR `problem_id` LIKE '%$search%'
+eot;
         $problems = db_fetch_lines($conn, $sql, -1);
         if (count($problems) == 1)
         {
