@@ -27,11 +27,11 @@ class Main extends acframe
         $sql = <<<eot
 INSERT INTO `problems` 
 (`problem_id`, `title`, `description`, `input`, `output`, `sample_input`, `sample_output`,
- `hint`, `source`, `contest_id`, `time_limit`, `memory_limit`, `spj`, `enabled`)
+ `hint`, `source`, `contest_id`, `time_limit`, `memory_limit`, `spj`, `enabled`, `difficulty`)
 VALUES
 (NULL, '{$p['title']}', '{$p['description']}', '{$p['input']}', '{$p['output']}', 
  '{$p['sample_input']}', '{$p['sample_output']}', '{$p['hint']}', '{$p['source']}',
- $cid, $tl, $ml, $spj, $ena)
+ $cid, $tl, $ml, $spj, $ena, '{$p['difficulty']}')
 eot;
 
         $pid = db_insert($conn, $sql);

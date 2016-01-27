@@ -44,6 +44,8 @@ eot;
             $problems = filter_contest_problem($problems);
         response::add_data('problems', $problems);
         response::add_data('volume', $volume);
+        
+        //session::init(session::DO_UPDATE);
         $solved_list = session::$is_login ? session::$user_info['solved_list'] : '';
         response::add_data('solved', $solved_list);
 

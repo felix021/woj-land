@@ -1,11 +1,23 @@
 <?php
 
+require_once(CONF_ROOT . '/score.cfg.php');
+
 class TPL_Main extends ctemplate
 {
     public function display($p)
     {
+        $score = array(
+            score_conf::EASY_SCORE,
+            score_conf::MEDIUM_SCORE,
+            score_conf::DIFFICULT_SCORE,
+        );
+        $score_limit = array(
+            score_conf::EASY_LIMIT,
+            score_conf::MEDIUM_LIMIT,
+            score_conf::DIFFICULT_LIMIT,
+            );
         echo <<<eot
-  <div id="tt"> Welcome to Land </div> 
+  <div id="tt"> C语言上机训练 </div> 
  
   <div id="main" align="left"> 
 	<div id="right"> 
@@ -14,16 +26,14 @@ class TPL_Main extends ctemplate
 		<a href="contest/list"><strong>Refer to the contest page.</strong></a> 
 		</div> 
 		
-		<div class="hpt">The Most Diligent Programmer</div> 
+		<div class="hpt">最勤奋Coder！</div> 
 		<div class="hpb"> 
             Yesterday: {$p['diligent']->day}<br /> 
             Last Week: {$p['diligent']->week}<br /> 
             Last Month: {$p['diligent']->month}
 		</div> 
-		
-    
  
-		<div class="hpt">Links</div> 
+		<div class="hpt">友情链接</div> 
 		<div class="hpb"> 
 		<div class="ir"><a href="http://bbs.whu.edu.cn/bbsdoc.php?board=ACM_ICPC" target=_blank>ACM/ICPC Board of BBS in Wuhan Univ.</a></div> 
 		<div class="ir"><a href="http://acm.pku.edu.cn/JudgeOnline/" target=_blank>OnlineJudge of PeKing Univ.</a></div> 
@@ -33,19 +43,16 @@ class TPL_Main extends ctemplate
 	</div> 
 	
 	<div id="left"> 
-		<div class="hpt">Guide for Beginners</div> 
+		<div class="hpt">使用说明</div> 
 		<div class="hpb"> 
-		&nbsp;&nbsp;&nbsp;Choose a problem from <a href="problem/volume">problem sets</a>, 
-		then solve it, <a href="submit/submit">submit</a> your code if you are sure that your 
-		code is right. Sometimes there are hints after a problem, which are useful.<br /> 
-		<a href="faq.html"><img src="img/faq2.jpg" alt="Frequently Asked Questions" align="right"  /></a> 
-    &nbsp;&nbsp;&nbsp;<a href="contest/list">Contests</a> will be hold with a fixed schedule, you can take part in anyone to show yourself.<br /> 
-    &nbsp;&nbsp;&nbsp;Read <a href="faq.html">FAQ</a> carefully first when you have any problem on how to use this system, 
-    many questions are already solved.<br /> 
+        <p>&nbsp; &nbsp; 使用手册下载：[<a href="upload/manual.doc">WOJ使用指南</a>] 。</p>
+        <p>&nbsp; &nbsp; 多做点题，做完以后去找 [<a href="status?username=answer">answer</a>] 的代码对照学习。</p>
+        <p>&nbsp; &nbsp; 关于本系统更具体的问题，请参考 [<a href="faq">FAQ</a>] 。</p>
     </div> 
  
-		<div class="hpt">News</div> 
+		<div class="hpt">最新消息</div> 
 		<div class="hpb"> 
+    <div class="news"><span class="newst">Mar 7<sup>th</sup>, 2012:</span> C语言上机训练系统启用。</div>
     <div class="news"><span class="newst">Mar 22<sup>nd</sup>, 2010:</span> Land is coming soon!</div>
     <div class="news"><span class="newst">Mar 2<sup>nd</sup>, 2007:</span> Change noah to a new style.</div> 
     <div class="news"><span class="newst">Jan 5<sup>th</sup>, 2007:</span> Noah v2.0 project started, <a href="mailto:acm@whu.edu.cn?Subject=Suggestion for the Noah v2.0">contact us</a> for any suggestion.</div> 

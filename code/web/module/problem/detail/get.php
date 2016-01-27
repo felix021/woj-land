@@ -29,8 +29,9 @@ class Main extends cframe
             if ($status == land_conf::CONTEST_RUNNING)
                 $seq_char = seq_to_char($problem['contest_seq']);
         }
-        land_conf::$page_title = "{$problem['problem_id']} - {$problem['title']} - Land";
         response::add_data('seq_char', $seq_char);
+
+        land_conf::$page_title = "{$problem['problem_id']} - {$problem['title']} - C语言上机训练系统";
         return true;
     }
 

@@ -37,7 +37,7 @@ class TPL_Main extends ctemplate
     </div> 
  
     <div id="main"> 
-    <div class="ptt">Code [<a href="$fmturl" target="_blank">format this code</a>]</div> 
+    <div class="ptt">Code [<a href="$fmturl" target="_blank">代码排版</a>]</div> 
     <div class="code" id="code">$code</div> 
     </div> 
 

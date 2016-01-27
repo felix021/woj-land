@@ -57,6 +57,7 @@ class TPL_Main extends ctemplate
   <div class="ifm"> 
     <strong>Time Limit</strong>: {$problem['time_limit']}MS &nbsp;
     <strong>Memory Limit</strong>: {$problem['memory_limit']}KB &nbsp;
+    <strong>Difficulty</strong>: {$problem['difficulty']}
     <br/> 
     <strong>Total Submit</strong>: {$problem['submitted']}&nbsp;
     <strong>Accepted</strong>: {$problem['accepted']}&nbsp;
@@ -82,7 +83,7 @@ class TPL_Main extends ctemplate
  
     <div class="ptt">Sample Output</div> 
         
-    <div class="ptx">{$problem['sample_output']}</div> 
+    <div class="ptx" style="font-family: courier new;">{$problem['sample_output']}</div> 
     
     <div class="ptt">Hint</div> 
         

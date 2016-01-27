@@ -6,7 +6,7 @@ require_once(MODULE_ROOT . '/contest/contest.func.php');
 
 class Main extends cframe
 {
-    protected $need_login = false;
+    protected $need_login = true;
 
     public function process()
     {

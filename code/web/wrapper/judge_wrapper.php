@@ -15,6 +15,7 @@ if (!defined("ROOT"))
 
 require_once(CONF_ROOT . "/land.cfg.php");
 require_once(CONF_ROOT . "/wrapper.cfg.php");
+require_once(CONF_ROOT . "/score.cfg.php");
 require_once(LIB_ROOT . "/logger.lib.php");
 require_once(LIB_ROOT . "/misc.lib.php");
 require_once(LIB_ROOT . "/db.lib.php");
@@ -270,6 +271,28 @@ eot;
                 $need_update = false;
             }
         }
+
+        $update_score = '';
+        FM_LOG_TRACE("before difficulty");
+        if (!$has_accepted && $result == land_conf::OJ_AC) {
+            if ($problem['difficulty'] == score_conf::EASY) {
+                $update_score = ' , `easy`=`easy`+1 ';
+            }
+            else if ($problem['difficulty'] == score_conf::MEDIUM) {
+                $update_score = ' , `medium`=`medium`+1 ';
+            }
+            else if ($problem['difficulty'] == score_conf::DIFFICULT) {
+                $update_score = ' , `difficult`=`difficult`+1 ';
+            }
+            else {
+                FM_LOG_WARNING("difficulty: BAD case!");
+                break;
+            }
+            $need_update = true;
+            FM_LOG_TRACE("do update diffifulty");
+        }
+        FM_LOG_TRACE("after diffifulty");
+
         if ($need_update)
         {
             $arr_solved  = array_filter($arr_solved, create_function('$a', 'return $a > 0;'));
@@ -281,6 +304,7 @@ eot;
 UPDATE `users` SET
     `solved`=$solved,
     `solved_list`='$solved_list'
+    $update_score
 WHERE `user_id`=$user_id
 eot;
             $res = db_query($conn, $sql);
@@ -481,6 +505,7 @@ eot;
 
     db_close($conn);
     //system("rm -rf " . escapeshellcmd($temp_dir));
+    @system("rm -rf " . escapeshellcmd($temp_dir) . "/a.out");
     exit(0);
 
 }

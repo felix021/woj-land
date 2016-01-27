@@ -34,6 +34,7 @@ class TPL_Main extends ctemplate
     <tr class="tro"><td><a href="$web_root/user/import">Batch user import</a></td></tr> 
     <tr class="tre"><td><a href="$web_root/group">Group Management</a></td></tr> 
     <tr class="tro"><td><a href="$web_root/notice">Set Notice</a></td></tr> 
+    <tr class="tre"><td><a href="$web_root/user/export">成绩批量导出</a></td></tr> 
     </tbody></table> 
   </div> 
 <br/>

@@ -2,20 +2,20 @@
 
 final class land_conf
 {
-    public static $web_root     = "/land";
+    public static $web_root     = "/starter";
     const UPLOAD_PATH           = "/upload/";
 
     const TIMEZONE              = "Asia/Shanghai";
 
-    const LOG_FILE              = "/home/felix021/woj/log/php.log";
+    const LOG_FILE              = "/home/www-data/starter/woj/log/php.log";
 
-    const DEBUG                 = true;
+    const DEBUG                 = false;
 
     const ERROR_REPORT_LEVEL    = E_ALL;
 
     //daemon
     const DAEMON_HOST           = '127.0.0.1';
-    const DAEMON_PORT           = 9527;
+    const DAEMON_PORT           = 9529;
     const DAEMON_TIME_OUT       = 5; //seconds
 
     const DEFAULT_CFRAME_CLASS  = "Main";
@@ -23,7 +23,7 @@ final class land_conf
 
     const STAY_TIME             = 3; //seconds before refresh
 
-    const UPDATE_KEY            = "woj-land";
+    const UPDATE_KEY            = "woj-starter";
 
     //privileges
     public static $priv_fields = array(
@@ -40,8 +40,8 @@ final class land_conf
     public static $lang         = array(
         self::LANG_C        => 'C',
         self::LANG_CPP      => 'C++',
-        self::LANG_JAVA     => 'Java',
-        self::LANG_PASCAL   => 'Pascal',
+        //self::LANG_JAVA     => 'Java',
+        //self::LANG_PASCAL   => 'Pascal',
         );
 
     //problems

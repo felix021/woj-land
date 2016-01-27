@@ -42,18 +42,17 @@ class TPL_Main extends ctemplate
   <form action="$web_root/status" method="get"> 
    <input type="hidden" name="admin" value="{$admin}"/> 
    <input type="hidden" name="contest_id" value="{$p['contest_id']}" /> 
-   <strong>Search: </strong>
-   <strong>Problem ID</strong> <input size="6" name="problem_id" value="{$p['problem_id']}"/>
-   <strong>Username</strong> <input size="12" name="username" value="{$username}"/>
-   <strong>Result</strong> 
+   <strong>题号</strong> <input size="6" name="problem_id" value="{$p['problem_id']}"/>
+   <strong>用户名</strong> <input size="12" name="username" value="{$username}"/>
+   <strong>结果</strong> 
     <select size="1" name="result" > 
     $result_opt
    </select>
-   <strong>Language</strong> <select size="1" name="language" > 
+   <strong>语言</strong> <select size="1" name="language" > 
     $language_opt
    </select>&nbsp;
-   <input type="submit" value="Go" width="8" /> 
-        <input type="button" onclick="javascript:window.location = '$web_root/status';" value="Cancel"/>
+   <input type="submit" value="过滤" width="8" /> 
+        <input type="button" onclick="javascript:window.location = '$web_root/status';" value="取消"/>
   </form> 
   <br/> 
  

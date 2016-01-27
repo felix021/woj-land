@@ -1,6 +1,0 @@
-#!/bin/bash
-
-#designed for supervise@daemontools
-#@ubuntu: sudo apt-get install daemontools && supervise .
-
-exec java Daemon >> daemon.log

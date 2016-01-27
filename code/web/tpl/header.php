@@ -13,24 +13,30 @@ class header implements itemplate
         {
             if (is_array(session::$priv) && session::$priv['admin'] == 1)
             {
-                $nav0 = '<a href="' . $web_root . '/admin">Admin</a> | ';
+                $nav0 = '<a href="' . $web_root . '/admin">管 理</a> | ';
             }
             
+            $new_mail = '';
             if (session::$n_unread > 0)
             {
                 $mail_color = 'style="color:red;"';
+                $new_mail = '('.session::$n_unread.')';
             }
 
-            $nav1 = '<a href="' . $web_root . '/user/logout">Logout</a> | ';
-            $nav2 = '<a href="' . $web_root . '/user/setting">Setting</a> | ';
+            $nav1 = '<a href="' . $web_root . '/user/logout">注 销</a> | ';
+            $nav2 = '<a href="' . $web_root . '/user/setting">设 置</a> | ';
+            $nav3 = "<a href=\"$web_root/mail/inbox\" $mail_color>站内信$new_mail</a> | ";
+            $nav4 = "<a href=\"$web_root/user/self\">个人信息</a> | ";
         }
         else
         {
-            $nav1 =  '<a href="' . $web_root . '/user/login">Login</a> | ';
-            $nav2 = '<a href="' . $web_root . '/user/register">Register</a> | ';
+            $nav1 =  '<a href="' . $web_root . '/user/login">登 录</a> | ';
+            $nav2 = '<a href="' . $web_root . '/user/register">注 册</a> | ';
+            $nav3 = ''; 
+            $nav4 = '';
         }
 
-        $title = "Land - Online Judge of Wuhan Univ.";
+        $title = "C语言上机训练系统";
         if (!empty(land_conf::$page_title))
             $title = land_conf::$page_title;
         $title = htmlspecialchars($title);
@@ -48,20 +54,23 @@ class header implements itemplate
 <body> 
 <center> 
 <div id="bar"> 
-<a href="$web_root">Home</a> | 
+<a href="$web_root">首 页</a> | 
 $nav0
 $nav1
-<a href="$web_root/problem/volume">Problems</a> | 
-<a href="$web_root/contest/list">Contests</a> | 
-<!-- TODO <a href="$web_root/vcontest/list">vContests</a> | -->
-<a href="$web_root/submit/submit">Submit</a> | 
-<a href="$web_root/status">Status</a> | 
-<a href="$web_root/ranklist">Ranklist</a> | 
+<a href="$web_root/problem/volume">题目列表</a> | 
+<a href="$web_root/contest/list">比赛</a> | 
+<!-- <a href="$web_root/vcontest/list">vContests</a> | -->
+<a href="$web_root/submit/submit">提 交</a> | 
+<a href="$web_root/status">状 态</a> | 
+<a href="$web_root/ranklist">排 名</a> | 
+$nav4
 $nav2
-<a href="$web_root/mail/inbox" $mail_color>Mail</a> | 
+$nav3
 <a href="$web_root/faq" target="_blank">FAQ</a> 
 </div> 
-
+<div id="tt" style="line-height: 10px;padding:10px;background-color:#ffff00;">
+    <a href="upload/manual.doc">使用手册下载</a>
+</div> 
 
 eot;
 
@@ -70,7 +79,7 @@ eot;
         {
             $notice = htmlspecialchars($notice->notice);
             echo <<<eot
- <div class="ntc" id="head_ntc"> Notice: $notice </div> 
+ <div class="ntc" id="head_ntc" style="font-size: 20px;"> Notice: $notice </div> 
 eot;
         }
     }

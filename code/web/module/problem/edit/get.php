@@ -16,7 +16,7 @@ class Main extends acframe
         $problem = get_problem_by_id($problem_id);
         response::add_data('problem', $problem);
 
-        response::add_data('contests', load_unfinished_contests());
+        response::add_data('contests', load_all_contests());
         return true;
     }
 

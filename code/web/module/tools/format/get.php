@@ -2,10 +2,6 @@
 
 class Main extends cframe
 {
-
-    protected $need_session = true;
-    protected $need_login   = false;
-
     public function process()
     {
         return true;
@@ -13,7 +9,7 @@ class Main extends cframe
 
     public function display()
     {
-        $this->set_my_tpl("faq.tpl.php");
+        $this->set_my_tpl("format.tpl.php");
         return true;
     }
 }

@@ -1,5 +1,8 @@
 <?php
 
+require_once(MODULE_ROOT . '/user/user.func.php');
+require_once(MODULE_ROOT . '/user/score.func.php');
+
 class Main extends cframe
 {
     protected $need_login = false;
@@ -18,14 +21,14 @@ class Main extends cframe
             return false;
         }
 
-        $from = date("Y-m-d H:i:s", strtotime("1 {$type} ago"));
+        $from = date("Y-m-d 00:00:00", strtotime("1 {$type} ago"));
 
         $AC_RESULT = land_conf::OJ_AC;
         $sql = <<<eot
 SELECT `username`, COUNT(DISTINCT(problem_id)) as `solved` FROM `sources`
     WHERE `result` = $AC_RESULT
       AND `submit_time` >= '$from'
-      AND `username` != 'anonymous'
+      AND `username` != 'answer'
     GROUP BY `user_id`
     ORDER BY `solved` DESC
     LIMIT 0, 1

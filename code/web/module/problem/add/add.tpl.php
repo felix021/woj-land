@@ -137,9 +137,21 @@ class TPL_Main extends ctemplate
                     <td></td> 
                 </tr> 
                 <tr class="tro"> 
+                    <td></td> 
+                    <td align="right"><strong>Difficulty:</strong>&nbsp;&nbsp;</td> 
+                    <td align="left">&nbsp;&nbsp;
+                        <select name="difficulty" tabindex="15">
+                            <option value="1">Easy</option>
+                            <option value="3">Medium</option>
+                            <option value="5">Difficult</option>
+                        </select>
+                    </td> 
+                    <td></td> 
+                </tr> 
+                <tr class="tre"> 
                     <td colspan="4" align="center"> 
-                        <input type="submit" class="formEle" tabindex="15" name="submit" id="submit" value="Submit" />&nbsp;
-                        <input class="formEle" tabindex="16" name="reset" id="reset" type="reset" value="Reset" /> 
+                        <input type="submit" class="formEle" tabindex="16" name="submit" id="submit" value="Submit" />&nbsp;
+                        <input class="formEle" tabindex="17" name="reset" id="reset" type="reset" value="Reset" /> 
                     </td> 
                 </tr> 
         </tbody></table> 

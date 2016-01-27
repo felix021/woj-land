@@ -38,7 +38,8 @@ UPDATE `problems` SET
   `hint`='{$p['hint']}',
   `source`='{$p['source']}',
   `contest_id`={$contest_id},
-  `spj`={$spj}
+  `spj`={$spj},
+  `difficulty`={$p['difficulty']}
 WHERE `problem_id`=$pid;
 eot;
 

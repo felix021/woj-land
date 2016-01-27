@@ -96,8 +96,8 @@ function fillSubmitForm()
         }
         else if (/\bsystem *\(/.test(source.value.replace(/\/\/ *system *\(/g, ''))) //有system
         {
-            pmt = "It seems that you have left 'system' uncommented in your source, "
-                + "which may result in 'Restricted Function'. Do you still want to submit?";
+            pmt = "代码中似乎包含了 system 函数，可能会导致"
+                + "'Restricted Function'. 你确定要提交吗?";
         }
     }
 
@@ -142,7 +142,7 @@ function change_lang()
     <table><tbody> 
       <tr> 
         <th width="80"></th> 
-        <th colspan="2">Paste your source code here</th>
+        <th colspan="2">Paste your source code here</th> 
         <th width="80"></th> 
       </tr> 
 
@@ -183,6 +183,7 @@ function change_lang()
         <td>
             <input type="submit" value="Submit" id="submit_btn" tabindex="2"/>
             <input type="reset" value="Reset" />
+            &nbsp; &nbsp; [<a href="../tools/format">代码排版工具</a>]
         </td> 
         <td></td> 
       </tr> 

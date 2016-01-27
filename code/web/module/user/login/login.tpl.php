@@ -42,6 +42,7 @@ function fillLoginForm()
 
 function rem(r)
 {
+/*
     r.value = 1 - r.value;
     if (r.value == 1) {
         if (!confirm("It's unsafe to be remembered on a public computer, are you sure?")) {
@@ -49,6 +50,7 @@ function rem(r)
             r.checked = false;
         }
     }
+*/
 }
 
 window.onload = function() {
@@ -71,11 +73,13 @@ window.onload = function() {
           <td align="right"><strong>Password</strong></td> 
           <td align="left"><input name="password" type="password" tabIndex="2" value="" size="20" maxLength="150" id="password"/></td> 
         </tr> 
+<!--
         <tr class="tre"> 
           <td align="right"></td> 
           <td align="left"><input type="checkbox" name="remember" id="remember" tabIndex="3" value="0" onclick="javascript: rem(this);"/> Remember me</td> 
         </tr> 
-        <tr class="tro"> 
+-->
+        <tr class="tre"> 
           <td colspan="2" align="center"> 
             <input type="submit" tabIndex="4" value="Login" id="submit_btn"/>
             <input tabIndex="5" type="reset" value="Reset"/> 

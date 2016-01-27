@@ -149,9 +149,9 @@ eot;
 <br/>
 <div style="text-indent:100px;">
 
-    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid">Standing</a></span>&nbsp;
+    <span class="bt"><a href="$web_root/contest/standing?contest_id=$cid">排名</a></span>&nbsp;
     <span class="bt"><a href="$web_root/status?contest_id=$cid">Status</a></span>&nbsp;
-    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid">Statistics</a></span> 
+    <span class="bt"><a href="$web_root/contest/statistics?contest_id=$cid">统计信息</a></span> 
     $edit_bt
     $seq_edit_bt
     </div>

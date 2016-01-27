@@ -1,5 +1,5 @@
 RewriteEngine On
-RewriteBase /land/
+RewriteBase /starter/
 
 RewriteCond %{REQUEST_FILENAME} -f
 RewriteRule ^.*$ - [QSA,L]

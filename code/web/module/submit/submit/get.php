@@ -2,7 +2,7 @@
 
 class Main extends cframe
 {
-    protected $need_login = false;
+    protected $need_login = true;
 
     public function process()
     {
@@ -25,7 +25,7 @@ class Main extends cframe
             response::add_data('admin', '');
         }
 
-        $problem_id = 1001;
+        $problem_id = '';
         if (isset(request::$arr_get['problem_id']))
         {
             $problem_id = (int)request::$arr_get['problem_id'];
