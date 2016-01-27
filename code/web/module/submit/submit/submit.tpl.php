@@ -90,10 +90,10 @@ function fillSubmitForm()
                 + "Do you still want to submit?";
         }
         else if (/\bfreopen *\(/.test(source.value.replace(/\/\/ *freopen *\(/g, ''))) //有freopen
-        {   
+        {
             pmt = "It seems that you have left 'freopen' uncommented in your source, "
                 + "which may result in 'Restricted Function'. Do you still want to submit?";
-        }   
+        }
         else if (/\bsystem *\(/.test(source.value.replace(/\/\/ *system *\(/g, ''))) //有system
         {
             pmt = "It seems that you have left 'system' uncommented in your source, "
@@ -142,8 +142,7 @@ function change_lang()
     <table><tbody> 
       <tr> 
         <th width="80"></th> 
-        <th colspan="2">
-            Paste your source code here</th> 
+        <th colspan="2">Paste your source code here</th>
         <th width="80"></th> 
       </tr> 
 
