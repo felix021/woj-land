@@ -17,6 +17,7 @@ extern "C"
 #include <errno.h>
 #include <pwd.h>
 #include <sys/types.h>
+#include <grp.h>
 #include "logger.h"
 }
 
@@ -382,18 +383,18 @@ void set_limit()
  */
 void set_security_option_spj()
 {
-    struct passwd *nobody = getpwnam("nobody");
-    if (nobody == NULL)
+    int ret;
+    ret = setgid(getgid());
+    if(ret)
     {
-        FM_LOG_WARNING("no user named 'nobody'? %d: %s", errno, strerror(errno));
+        FM_LOG_WARNING("setgid failed");
         exit(judge_conf::EXIT_SET_SECURITY);
     }
 
-    //setuid
-    if (EXIT_SUCCESS != setuid(nobody->pw_uid))
+    ret = setuid(getuid());
+    if(ret)
     {
-        FM_LOG_WARNING("setuid(%d) failed, %d: %s", 
-                nobody->pw_uid, errno, strerror(errno));
+        FM_LOG_WARNING("setuid failed");
         exit(judge_conf::EXIT_SET_SECURITY);
     }
 
@@ -503,6 +504,13 @@ int oj_compare_output_spj(
         {
             FM_LOG_TRACE("load spj.exe");
             set_security_option_spj();
+            FM_LOG_TRACE("spj cmd: %s %s %s %s %s",
+                    spj_exec.c_str(),
+                    ans_stdout.c_str(), 
+                    ans_stdin.c_str(),
+                    user_stdout.c_str(),
+                    source_code.c_str()
+            );
             log_close();
 
             //spj.exe  ans_stdout  ans_stdin  user_stdout  source_code
