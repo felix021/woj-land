@@ -27,8 +27,18 @@ extern "C"
 
 using namespace std;
 
+// Global PIDs for cleanup in case of main judge timeout
+static pid_t current_compiler_pid = 0;
+static pid_t current_executive_pid = 0;
+static pid_t current_spj_pid = 0;
+
 extern int errno;
 int int_ignored; //用来应付"warn_if_unused"的返回值, GCC真麻烦..
+
+// Forward declaration for functions to be defined after main
+static int run_compiler();
+// static int judge_test_case(const char* current_data_file_base_name); // Will define later
+static int judge_test_case(const char* current_data_file_base_name);
 
 int main(int argc, char *argv[], char *envp[])
 {
@@ -49,120 +59,16 @@ int main(int argc, char *argv[], char *envp[])
     }
     signal(SIGALRM, timeout);
 
-//编译---------------------------------------------------------------------
-    pid_t compiler = fork();
-    int status = 0;
-    if (compiler < 0)
-    {
-        FM_LOG_WARNING("error fork compiler");
-        exit(judge_conf::EXIT_COMPILE);
+    // Compile the source code
+    int compile_result_status = run_compiler();
+    if (compile_result_status != EXIT_SUCCESS) {
+        // If compilation failed (OJ_CE, OJ_TLE_COMPILE, or other EXIT_COMPILE),
+        // run_compiler already called output_result and exited or returned a status.
+        // If it returned (meaning output_result was called), we should terminate.
+        log_close();
+        return 0; 
     }
-    else if (compiler == 0)
-    {
-        //运行编译器的进程
-        log_add_info("compiler");
-        stdout = freopen(problem::stdout_file_compiler.c_str(), "w", stdout);
-        stderr = freopen(problem::stderr_file_compiler.c_str(), "w", stderr);
-        if (stdout == NULL || stderr == NULL)
-        {
-            FM_LOG_WARNING("error freopen: stdout(%p), stderr(%p)", stdout, stderr);
-            exit(judge_conf::EXIT_COMPILE);
-        }
-
-        malarm(ITIMER_REAL, judge_conf::compile_time_limit);
-        switch (problem::lang)
-        {
-            case judge_conf::LANG_C:
-                FM_LOG_TRACE("start: gcc -o %s %s -static -w -lm -std=c99 -O2 -DOJ",
-                        problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("gcc", "gcc", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
-                        "-static", "-w", "-lm", "-std=c99", "-O2", "-DOJ", 
-                       NULL);
-                break;
-            
-            case judge_conf::LANG_CPP:
-                FM_LOG_TRACE("start: g++ -o %s %s -static -w -O2 -DOJ",
-                        problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("g++", "g++", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
-                        "-static", "-w", "-O2", "-DOJ", 
-                       NULL);
-                break;
-            
-            case judge_conf::LANG_JAVA:
-                FM_LOG_TRACE("start: javac %s -d %s", problem::source_file.c_str(), problem::temp_dir.c_str());
-                execlp("javac", "javac", 
-                       problem::source_file.c_str(), "-d", problem::temp_dir.c_str(),
-                       NULL);
-                break;
-
-            case judge_conf::LANG_PASCAL:
-                FM_LOG_TRACE("start: fpc -o%s %s -Co -Cr -Ct -Ci",
-                        problem::exec_file.c_str(), problem::source_file.c_str());
-                execlp("fpc", "fpc", problem::source_file.c_str(),
-                       ("-o" + problem::exec_file).c_str(),
-                        "-Co", "-Cr", "-Ct", "-Ci",
-                       NULL);
-                break;
-        }
-                
-        //如果执行到这里说明execlp出错了
-        FM_LOG_WARNING("exec error");
-        exit(judge_conf::EXIT_COMPILE);
-    }
-    else
-    {
-        //Judge进程(父进程)
-        pid_t w = waitpid(compiler, &status, WUNTRACED);
-        if (w == -1)
-        {
-            FM_LOG_WARNING("waitpid error");
-            exit(judge_conf::EXIT_COMPILE);
-        }
-
-        FM_LOG_TRACE("compiler finished");
-        if (WIFEXITED(status))
-        {
-            if (EXIT_SUCCESS == WEXITSTATUS(status))
-            {
-                FM_LOG_TRACE("compile succeeded");
-            }
-            else if (judge_conf::GCC_COMPILE_ERROR == WEXITSTATUS(status))
-            {
-                FM_LOG_TRACE("compile error");
-                output_result(judge_conf::OJ_CE);
-                exit(judge_conf::EXIT_OK);
-            }
-            else
-            {
-                FM_LOG_WARNING(" compiler unknown exit status %d", WEXITSTATUS(status));
-                exit(judge_conf::EXIT_COMPILE);
-            }
-        }
-        else 
-        {
-            if (WIFSIGNALED(status))
-            {
-                if (SIGALRM == WTERMSIG(status))
-                {
-                    FM_LOG_WARNING("compiler time limit exceeded");
-                    output_result(judge_conf::OJ_TLE_COMPILE);
-                    exit(judge_conf::EXIT_OK);
-                }
-                else
-                    FM_LOG_WARNING("unknown signal(%d)", WTERMSIG(status));
-            }
-            else if (WIFSTOPPED(status))
-            {
-                FM_LOG_WARNING("stopped by signal %d\n", WSTOPSIG(status));
-            }
-            else
-            {
-                FM_LOG_WARNING("unknown stop reason, status(%d)", status);
-            }
-            exit(judge_conf::EXIT_COMPILE);
-        }
-    }
-    //end of fork for compiler, compile succeeded here
+    FM_LOG_TRACE("Compilation successful. Proceeding to judge test cases.");
 
 //Judge----------------------------------------------------------------------
     //打开输入输出文件
@@ -174,280 +80,188 @@ int main(int argc, char *argv[], char *envp[])
     }
 
     FM_LOG_TRACE("start reading data.txt");
-    char line[1024];
-    //每一行对应一个输入文件, 需要judge一次
-    while (true)
-    {
-        struct rusage rused;
-        int_ignored = fscanf(fp, " %1023[^\n]", line);
-        int len = strlen(line);
-        while (len > 0 && (line[len - 1] == ' ' || line[len - 1] == '\t'))
-        {
-            len--;
+    
+    std::string line_str;
+    char buffer[1024]; // Buffer for fgets
+
+    while (fgets(buffer, sizeof(buffer), fp) != NULL) {
+        line_str = buffer;
+
+        // Trim trailing newline characters (\r, \n)
+        size_t first_newline = line_str.find_first_of("\r\n");
+        if (first_newline != std::string::npos) {
+            line_str.erase(first_newline);
         }
-        if (feof(fp) || len == 0)
-        {
-            FM_LOG_TRACE("end of reading data_file");
-            break;
+
+        // Trim leading and trailing whitespace (space, tab)
+        const std::string whitespace = " \t";
+        size_t start = line_str.find_first_not_of(whitespace);
+        if (start == std::string::npos) { // Line is empty or all whitespace
+            FM_LOG_TRACE("Skipping empty or whitespace-only line in data.txt: [%s]", buffer); // Log original buffer content
+            continue;
         }
-        len -= 3;
-        if (strncmp(line + len, ".in", 3) == 0)
-        {
-            //此处是为了兼容noah/oak的带.in后缀的数据文件
-            line[len] = '\0';
+        line_str = line_str.substr(start);
+        size_t end = line_str.find_last_not_of(whitespace);
+        // substr(0, end + 1) is safe because end is guaranteed to be valid due to previous check
+        line_str = line_str.substr(0, end + 1);
+
+        if (line_str.empty()) { // Should be caught by the start == std::string::npos check, but as a safeguard.
+            FM_LOG_TRACE("Skipping line that became empty after trimming in data.txt: [%s]", buffer);
+            continue;
         }
-        problem::input_file      = problem::data_dir + "/" + line + ".in";
-        problem::output_file_std = problem::data_dir + "/" + line + ".out";
-        FM_LOG_DEBUG("input_file        %s", problem::input_file.c_str());
-        FM_LOG_DEBUG("output_file_std   %s", problem::output_file_std.c_str());
-
-        pid_t executive = fork();
-        if (executive < 0)
-        {
-            FM_LOG_WARNING("fork for child failed");
-            exit(judge_conf::EXIT_PRE_JUDGE);
+        
+        std::string base_name = line_str;
+        const std::string suffix = ".in";
+        if (base_name.length() >= suffix.length() &&
+            base_name.compare(base_name.length() - suffix.length(), suffix.length(), suffix) == 0) {
+            base_name.erase(base_name.length() - suffix.length());
+            FM_LOG_TRACE("Removed '.in' suffix from '%s', base name: '%s'", line_str.c_str(), base_name.c_str());
+        } else {
+            FM_LOG_TRACE("No '.in' suffix found in '%s', using as base name: '%s'", line_str.c_str(), base_name.c_str());
         }
-        else if (executive == 0)
-        {
-            //子进程，用于运行用户提交的代码
-            log_add_info("executive");
 
-            //重定向 stdin, stdout, stderr
-            io_redirect();
-            fclose(fp);
-
-            //安全相关, 包括seteuid, chroot
-            set_security_option();
-
-            FM_LOG_DEBUG("tl: %d, tu: %d, tla: %d", problem::time_limit,
-                    problem::time_usage, judge_conf::time_limit_addtion);
-
-            int real_time_limit = problem::time_limit //总时限
-                                - problem::time_usage //已用时间
-                                + judge_conf::time_limit_addtion; //误差调整
-            //设置一个真实时间的ALARM，防止sleep/io等卡住不退
-            if (EXIT_SUCCESS != malarm(ITIMER_REAL, real_time_limit))
-            {
-                FM_LOG_WARNING("malarm failed");
-                exit(judge_conf::EXIT_PRE_JUDGE);
-            }
-
-            FM_LOG_TRACE("begin executive: %s", problem::exec_file.c_str());
-
-            //设置 memory, time, output 限制..
-            set_limit(); //log_close in set_limit()
-
-            if (ptrace(PTRACE_TRACEME, 0, NULL, NULL) < 0)
-            {
-                //无法打日志了，因为已经close日志且chroot了, 所以给出更详细的退出值
-                exit(judge_conf::EXIT_PRE_JUDGE_PTRACE);
-            }
-            //载入程序
-            if (problem::lang != judge_conf::LANG_JAVA)
-            {
-                execl("./a.out", "a.out", NULL);
-            }
-            else
-            {
-                execlp("java", "java", "-Djava.security.manager", "-Djava.security.policy==../../java.policy", "Main", NULL);
-            }
-
-            //运行到此说明execlp出错了, 无法打日志了
-            exit(judge_conf::EXIT_PRE_JUDGE_EXECLP);
+        if (base_name.empty()) {
+            FM_LOG_WARNING("Empty base name after processing line: [%s] (original: [%s]). Skipping.", 
+                           line_str.c_str(), buffer);
+            continue;
         }
-        else 
-        {
-            //judge进程(父进程)
-            int status          = 0;
-            int syscall_id      = 0; //存放系统调用的调用号
-            struct user_regs_struct regs;
 
-            //每个case在judge之前都需要初始化rf_table
-            init_RF_table(problem::lang);
-            FM_LOG_TRACE("start judging...");
-            while (true)
-            {
-                if (wait4(executive, &status, 0, &rused) < 0)
-                {
-                    FM_LOG_WARNING("wait4 failed, %d:%s", errno, strerror(errno));
-                    exit(judge_conf::EXIT_JUDGE);
-                }
+        FM_LOG_DEBUG("--- Starting Test Case for: %s ---", base_name.c_str());
+        int test_case_status = judge_test_case(base_name.c_str());
+        // problem::result is updated globally by judge_test_case.
+        // problem::time_usage and problem::memory_usage are also updated globally within judge_test_case.
 
-                if (WIFEXITED(status))
-                {
-                    //子进程主动退出
-                    //如果是JAVA返回值非0表示出错，其他语言不考虑此返回值
-                    if (problem::lang != judge_conf::LANG_JAVA
-                        || WEXITSTATUS(status) == EXIT_SUCCESS)
-                    {
-                        //子进程返回0 (AC/PE,WA)
-                        FM_LOG_TRACE("normal quit");
-                        int result;
-                        if (problem::spj)
-                        {
-                            //SPJ，由SPJ程序判结果
-                            result = oj_compare_output_spj(problem::output_file_std, 
-                                                       problem::input_file,
-                                                       problem::stdout_file_executive,
-                                                       problem::source_file,
-                                                       problem::spj_exe_file,
-                                                       problem::stdout_file_spj);
-                        }
-                        else
-                        {
-                            //非SPJ，直接判结果
-                            result = oj_compare_output(problem::output_file_std, 
-                                                       problem::stdout_file_executive);
-                        }
-                        //如果这一轮是WA
-                        if (result == judge_conf::OJ_WA)
-                        {
-                            //那么最终结果就是WA
-                            problem::result = judge_conf::OJ_WA;
-                        } 
-                        //这一轮是AC或PE
-                        else if (problem::result != judge_conf::OJ_PE)
-                        {
-                            //第一轮或上一轮是AC，结果就是这一轮的情况
-                            problem::result = result;
-                        }
-                        else /* (problem::result == judge_conf::OJ_PE) */
-                        {
-                            //上一轮是PE，这轮无论是AC还是PE，都是PE
-                            problem::result = judge_conf::OJ_PE;
-                        }
-                        FM_LOG_TRACE("case result: %d, problem result: %d",
-                                    result, problem::result);
-                    }
-                    else
-                    {
-                        //子进程返回值异常
-                        FM_LOG_TRACE("abnormal quit, exit_code: %d", WEXITSTATUS(status));
-                        problem::result = judge_conf::OJ_RE_JAVA;
-                    }
-                    break;
-                }
-
-                //判断是否是RE/TLE/OLE等非正常退出的情况
-                if ( WIFSIGNALED(status) ||
-                     //这是因为超过软/硬限制而收到信号的情况
-                    (WIFSTOPPED(status) && WSTOPSIG(status) != SIGTRAP))
-                     //这是程序首到信号暂停、但是并未结束的情况
-                     //被ptrace暂停的情况(=SIGTRAP)是正常的，需要过滤掉
-                {
-                    int signo = 0;
-                    if (WIFSIGNALED(status))
-                    {
-                        signo = WTERMSIG(status);
-                        FM_LOG_TRACE("child signaled by %d, %s", signo, strsignal(signo));
-                    }
-                    else 
-                    {
-                        signo = WSTOPSIG(status);
-                        FM_LOG_TRACE("child stopped by %d, %s", signo, strsignal(signo));
-                    }
-                    switch (signo)
-                    {
-                        //TLE
-                        case SIGALRM:
-                        case SIGXCPU:
-                        case SIGVTALRM:
-                        case SIGKILL:
-                            FM_LOG_TRACE("time limit exceeded");
-                            problem::result = judge_conf::OJ_TLE;
-                            break;
-                        //OLE
-                        case SIGXFSZ:
-                            FM_LOG_TRACE("file limit exceeded");
-                            problem::result = judge_conf::OJ_OLE;
-                            break;
-                        //RE的各种情况
-                        case SIGSEGV:
-                            problem::result = judge_conf::OJ_RE_SEGV;
-                            break;
-                        case SIGFPE:
-                            problem::result = judge_conf::OJ_RE_FPE;
-                            break;
-                        case SIGBUS:
-                            problem::result = judge_conf::OJ_RE_BUS;
-                            break;
-                        case SIGABRT:
-                            problem::result = judge_conf::OJ_RE_ABRT;
-                            break;
-                        default:
-                            problem::result = judge_conf::OJ_RE_UNKNOWN;
-                            break;
-                    } //end of swtich
-                    ptrace(PTRACE_KILL, executive, NULL, NULL);
-                    break;
-                } //end of  "if (WIFSIGNALED(status) ...)"
-
-                //MLE
-                problem::memory_usage = std::max(problem::memory_usage, 
-                        rused.ru_minflt * (getpagesize() / judge_conf::KILO));
-                if (problem::memory_usage > problem::memory_limit)
-                {
-                    problem::result = judge_conf::OJ_MLE;
-                    FM_LOG_TRACE("memory limit exceeded: %d (fault: %d * %d)", 
-                            problem::memory_usage, rused.ru_minflt, getpagesize());
-                    ptrace(PTRACE_KILL, executive, NULL, NULL);
-                    break;
-                }
-
-                //截获的SYSCALL, 检查
-                if (ptrace(PTRACE_GETREGS, executive, NULL, &regs) < 0)
-                {
-                    FM_LOG_WARNING("ptrace(PTRACE_GETREGS) failed, %d: %s",
-                            errno, strerror(errno));
-                    exit(judge_conf::EXIT_JUDGE);
-                }
-#ifdef __i386__
-                syscall_id = regs.orig_eax;
-#else
-                //此处是从bnuoj直接copy过来的，没有用i386平台测试过...
-                syscall_id = regs.orig_rax;
-#endif
-                if (syscall_id > 0 && !is_valid_syscall(problem::lang, syscall_id, executive, regs))
-                {
-                    FM_LOG_TRACE("restricted function, syscall_id: %d", syscall_id);
-                    if (syscall_id == SYS_rt_sigprocmask) //occur when glibc fail
-                    {
-                        problem::result = judge_conf::OJ_RE_SEGV;
-                    }
-                    else
-                    {
-                        problem::result = judge_conf::OJ_RF;
-                    }
-                    ptrace(PTRACE_KILL, executive, NULL, NULL);
-                    break;
-                }
-                
-                if (ptrace(PTRACE_SYSCALL, executive, NULL, NULL) < 0)
-                {
-                    FM_LOG_WARNING("ptrace(PTRACE_SYSCALL) failed");
-                    exit(judge_conf::EXIT_JUDGE);
-                }
+        if (test_case_status != judge_conf::OJ_AC && test_case_status != judge_conf::OJ_PE) {
+            FM_LOG_INFO("Test case for '%s' resulted in %d (not AC/PE), stopping further test cases.",
+                        base_name.c_str(), test_case_status);
+            if (test_case_status == judge_conf::OJ_TLE) { 
+                problem::time_usage = problem::time_limit; // Ensure time_usage reflects TLE
             }
-        } //end of fork for judge process
-
-        problem::time_usage += (rused.ru_utime.tv_sec * 1000 + 
-                                rused.ru_utime.tv_usec / 1000);
-        problem::time_usage += (rused.ru_stime.tv_sec * 1000 + 
-                                rused.ru_stime.tv_usec / 1000);
-
-        if (problem::result != judge_conf::OJ_AC &&
-            problem::result != judge_conf::OJ_PE)
-        {
-            FM_LOG_TRACE("not ac/pe, no need to continue");
-            if (problem::result == judge_conf::OJ_TLE)
-            {
-                problem::time_usage = problem::time_limit;
-            }
-            break;
+            break; // Stop processing further test cases
         }
+        FM_LOG_DEBUG("--- Finished Test Case for: %s --- Result so far: %d", base_name.c_str(), problem::result);
     }
 
+    if (ferror(fp)) {
+        FM_LOG_WARNING("Error occurred while reading data.txt: %s", strerror(errno));
+    }
+    FM_LOG_TRACE("Finished reading data.txt.");
+    fclose(fp); // Close data_file after loop
+
     output_result(problem::result, problem::memory_usage, problem::time_usage);
+    FM_LOG_DEBUG("Judge finished. Result: %d, Memory: %ld KB, Time: %d ms.",
+                 problem::result, problem::memory_usage, problem::time_usage);
+    log_close(); // Close log file at the very end of execution
     return 0;
+}
+
+
+// Handles the compilation phase.
+// Returns EXIT_SUCCESS if compilation is successful.
+// Returns judge_conf::OJ_CE or judge_conf::OJ_TLE_COMPILE if specific errors occur and result is outputted.
+// Exits directly for critical errors (e.g., fork failure, waitpid failure).
+static int run_compiler() {
+// ... (run_compiler implementation from previous successful diff - unchanged)
+    FM_LOG_DEBUG("--- Starting Compilation Phase ---");
+    int status = 0;
+    current_compiler_pid = fork(); // Uses global current_compiler_pid
+
+    if (current_compiler_pid < 0) {
+        FM_LOG_FATAL("fork for compiler failed: %s", strerror(errno));
+        current_compiler_pid = 0; // Reset global
+        exit(judge_conf::EXIT_COMPILE); 
+    } else if (current_compiler_pid == 0) {
+        // Child process (compiler)
+        log_add_info("compiler_child"); // Differentiate logs
+        stdout = freopen(problem::stdout_file_compiler.c_str(), "w", stdout);
+        stderr = freopen(problem::stderr_file_compiler.c_str(), "w", stderr);
+        if (stdout == NULL || stderr == NULL) {
+            FM_LOG_FATAL("Compiler child: freopen for stdout/stderr failed: %s", strerror(errno));
+            // Using FATAL as this is critical for compiler's operation.
+            exit(judge_conf::EXIT_COMPILE);
+        }
+
+        if (malarm(ITIMER_REAL, judge_conf::compile_time_limit) != 0) {
+             FM_LOG_FATAL("Compiler child: malarm failed: %s", strerror(errno));
+             exit(judge_conf::EXIT_COMPILE);
+        }
+        
+        switch (problem::lang) {
+            case judge_conf::LANG_C:
+                FM_LOG_TRACE("Compiler child: exec gcc ...");
+                execlp("gcc", "gcc", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
+                       /* -static for static linking, -w to suppress warnings */ "-static", "-w",
+                       "-lm", "-std=c99", "-O2", "-DOJ", NULL);
+                break;
+            case judge_conf::LANG_CPP:
+                FM_LOG_TRACE("Compiler child: exec g++ ...");
+                execlp("g++", "g++", "-o", problem::exec_file.c_str(), problem::source_file.c_str(),
+                       /* -static for static linking, -w to suppress warnings */ "-static", "-w",
+                       "-O2", "-DOJ", NULL);
+                break;
+            case judge_conf::LANG_JAVA:
+                 FM_LOG_TRACE("Compiler child: exec javac ...");
+                 // Note: Java compilation doesn't use problem::exec_file directly for output,
+                 // it uses -d problem::temp_dir. problem::exec_file for Java is "Main".
+                 execlp("javac", "javac", problem::source_file.c_str(), "-d", problem::temp_dir.c_str(), NULL);
+                break;
+            case judge_conf::LANG_PASCAL:
+                FM_LOG_TRACE("Compiler child: exec fpc ...");
+                execlp("fpc", "fpc", problem::source_file.c_str(),
+                       ("-o" + problem::exec_file).c_str(), "-Co", "-Cr", "-Ct", "-Ci", NULL);
+                break;
+            default: 
+                FM_LOG_FATAL("Compiler child: Unknown language %d in run_compiler", problem::lang);
+                exit(judge_conf::EXIT_COMPILE);
+        }
+        // If execlp returns, it's an error
+        FM_LOG_FATAL("Compiler child: execlp failed for lang %d: %s", problem::lang, strerror(errno));
+        exit(judge_conf::EXIT_COMPILE);
+    } else {
+        // Parent process (judge)
+        pid_t w = waitpid(current_compiler_pid, &status, WUNTRACED);
+        // Important: Reset global current_compiler_pid after waitpid returns, regardless of outcome.
+        // This ensures the timeout handler doesn't try to kill an already terminated/waited-for process.
+        current_compiler_pid = 0; 
+
+        if (w == -1) {
+            FM_LOG_FATAL("waitpid for compiler failed: %s", strerror(errno));
+            exit(judge_conf::EXIT_COMPILE); 
+        }
+
+        FM_LOG_DEBUG("Compiler process finished.");
+        if (WIFEXITED(status)) {
+            if (WEXITSTATUS(status) == EXIT_SUCCESS) {
+                FM_LOG_TRACE("Compilation successful.");
+                return EXIT_SUCCESS; // Success
+            } else if (WEXITSTATUS(status) == judge_conf::GCC_COMPILE_ERROR) {
+                FM_LOG_TRACE("Compilation error (CE).");
+                output_result(judge_conf::OJ_CE); 
+                return judge_conf::OJ_CE;         
+            } else {
+                FM_LOG_WARNING("Compiler exited with unknown status: %d", WEXITSTATUS(status));
+                output_result(judge_conf::OJ_SE); // Treat as System Error
+                return judge_conf::EXIT_COMPILE;  // Indicate general compile error for main to terminate
+            }
+        } else if (WIFSIGNALED(status)) {
+            if (WTERMSIG(status) == SIGALRM) {
+                FM_LOG_WARNING("Compiler Time Limit Exceeded (SIGALRM).");
+                output_result(judge_conf::OJ_TLE_COMPILE); 
+                return judge_conf::OJ_TLE_COMPILE;        
+            } else {
+                FM_LOG_WARNING("Compiler terminated by signal: %d (%s)", WTERMSIG(status), strsignal(WTERMSIG(status)));
+                output_result(judge_conf::OJ_SE); 
+                return judge_conf::EXIT_COMPILE;  
+            }
+        } else if (WIFSTOPPED(status)) { // Should not happen with WUNTRACED unless something else sends SIGSTOP
+             FM_LOG_WARNING("Compiler stopped by signal: %d (%s). Treating as System Error.", WSTOPSIG(status), strsignal(WSTOPSIG(status)));
+             output_result(judge_conf::OJ_SE);
+             return judge_conf::EXIT_COMPILE;
+        } else {
+            FM_LOG_WARNING("Compiler ended with unknown reason, status: %d. Treating as System Error.", status);
+            output_result(judge_conf::OJ_SE);
+            return judge_conf::EXIT_COMPILE;
+        }
+    }
 }
 
